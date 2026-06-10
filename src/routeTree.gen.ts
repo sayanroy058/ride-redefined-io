@@ -11,10 +11,12 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VerifyOtpRouteImport } from './routes/verify-otp'
 import { Route as SupportRouteImport } from './routes/support'
+import { Route as SellRouteImport } from './routes/sell'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
+import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as BuyRouteImport } from './routes/buy'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
@@ -28,6 +30,11 @@ const VerifyOtpRoute = VerifyOtpRouteImport.update({
 const SupportRoute = SupportRouteImport.update({
   id: '/support',
   path: '/support',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SellRoute = SellRouteImport.update({
+  id: '/sell',
+  path: '/sell',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RegisterRoute = RegisterRouteImport.update({
@@ -48,6 +55,11 @@ const LoginRoute = LoginRouteImport.update({
 const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
   id: '/forgot-password',
   path: '/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BuyRoute = BuyRouteImport.update({
@@ -75,10 +87,12 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/buy': typeof BuyRouteWithChildren
+  '/dashboard': typeof DashboardRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/profile': typeof ProfileRoute
   '/register': typeof RegisterRoute
+  '/sell': typeof SellRoute
   '/support': typeof SupportRoute
   '/verify-otp': typeof VerifyOtpRoute
   '/buy/$id': typeof BuyIdRoute
@@ -87,10 +101,12 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/buy': typeof BuyRouteWithChildren
+  '/dashboard': typeof DashboardRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/profile': typeof ProfileRoute
   '/register': typeof RegisterRoute
+  '/sell': typeof SellRoute
   '/support': typeof SupportRoute
   '/verify-otp': typeof VerifyOtpRoute
   '/buy/$id': typeof BuyIdRoute
@@ -100,10 +116,12 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/buy': typeof BuyRouteWithChildren
+  '/dashboard': typeof DashboardRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/profile': typeof ProfileRoute
   '/register': typeof RegisterRoute
+  '/sell': typeof SellRoute
   '/support': typeof SupportRoute
   '/verify-otp': typeof VerifyOtpRoute
   '/buy/$id': typeof BuyIdRoute
@@ -114,10 +132,12 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/buy'
+    | '/dashboard'
     | '/forgot-password'
     | '/login'
     | '/profile'
     | '/register'
+    | '/sell'
     | '/support'
     | '/verify-otp'
     | '/buy/$id'
@@ -126,10 +146,12 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/buy'
+    | '/dashboard'
     | '/forgot-password'
     | '/login'
     | '/profile'
     | '/register'
+    | '/sell'
     | '/support'
     | '/verify-otp'
     | '/buy/$id'
@@ -138,10 +160,12 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/buy'
+    | '/dashboard'
     | '/forgot-password'
     | '/login'
     | '/profile'
     | '/register'
+    | '/sell'
     | '/support'
     | '/verify-otp'
     | '/buy/$id'
@@ -151,10 +175,12 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   BuyRoute: typeof BuyRouteWithChildren
+  DashboardRoute: typeof DashboardRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   LoginRoute: typeof LoginRoute
   ProfileRoute: typeof ProfileRoute
   RegisterRoute: typeof RegisterRoute
+  SellRoute: typeof SellRoute
   SupportRoute: typeof SupportRoute
   VerifyOtpRoute: typeof VerifyOtpRoute
 }
@@ -173,6 +199,13 @@ declare module '@tanstack/react-router' {
       path: '/support'
       fullPath: '/support'
       preLoaderRoute: typeof SupportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sell': {
+      id: '/sell'
+      path: '/sell'
+      fullPath: '/sell'
+      preLoaderRoute: typeof SellRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/register': {
@@ -201,6 +234,13 @@ declare module '@tanstack/react-router' {
       path: '/forgot-password'
       fullPath: '/forgot-password'
       preLoaderRoute: typeof ForgotPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/buy': {
@@ -248,10 +288,12 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   BuyRoute: BuyRouteWithChildren,
+  DashboardRoute: DashboardRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
   LoginRoute: LoginRoute,
   ProfileRoute: ProfileRoute,
   RegisterRoute: RegisterRoute,
+  SellRoute: SellRoute,
   SupportRoute: SupportRoute,
   VerifyOtpRoute: VerifyOtpRoute,
 }
