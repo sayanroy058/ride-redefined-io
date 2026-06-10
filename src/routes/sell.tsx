@@ -49,7 +49,7 @@ function Sell() {
     if (!f.brand || !f.model || !f.sellerName || !f.sellerPhone) { toast.error("Please complete required fields"); return; }
     const listing: Listing = {
       id: "L-" + Date.now(),
-      sellerId: user.id,
+      sellerId: user!.id,
       sellerName: f.sellerName, sellerEmail: f.sellerEmail, sellerPhone: f.sellerPhone,
       brand: f.brand, model: f.model, variant: f.variant, year: f.year, registrationYear: f.registrationYear,
       fuelType: f.fuelType, transmission: f.transmission, kmDriven: f.kmDriven, ownership: f.ownership,
