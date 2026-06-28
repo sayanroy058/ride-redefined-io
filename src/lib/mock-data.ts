@@ -118,11 +118,12 @@ export const SEED_TICKETS: Ticket[] = [
 ];
 
 export const SEED_OFFERS: Offer[] = [
-  { id: "o-1", listingId: "seed-1", buyerName: "Alex Kim", amount: 31000, message: "Cash, can pick up this weekend.", createdAt: Date.now() - 3 * 3600000 },
-  { id: "o-2", listingId: "seed-1", buyerName: "Rita N.", amount: 30500, message: "Trade-in available.", createdAt: Date.now() - 86400000 },
+  { id: "o-1", listingId: "seed-1", buyerName: "Arjun Kapoor", amount: 4750000, message: "Cash, can pick up this weekend.", createdAt: Date.now() - 3 * 3600000 },
+  { id: "o-2", listingId: "seed-1", buyerName: "Riya N.", amount: 4680000, message: "Trade-in available.", createdAt: Date.now() - 86400000 },
 ];
 
-export function emiEstimate(price: number, years = 5, rate = 0.079) {
+// EMI for INR with typical Indian car loan rate (~9.5%)
+export function emiEstimate(price: number, years = 5, rate = 0.095) {
   const n = years * 12; const r = rate / 12;
   return Math.round((price * r) / (1 - Math.pow(1 + r, -n)));
 }
