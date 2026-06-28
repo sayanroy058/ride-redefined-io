@@ -22,6 +22,8 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BuyIdRouteImport } from './routes/buy.$id'
+import { Route as BuyIdInspectionRouteImport } from './routes/buy.$id.inspection'
+import { Route as BuyIdDefectsRouteImport } from './routes/buy.$id.defects'
 
 const VerifyOtpRoute = VerifyOtpRouteImport.update({
   id: '/verify-otp',
@@ -88,6 +90,16 @@ const BuyIdRoute = BuyIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => BuyRoute,
 } as any)
+const BuyIdInspectionRoute = BuyIdInspectionRouteImport.update({
+  id: '/inspection',
+  path: '/inspection',
+  getParentRoute: () => BuyIdRoute,
+} as any)
+const BuyIdDefectsRoute = BuyIdDefectsRouteImport.update({
+  id: '/defects',
+  path: '/defects',
+  getParentRoute: () => BuyIdRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -102,7 +114,9 @@ export interface FileRoutesByFullPath {
   '/sell': typeof SellRoute
   '/support': typeof SupportRoute
   '/verify-otp': typeof VerifyOtpRoute
-  '/buy/$id': typeof BuyIdRoute
+  '/buy/$id': typeof BuyIdRouteWithChildren
+  '/buy/$id/defects': typeof BuyIdDefectsRoute
+  '/buy/$id/inspection': typeof BuyIdInspectionRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -117,7 +131,9 @@ export interface FileRoutesByTo {
   '/sell': typeof SellRoute
   '/support': typeof SupportRoute
   '/verify-otp': typeof VerifyOtpRoute
-  '/buy/$id': typeof BuyIdRoute
+  '/buy/$id': typeof BuyIdRouteWithChildren
+  '/buy/$id/defects': typeof BuyIdDefectsRoute
+  '/buy/$id/inspection': typeof BuyIdInspectionRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -133,7 +149,9 @@ export interface FileRoutesById {
   '/sell': typeof SellRoute
   '/support': typeof SupportRoute
   '/verify-otp': typeof VerifyOtpRoute
-  '/buy/$id': typeof BuyIdRoute
+  '/buy/$id': typeof BuyIdRouteWithChildren
+  '/buy/$id/defects': typeof BuyIdDefectsRoute
+  '/buy/$id/inspection': typeof BuyIdInspectionRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -151,6 +169,8 @@ export interface FileRouteTypes {
     | '/support'
     | '/verify-otp'
     | '/buy/$id'
+    | '/buy/$id/defects'
+    | '/buy/$id/inspection'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -166,6 +186,8 @@ export interface FileRouteTypes {
     | '/support'
     | '/verify-otp'
     | '/buy/$id'
+    | '/buy/$id/defects'
+    | '/buy/$id/inspection'
   id:
     | '__root__'
     | '/'
@@ -181,6 +203,8 @@ export interface FileRouteTypes {
     | '/support'
     | '/verify-otp'
     | '/buy/$id'
+    | '/buy/$id/defects'
+    | '/buy/$id/inspection'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -291,15 +315,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BuyIdRouteImport
       parentRoute: typeof BuyRoute
     }
+    '/buy/$id/inspection': {
+      id: '/buy/$id/inspection'
+      path: '/inspection'
+      fullPath: '/buy/$id/inspection'
+      preLoaderRoute: typeof BuyIdInspectionRouteImport
+      parentRoute: typeof BuyIdRoute
+    }
+    '/buy/$id/defects': {
+      id: '/buy/$id/defects'
+      path: '/defects'
+      fullPath: '/buy/$id/defects'
+      preLoaderRoute: typeof BuyIdDefectsRouteImport
+      parentRoute: typeof BuyIdRoute
+    }
   }
 }
 
+interface BuyIdRouteChildren {
+  BuyIdDefectsRoute: typeof BuyIdDefectsRoute
+  BuyIdInspectionRoute: typeof BuyIdInspectionRoute
+}
+
+const BuyIdRouteChildren: BuyIdRouteChildren = {
+  BuyIdDefectsRoute: BuyIdDefectsRoute,
+  BuyIdInspectionRoute: BuyIdInspectionRoute,
+}
+
+const BuyIdRouteWithChildren = BuyIdRoute._addFileChildren(BuyIdRouteChildren)
+
 interface BuyRouteChildren {
-  BuyIdRoute: typeof BuyIdRoute
+  BuyIdRoute: typeof BuyIdRouteWithChildren
 }
 
 const BuyRouteChildren: BuyRouteChildren = {
-  BuyIdRoute: BuyIdRoute,
+  BuyIdRoute: BuyIdRouteWithChildren,
 }
 
 const BuyRouteWithChildren = BuyRoute._addFileChildren(BuyRouteChildren)
