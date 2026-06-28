@@ -1,10 +1,11 @@
 import { createFileRoute, Link, notFound, useParams } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { ArrowLeft, BadgeCheck, Calendar, Car, Fuel, GaugeCircle, Heart, MapPin, Phone, PlayCircle, Settings2, ShieldCheck, Wrench } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { ArrowLeft, BadgeCheck, Calendar, Car, CheckCircle2, Fuel, GaugeCircle, Heart, MapPin, Phone, PlayCircle, Settings2, ShieldCheck, Star, Wrench, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
+import { Progress } from "@/components/ui/progress";
 import { useApp } from "@/lib/store";
 import { CarCard, formatPrice } from "@/components/site/CarCard";
 import { emiEstimate } from "@/lib/mock-data";
