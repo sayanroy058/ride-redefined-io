@@ -193,6 +193,9 @@ function VehicleDetail() {
               </TabsContent>
 
               <TabsContent value="inspection" className="pt-4 space-y-4">
+                <div className="flex justify-end">
+                  <Button asChild size="sm" variant="outline"><Link to="/buy/$id/inspection" params={{ id: listing.id }}>View full inspection report →</Link></Button>
+                </div>
                 <div className="rounded-2xl border border-success/30 bg-success/5 p-5">
                   <div className="flex items-center justify-between">
                     <div>
@@ -225,6 +228,9 @@ function VehicleDetail() {
               </TabsContent>
 
               <TabsContent value="defects" className="pt-4 space-y-4">
+                <div className="flex justify-end">
+                  <Button asChild size="sm" variant="outline"><Link to="/buy/$id/defects" params={{ id: listing.id }}>View full defects report →</Link></Button>
+                </div>
                 <div className="rounded-2xl border border-warning/30 bg-warning/5 p-4 text-sm">
                   <Star className="mr-2 inline h-4 w-4 text-warning" />Full transparency — every cosmetic or mechanical issue noted by our engineers.
                 </div>
