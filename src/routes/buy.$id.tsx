@@ -36,6 +36,26 @@ function VehicleDetail() {
   const similar = listings.filter(l => l.id !== listing.id && l.bodyType === listing.bodyType).slice(0, 3);
   const fav = wishlist.includes(listing.id);
 
+  const highlightTags = useMemo(() => [
+    "Sunroof", "Apple CarPlay", "Android Auto", "360° Camera", "Ventilated seats",
+    "ADAS Level 2", "Premium audio", "Wireless charging", "LED Matrix headlamps",
+  ], []);
+  const inspectionScore = useMemo(() => (8.6 + ((listing.id.charCodeAt(0) % 10) / 20)).toFixed(1), [listing.id]);
+  const defectsList = useMemo(() => ([
+    { area: "Front bumper", severity: "Minor", note: "Light scuff on left edge — paint touch-up done." },
+    { area: "Alloy wheel (RR)", severity: "Minor", note: "Small kerb mark on rear-right alloy." },
+    { area: "Windshield", severity: "Minor", note: "Tiny stone chip on lower passenger side, sealed." },
+    { area: "Driver seat bolster", severity: "Moderate", note: "Mild wear on outer leather bolster." },
+    { area: "Tail-lamp cluster", severity: "Minor", note: "Hairline scratch, no cracks, fully functional." },
+    { area: "Underbody", severity: "Minor", note: "Surface rust on exhaust shield — treated and coated." },
+  ] as const), []);
+  const serviceHistory = useMemo(() => ([
+    { date: "Mar 2024", km: 42100, service: "Periodic service + brake fluid", workshop: "Authorized service center" },
+    { date: "Sep 2023", km: 33800, service: "Engine oil & filter change", workshop: "Authorized service center" },
+    { date: "Feb 2023", km: 24500, service: "Wheel alignment & balancing", workshop: "Multi-brand workshop" },
+    { date: "Jul 2022", km: 14200, service: "1st free service", workshop: "Authorized service center" },
+  ]), []);
+
   return (
     <div className="container mx-auto px-4 py-8">
       <Link to="/buy" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"><ArrowLeft className="h-4 w-4" /> Back to inventory</Link>
@@ -321,3 +341,21 @@ function SpecGrid({ items }: { items: Array<[string, any]> }) {
     </div>
   );
 }
+
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div>
+      <h3 className="mb-3 font-display text-sm font-semibold uppercase tracking-wider text-muted-foreground">{title}</h3>
+      {children}
+    </div>
+  );
+}
+
+const FEATURES_BY_GROUP: Record<string, string[]> = {
+  "Safety": ["6 Airbags", "ABS with EBD", "Electronic Stability Program", "Hill-hold assist", "ISOFIX child seat mounts", "Tire pressure monitor", "360° surround camera", "Blind-spot monitor", "Lane-keep assist", "Forward collision warning"],
+  "Comfort & convenience": ["Dual-zone climate control", "Ventilated front seats", "Electric driver seat memory", "Auto-dimming IRVM", "Rain-sensing wipers", "Auto LED headlamps", "Push-button start", "Cruise control", "Hands-free tailgate", "Wireless phone charger"],
+  "Infotainment": ["10.25\" touchscreen", "Wireless Apple CarPlay", "Wireless Android Auto", "12-speaker premium audio", "Bluetooth 5.0", "Voice assistant", "Connected car app", "OTA updates"],
+  "Exterior": ["LED Matrix headlamps", "LED DRLs", "Panoramic sunroof", "18\" alloy wheels", "Roof rails", "Shark-fin antenna", "Auto-folding ORVMs"],
+  "Interior": ["Leatherette upholstery", "Ambient lighting (64 colors)", "Cooled glovebox", "60:40 split rear seat", "Rear AC vents", "USB-C charging (4)", "Wireless smart key"],
+};
+
