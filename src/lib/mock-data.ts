@@ -54,9 +54,9 @@ export function generateMockListings(): Listing[] {
     const expectedPrice = c.expectedPrice ?? 30000;
     const refurb = Math.round(expectedPrice * 0.04);
     const repair = Math.round(expectedPrice * 0.02);
-    const transport = 450;
-    const inspection = 250;
-    const documentation = 180;
+    const transport = 35000;
+    const inspection = 18000;
+    const documentation = 12000;
     const commission = Math.round(expectedPrice * 0.05);
     const margin = Math.round(expectedPrice * 0.08);
     const finalPrice = expectedPrice + refurb + repair + transport + inspection + documentation + commission + margin;
@@ -65,9 +65,9 @@ export function generateMockListings(): Listing[] {
     return {
       id: `seed-${i + 1}`,
       sellerId: `seed-seller-${i + 1}`,
-      sellerName: ["Aarav Sharma", "Priya Patel", "James Carter", "Sophia Lin", "Marco Rossi"][i % 5],
-      sellerEmail: `seller${i + 1}@example.com`,
-      sellerPhone: `+1 555 010${100 + i}`,
+      sellerName: ["Aarav Sharma", "Priya Patel", "Rohan Mehta", "Sneha Iyer", "Vikram Singh"][i % 5],
+      sellerEmail: `seller${i + 1}@example.in`,
+      sellerPhone: `+91 98${(2000000 + i * 137).toString().slice(0, 8)}`,
       brand: c.brand!,
       model: c.model!,
       variant: c.variant!,
@@ -78,7 +78,7 @@ export function generateMockListings(): Listing[] {
       kmDriven: randInt(8000, 75000),
       ownership: rand(OWNERSHIP),
       registrationState: rand(STATES),
-      registrationCity: rand(["Los Angeles", "San Francisco", "Austin", "Miami", "Seattle", "Chicago", "Boston"]),
+      registrationCity: rand(CITIES),
       vin: `VIN${(1000000 + i * 37).toString().padStart(11, "0")}`,
       insuranceStatus: rand(["Active", "Expired", "Expires soon"]),
       roadTaxStatus: "Paid",
