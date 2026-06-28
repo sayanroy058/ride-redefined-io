@@ -171,7 +171,7 @@ function VehicleDetail() {
             <div className="mt-1 text-sm text-muted-foreground">From <span className="font-semibold text-foreground">{formatPrice(emi)}/mo</span> · 60 months</div>
             <div className="mt-4 grid gap-2">
               <Button size="lg" className="w-full">Buy now</Button>
-              <Button size="lg" variant="outline" className="w-full">Reserve · $99</Button>
+              <Button size="lg" variant="outline" className="w-full">Reserve · ₹7,999</Button>
               <Button size="lg" variant="ghost" className="w-full"><Phone className="mr-2 h-4 w-4" />Talk to advisor</Button>
             </div>
             <Separator className="my-4" />

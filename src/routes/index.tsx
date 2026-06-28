@@ -54,10 +54,10 @@ function Landing() {
                 </Select>
                 <Select><SelectTrigger className="border-0 bg-transparent"><SelectValue placeholder="Budget" /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="0-20000">Under $20k</SelectItem>
-                    <SelectItem value="20000-35000">$20k – $35k</SelectItem>
-                    <SelectItem value="35000-60000">$35k – $60k</SelectItem>
-                    <SelectItem value="60000+">$60k+</SelectItem>
+                    <SelectItem value="0-1000000">Under ₹10 L</SelectItem>
+                    <SelectItem value="1000000-2500000">₹10 L – ₹25 L</SelectItem>
+                    <SelectItem value="2500000-5000000">₹25 L – ₹50 L</SelectItem>
+                    <SelectItem value="5000000+">₹50 L+</SelectItem>
                   </SelectContent>
                 </Select>
                 <Button asChild size="lg" className="gap-1.5">
