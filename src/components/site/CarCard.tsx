@@ -6,7 +6,15 @@ import { useApp } from "@/lib/store";
 import type { Listing } from "@/lib/types";
 
 export function formatPrice(p: number) {
-  return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(p);
+  // Indian numbering (lakhs/crores), prefix with ₹
+  return "₹" + new Intl.NumberFormat("en-IN", { maximumFractionDigits: 0 }).format(Math.round(p));
+}
+
+export function formatPriceShort(p: number) {
+  const n = Math.round(p);
+  if (n >= 10000000) return `₹${(n / 10000000).toFixed(2)} Cr`;
+  if (n >= 100000) return `₹${(n / 100000).toFixed(2)} L`;
+  return "₹" + new Intl.NumberFormat("en-IN").format(n);
 }
 
 export function StatusBadge({ status }: { status: Listing["status"] }) {

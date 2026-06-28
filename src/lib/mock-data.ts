@@ -10,7 +10,8 @@ export const BODY_TYPES = ["Sedan", "SUV", "Hatchback", "Coupe", "Convertible", 
 export const FUEL_TYPES = ["Petrol", "Diesel", "Electric", "Hybrid", "CNG"];
 export const TRANSMISSIONS = ["Automatic", "Manual", "CVT", "DCT"];
 export const OWNERSHIP = ["1st Owner", "2nd Owner", "3rd Owner", "4th+ Owner"];
-export const STATES = ["California", "New York", "Texas", "Florida", "Washington", "Illinois", "Massachusetts"];
+export const STATES = ["Maharashtra", "Karnataka", "Delhi", "Tamil Nadu", "Telangana", "Gujarat", "West Bengal", "Haryana"];
+export const CITIES = ["Mumbai", "Bengaluru", "New Delhi", "Chennai", "Hyderabad", "Ahmedabad", "Kolkata", "Gurugram", "Pune", "Noida"];
 
 const SAMPLE_IMAGES = [
   "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=1200&q=80",
@@ -27,21 +28,22 @@ const SAMPLE_IMAGES = [
   "https://images.unsplash.com/photo-1502877338535-766e1452684a?w=1200&q=80",
 ];
 
+// Prices in INR (Indian Rupees)
 const CARS: Array<Partial<Listing>> = [
-  { brand: "Tesla", model: "Model 3", variant: "Long Range AWD", year: 2022, fuelType: "Electric", transmission: "Automatic", expectedPrice: 32500, bodyType: "Sedan" },
-  { brand: "BMW", model: "M340i", variant: "xDrive", year: 2021, fuelType: "Petrol", transmission: "Automatic", expectedPrice: 41900, bodyType: "Sedan" },
-  { brand: "Porsche", model: "Macan", variant: "S", year: 2020, fuelType: "Petrol", transmission: "DCT", expectedPrice: 52000, bodyType: "SUV" },
-  { brand: "Mercedes-Benz", model: "C300", variant: "AMG Line", year: 2022, fuelType: "Petrol", transmission: "Automatic", expectedPrice: 38900, bodyType: "Sedan" },
-  { brand: "Audi", model: "Q5", variant: "45 TFSI Premium", year: 2021, fuelType: "Petrol", transmission: "DCT", expectedPrice: 36500, bodyType: "SUV" },
-  { brand: "Toyota", model: "Camry", variant: "XSE Hybrid", year: 2023, fuelType: "Hybrid", transmission: "CVT", expectedPrice: 28900, bodyType: "Sedan" },
-  { brand: "Honda", model: "Civic", variant: "Sport Touring", year: 2022, fuelType: "Petrol", transmission: "CVT", expectedPrice: 24500, bodyType: "Hatchback" },
-  { brand: "Polestar", model: "2", variant: "Long Range Dual", year: 2022, fuelType: "Electric", transmission: "Automatic", expectedPrice: 39900, bodyType: "Sedan" },
-  { brand: "Volvo", model: "XC60", variant: "T8 Recharge", year: 2021, fuelType: "Hybrid", transmission: "Automatic", expectedPrice: 44500, bodyType: "SUV" },
-  { brand: "Lexus", model: "RX 350", variant: "F Sport", year: 2020, fuelType: "Petrol", transmission: "Automatic", expectedPrice: 41200, bodyType: "SUV" },
-  { brand: "Hyundai", model: "Ioniq 5", variant: "Limited AWD", year: 2023, fuelType: "Electric", transmission: "Automatic", expectedPrice: 42800, bodyType: "SUV" },
-  { brand: "Kia", model: "EV6", variant: "GT-Line AWD", year: 2022, fuelType: "Electric", transmission: "Automatic", expectedPrice: 38500, bodyType: "SUV" },
-  { brand: "Mazda", model: "CX-5", variant: "Signature Turbo", year: 2021, fuelType: "Petrol", transmission: "Automatic", expectedPrice: 26900, bodyType: "SUV" },
-  { brand: "Volkswagen", model: "Golf GTI", variant: "Autobahn", year: 2022, fuelType: "Petrol", transmission: "DCT", expectedPrice: 29900, bodyType: "Hatchback" },
+  { brand: "Tesla", model: "Model 3", variant: "Long Range AWD", year: 2022, fuelType: "Electric", transmission: "Automatic", expectedPrice: 4850000, bodyType: "Sedan" },
+  { brand: "BMW", model: "M340i", variant: "xDrive", year: 2021, fuelType: "Petrol", transmission: "Automatic", expectedPrice: 5290000, bodyType: "Sedan" },
+  { brand: "Porsche", model: "Macan", variant: "S", year: 2020, fuelType: "Petrol", transmission: "DCT", expectedPrice: 6890000, bodyType: "SUV" },
+  { brand: "Mercedes-Benz", model: "C300", variant: "AMG Line", year: 2022, fuelType: "Petrol", transmission: "Automatic", expectedPrice: 4990000, bodyType: "Sedan" },
+  { brand: "Audi", model: "Q5", variant: "45 TFSI Premium", year: 2021, fuelType: "Petrol", transmission: "DCT", expectedPrice: 4650000, bodyType: "SUV" },
+  { brand: "Toyota", model: "Camry", variant: "XSE Hybrid", year: 2023, fuelType: "Hybrid", transmission: "CVT", expectedPrice: 3890000, bodyType: "Sedan" },
+  { brand: "Honda", model: "Civic", variant: "Sport Touring", year: 2022, fuelType: "Petrol", transmission: "CVT", expectedPrice: 1850000, bodyType: "Hatchback" },
+  { brand: "Polestar", model: "2", variant: "Long Range Dual", year: 2022, fuelType: "Electric", transmission: "Automatic", expectedPrice: 5290000, bodyType: "Sedan" },
+  { brand: "Volvo", model: "XC60", variant: "T8 Recharge", year: 2021, fuelType: "Hybrid", transmission: "Automatic", expectedPrice: 5490000, bodyType: "SUV" },
+  { brand: "Lexus", model: "RX 350", variant: "F Sport", year: 2020, fuelType: "Petrol", transmission: "Automatic", expectedPrice: 5290000, bodyType: "SUV" },
+  { brand: "Hyundai", model: "Ioniq 5", variant: "Limited AWD", year: 2023, fuelType: "Electric", transmission: "Automatic", expectedPrice: 4490000, bodyType: "SUV" },
+  { brand: "Kia", model: "EV6", variant: "GT-Line AWD", year: 2022, fuelType: "Electric", transmission: "Automatic", expectedPrice: 4190000, bodyType: "SUV" },
+  { brand: "Mazda", model: "CX-5", variant: "Signature Turbo", year: 2021, fuelType: "Petrol", transmission: "Automatic", expectedPrice: 2290000, bodyType: "SUV" },
+  { brand: "Volkswagen", model: "Golf GTI", variant: "Autobahn", year: 2022, fuelType: "Petrol", transmission: "DCT", expectedPrice: 2890000, bodyType: "Hatchback" },
 ];
 
 function rand<T>(arr: T[]) { return arr[Math.floor(Math.random() * arr.length)]; }
@@ -52,9 +54,9 @@ export function generateMockListings(): Listing[] {
     const expectedPrice = c.expectedPrice ?? 30000;
     const refurb = Math.round(expectedPrice * 0.04);
     const repair = Math.round(expectedPrice * 0.02);
-    const transport = 450;
-    const inspection = 250;
-    const documentation = 180;
+    const transport = 35000;
+    const inspection = 18000;
+    const documentation = 12000;
     const commission = Math.round(expectedPrice * 0.05);
     const margin = Math.round(expectedPrice * 0.08);
     const finalPrice = expectedPrice + refurb + repair + transport + inspection + documentation + commission + margin;
@@ -63,9 +65,9 @@ export function generateMockListings(): Listing[] {
     return {
       id: `seed-${i + 1}`,
       sellerId: `seed-seller-${i + 1}`,
-      sellerName: ["Aarav Sharma", "Priya Patel", "James Carter", "Sophia Lin", "Marco Rossi"][i % 5],
-      sellerEmail: `seller${i + 1}@example.com`,
-      sellerPhone: `+1 555 010${100 + i}`,
+      sellerName: ["Aarav Sharma", "Priya Patel", "Rohan Mehta", "Sneha Iyer", "Vikram Singh"][i % 5],
+      sellerEmail: `seller${i + 1}@example.in`,
+      sellerPhone: `+91 98${(2000000 + i * 137).toString().slice(0, 8)}`,
       brand: c.brand!,
       model: c.model!,
       variant: c.variant!,
@@ -76,7 +78,7 @@ export function generateMockListings(): Listing[] {
       kmDriven: randInt(8000, 75000),
       ownership: rand(OWNERSHIP),
       registrationState: rand(STATES),
-      registrationCity: rand(["Los Angeles", "San Francisco", "Austin", "Miami", "Seattle", "Chicago", "Boston"]),
+      registrationCity: rand(CITIES),
       vin: `VIN${(1000000 + i * 37).toString().padStart(11, "0")}`,
       insuranceStatus: rand(["Active", "Expired", "Expires soon"]),
       roadTaxStatus: "Paid",
@@ -116,11 +118,12 @@ export const SEED_TICKETS: Ticket[] = [
 ];
 
 export const SEED_OFFERS: Offer[] = [
-  { id: "o-1", listingId: "seed-1", buyerName: "Alex Kim", amount: 31000, message: "Cash, can pick up this weekend.", createdAt: Date.now() - 3 * 3600000 },
-  { id: "o-2", listingId: "seed-1", buyerName: "Rita N.", amount: 30500, message: "Trade-in available.", createdAt: Date.now() - 86400000 },
+  { id: "o-1", listingId: "seed-1", buyerName: "Arjun Kapoor", amount: 4750000, message: "Cash, can pick up this weekend.", createdAt: Date.now() - 3 * 3600000 },
+  { id: "o-2", listingId: "seed-1", buyerName: "Riya N.", amount: 4680000, message: "Trade-in available.", createdAt: Date.now() - 86400000 },
 ];
 
-export function emiEstimate(price: number, years = 5, rate = 0.079) {
+// EMI for INR with typical Indian car loan rate (~9.5%)
+export function emiEstimate(price: number, years = 5, rate = 0.095) {
   const n = years * 12; const r = rate / 12;
   return Math.round((price * r) / (1 - Math.pow(1 + r, -n)));
 }

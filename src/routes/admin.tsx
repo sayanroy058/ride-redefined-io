@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { Activity, Car, CheckCircle2, DollarSign, Inbox, LifeBuoy, Package, Search, ShieldCheck, TrendingUp, Users, XCircle } from "lucide-react";
+import { Activity, Car, CheckCircle2, IndianRupee, Inbox, LifeBuoy, Package, Search, ShieldCheck, TrendingUp, Users, XCircle } from "lucide-react";
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -37,7 +37,7 @@ function Admin() {
     { i: Inbox, label: "Pending approvals", value: listings.filter(l => l.status === "pending_review" || l.status === "under_inspection").length, trend: "-3" },
     { i: Package, label: "Active listings", value: listings.filter(l => l.status === "listed").length, trend: "+8%" },
     { i: CheckCircle2, label: "Sold", value: listings.filter(l => l.status === "sold").length, trend: "+22%" },
-    { i: DollarSign, label: "Total revenue", value: formatPrice(totalRevenue), trend: "+18%" },
+    { i: IndianRupee, label: "Total revenue", value: formatPrice(totalRevenue), trend: "+18%" },
     { i: LifeBuoy, label: "Open tickets", value: tickets.filter(t => t.status !== "resolved").length, trend: "" },
   ];
 
@@ -208,9 +208,9 @@ function ApprovalRow({ listing }: { listing: Listing }) {
     basePrice: listing.expectedPrice,
     refurbishment: listing.pricing?.refurbishment ?? Math.round(listing.expectedPrice * 0.04),
     repair: listing.pricing?.repair ?? Math.round(listing.expectedPrice * 0.02),
-    transportation: listing.pricing?.transportation ?? 450,
-    inspection: listing.pricing?.inspection ?? 250,
-    documentation: listing.pricing?.documentation ?? 180,
+    transportation: listing.pricing?.transportation ?? 35000,
+    inspection: listing.pricing?.inspection ?? 18000,
+    documentation: listing.pricing?.documentation ?? 12000,
     commission: listing.pricing?.commission ?? Math.round(listing.expectedPrice * 0.05),
     margin: listing.pricing?.margin ?? Math.round(listing.expectedPrice * 0.08),
   });

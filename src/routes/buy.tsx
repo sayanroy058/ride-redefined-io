@@ -33,7 +33,7 @@ function BuyPage() {
   const [trans, setTrans] = useState<string[]>([]);
   const [own, setOwn] = useState<string[]>([]);
   const [state, setState] = useState<string[]>([]);
-  const [price, setPrice] = useState<[number, number]>([0, 100000]);
+  const [price, setPrice] = useState<[number, number]>([0, 10000000]);
   const [year, setYear] = useState<[number, number]>([2015, 2024]);
   const [km, setKm] = useState<[number, number]>([0, 150000]);
   const [sort, setSort] = useState<Sort>("newest");
@@ -79,7 +79,7 @@ function BuyPage() {
 
       <div>
         <div className="mb-2 flex justify-between text-sm font-medium"><span>Price</span><span className="text-muted-foreground">{formatPrice(price[0])} – {formatPrice(price[1])}</span></div>
-        <Slider min={0} max={100000} step={1000} value={price} onValueChange={(v) => setPrice(v as [number, number])} />
+        <Slider min={0} max={10000000} step={50000} value={price} onValueChange={(v) => setPrice(v as [number, number])} />
       </div>
       <div>
         <div className="mb-2 flex justify-between text-sm font-medium"><span>Year</span><span className="text-muted-foreground">{year[0]} – {year[1]}</span></div>
