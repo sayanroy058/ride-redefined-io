@@ -10,7 +10,8 @@ export const BODY_TYPES = ["Sedan", "SUV", "Hatchback", "Coupe", "Convertible", 
 export const FUEL_TYPES = ["Petrol", "Diesel", "Electric", "Hybrid", "CNG"];
 export const TRANSMISSIONS = ["Automatic", "Manual", "CVT", "DCT"];
 export const OWNERSHIP = ["1st Owner", "2nd Owner", "3rd Owner", "4th+ Owner"];
-export const STATES = ["California", "New York", "Texas", "Florida", "Washington", "Illinois", "Massachusetts"];
+export const STATES = ["Maharashtra", "Karnataka", "Delhi", "Tamil Nadu", "Telangana", "Gujarat", "West Bengal", "Haryana"];
+export const CITIES = ["Mumbai", "Bengaluru", "New Delhi", "Chennai", "Hyderabad", "Ahmedabad", "Kolkata", "Gurugram", "Pune", "Noida"];
 
 const SAMPLE_IMAGES = [
   "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=1200&q=80",
@@ -27,21 +28,22 @@ const SAMPLE_IMAGES = [
   "https://images.unsplash.com/photo-1502877338535-766e1452684a?w=1200&q=80",
 ];
 
+// Prices in INR (Indian Rupees)
 const CARS: Array<Partial<Listing>> = [
-  { brand: "Tesla", model: "Model 3", variant: "Long Range AWD", year: 2022, fuelType: "Electric", transmission: "Automatic", expectedPrice: 32500, bodyType: "Sedan" },
-  { brand: "BMW", model: "M340i", variant: "xDrive", year: 2021, fuelType: "Petrol", transmission: "Automatic", expectedPrice: 41900, bodyType: "Sedan" },
-  { brand: "Porsche", model: "Macan", variant: "S", year: 2020, fuelType: "Petrol", transmission: "DCT", expectedPrice: 52000, bodyType: "SUV" },
-  { brand: "Mercedes-Benz", model: "C300", variant: "AMG Line", year: 2022, fuelType: "Petrol", transmission: "Automatic", expectedPrice: 38900, bodyType: "Sedan" },
-  { brand: "Audi", model: "Q5", variant: "45 TFSI Premium", year: 2021, fuelType: "Petrol", transmission: "DCT", expectedPrice: 36500, bodyType: "SUV" },
-  { brand: "Toyota", model: "Camry", variant: "XSE Hybrid", year: 2023, fuelType: "Hybrid", transmission: "CVT", expectedPrice: 28900, bodyType: "Sedan" },
-  { brand: "Honda", model: "Civic", variant: "Sport Touring", year: 2022, fuelType: "Petrol", transmission: "CVT", expectedPrice: 24500, bodyType: "Hatchback" },
-  { brand: "Polestar", model: "2", variant: "Long Range Dual", year: 2022, fuelType: "Electric", transmission: "Automatic", expectedPrice: 39900, bodyType: "Sedan" },
-  { brand: "Volvo", model: "XC60", variant: "T8 Recharge", year: 2021, fuelType: "Hybrid", transmission: "Automatic", expectedPrice: 44500, bodyType: "SUV" },
-  { brand: "Lexus", model: "RX 350", variant: "F Sport", year: 2020, fuelType: "Petrol", transmission: "Automatic", expectedPrice: 41200, bodyType: "SUV" },
-  { brand: "Hyundai", model: "Ioniq 5", variant: "Limited AWD", year: 2023, fuelType: "Electric", transmission: "Automatic", expectedPrice: 42800, bodyType: "SUV" },
-  { brand: "Kia", model: "EV6", variant: "GT-Line AWD", year: 2022, fuelType: "Electric", transmission: "Automatic", expectedPrice: 38500, bodyType: "SUV" },
-  { brand: "Mazda", model: "CX-5", variant: "Signature Turbo", year: 2021, fuelType: "Petrol", transmission: "Automatic", expectedPrice: 26900, bodyType: "SUV" },
-  { brand: "Volkswagen", model: "Golf GTI", variant: "Autobahn", year: 2022, fuelType: "Petrol", transmission: "DCT", expectedPrice: 29900, bodyType: "Hatchback" },
+  { brand: "Tesla", model: "Model 3", variant: "Long Range AWD", year: 2022, fuelType: "Electric", transmission: "Automatic", expectedPrice: 4850000, bodyType: "Sedan" },
+  { brand: "BMW", model: "M340i", variant: "xDrive", year: 2021, fuelType: "Petrol", transmission: "Automatic", expectedPrice: 5290000, bodyType: "Sedan" },
+  { brand: "Porsche", model: "Macan", variant: "S", year: 2020, fuelType: "Petrol", transmission: "DCT", expectedPrice: 6890000, bodyType: "SUV" },
+  { brand: "Mercedes-Benz", model: "C300", variant: "AMG Line", year: 2022, fuelType: "Petrol", transmission: "Automatic", expectedPrice: 4990000, bodyType: "Sedan" },
+  { brand: "Audi", model: "Q5", variant: "45 TFSI Premium", year: 2021, fuelType: "Petrol", transmission: "DCT", expectedPrice: 4650000, bodyType: "SUV" },
+  { brand: "Toyota", model: "Camry", variant: "XSE Hybrid", year: 2023, fuelType: "Hybrid", transmission: "CVT", expectedPrice: 3890000, bodyType: "Sedan" },
+  { brand: "Honda", model: "Civic", variant: "Sport Touring", year: 2022, fuelType: "Petrol", transmission: "CVT", expectedPrice: 1850000, bodyType: "Hatchback" },
+  { brand: "Polestar", model: "2", variant: "Long Range Dual", year: 2022, fuelType: "Electric", transmission: "Automatic", expectedPrice: 5290000, bodyType: "Sedan" },
+  { brand: "Volvo", model: "XC60", variant: "T8 Recharge", year: 2021, fuelType: "Hybrid", transmission: "Automatic", expectedPrice: 5490000, bodyType: "SUV" },
+  { brand: "Lexus", model: "RX 350", variant: "F Sport", year: 2020, fuelType: "Petrol", transmission: "Automatic", expectedPrice: 5290000, bodyType: "SUV" },
+  { brand: "Hyundai", model: "Ioniq 5", variant: "Limited AWD", year: 2023, fuelType: "Electric", transmission: "Automatic", expectedPrice: 4490000, bodyType: "SUV" },
+  { brand: "Kia", model: "EV6", variant: "GT-Line AWD", year: 2022, fuelType: "Electric", transmission: "Automatic", expectedPrice: 4190000, bodyType: "SUV" },
+  { brand: "Mazda", model: "CX-5", variant: "Signature Turbo", year: 2021, fuelType: "Petrol", transmission: "Automatic", expectedPrice: 2290000, bodyType: "SUV" },
+  { brand: "Volkswagen", model: "Golf GTI", variant: "Autobahn", year: 2022, fuelType: "Petrol", transmission: "DCT", expectedPrice: 2890000, bodyType: "Hatchback" },
 ];
 
 function rand<T>(arr: T[]) { return arr[Math.floor(Math.random() * arr.length)]; }
