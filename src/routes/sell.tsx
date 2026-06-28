@@ -99,7 +99,7 @@ function Sell() {
           <Field label="Body type"><SelectV value={f.bodyType} onChange={v => setF({ ...f, bodyType: v })} options={BODY_TYPES} /></Field>
           <Field label="Manufacturing year"><Input type="number" value={f.year} onChange={e => setF({ ...f, year: +e.target.value })} /></Field>
           <Field label="Registration year"><Input type="number" value={f.registrationYear} onChange={e => setF({ ...f, registrationYear: +e.target.value })} /></Field>
-          <Field label="Expected selling price (USD)"><Input type="number" value={f.expectedPrice} onChange={e => setF({ ...f, expectedPrice: +e.target.value })} /></Field>
+          <Field label="Expected selling price (₹ INR)"><Input type="number" value={f.expectedPrice} onChange={e => setF({ ...f, expectedPrice: +e.target.value })} /></Field>
         </div>}
 
         {step === 1 && <div className="grid gap-4 md:grid-cols-2">
