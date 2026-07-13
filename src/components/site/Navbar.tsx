@@ -16,7 +16,7 @@ const NAV = [
 ] as const;
 
 export function Navbar() {
-  const { user, logout, theme, setTheme, wishlist, loginAsAdmin } = useApp();
+  const { user, logout, theme, setTheme, wishlist, loginAsAdmin, loginAsAgent } = useApp();
   const pathname = useRouterState({ select: s => s.location.pathname });
   const [open, setOpen] = useState(false);
 
@@ -68,6 +68,8 @@ export function Navbar() {
                 <DropdownMenuItem asChild><Link to="/profile"><User2 className="mr-2 h-4 w-4" />Profile</Link></DropdownMenuItem>
                 {user.role === "admin" ? (
                   <DropdownMenuItem asChild><Link to="/admin"><ShieldCheck className="mr-2 h-4 w-4" />Admin</Link></DropdownMenuItem>
+                ) : user.role === "agent" ? (
+                  <DropdownMenuItem asChild><Link to="/agent"><ShieldCheck className="mr-2 h-4 w-4" />Agent console</Link></DropdownMenuItem>
                 ) : (
                   <DropdownMenuItem asChild><Link to="/dashboard"><User2 className="mr-2 h-4 w-4" />Dashboard</Link></DropdownMenuItem>
                 )}
@@ -81,6 +83,9 @@ export function Navbar() {
               <Button asChild size="sm"><Link to="/register">Register</Link></Button>
               <Button variant="outline" size="sm" onClick={loginAsAdmin} className="hidden lg:inline-flex">
                 <ShieldCheck className="mr-1 h-3.5 w-3.5" />Demo Admin
+              </Button>
+              <Button variant="outline" size="sm" onClick={loginAsAgent} className="hidden lg:inline-flex">
+                <ShieldCheck className="mr-1 h-3.5 w-3.5" />Demo Agent
               </Button>
             </div>
           )}
