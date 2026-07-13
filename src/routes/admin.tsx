@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { Activity, Car, CheckCircle2, IndianRupee, Inbox, LifeBuoy, Package, Search, ShieldCheck, TrendingUp, Users, XCircle } from "lucide-react";
+import { Activity, Briefcase, Car, CheckCircle2, Gauge, IndianRupee, Inbox, LifeBuoy, Package, Search, ShieldCheck, TrendingUp, Users, XCircle } from "lucide-react";
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -121,11 +121,7 @@ function Admin() {
         </TabsList>
 
         <TabsContent value="approvals" className="mt-6">
-          <div className="space-y-3">
-            {listings.filter(l => l.status === "pending_review" || l.status === "under_inspection" || l.status === "approved").map(l => (
-              <ApprovalRow key={l.id} listing={l} />
-            ))}
-          </div>
+          <ApprovalQueue />
         </TabsContent>
 
         <TabsContent value="inventory" className="mt-6">
@@ -201,6 +197,100 @@ function Admin() {
   );
 }
 
+// Deterministic inspection score per listing (0-10)
+function inspectionScore(id: string) {
+  let h = 0;
+  for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) >>> 0;
+  return +((h % 30) / 10 + 7).toFixed(1); // 7.0 - 9.9
+}
+function scoreTone(s: number) {
+  if (s >= 9) return "bg-success/15 text-success border-success/30";
+  if (s >= 8) return "bg-primary/15 text-primary border-primary/30";
+  return "bg-warning/15 text-warning border-warning/30";
+}
+
+type SourceFilter = "all" | "agent" | "direct";
+type StatusFilter = "queue" | "pending_review" | "under_inspection" | "approved";
+
+function ApprovalQueue() {
+  const { listings, updateListing } = useApp();
+  const [source, setSource] = useState<SourceFilter>("all");
+  const [statusF, setStatusF] = useState<StatusFilter>("queue");
+
+  const queue = listings.filter(l =>
+    l.status === "pending_review" || l.status === "under_inspection" || l.status === "approved"
+  );
+  const filtered = queue.filter(l => {
+    if (source === "agent" && !l.sellerId.startsWith("agent-")) return false;
+    if (source === "direct" && l.sellerId.startsWith("agent-")) return false;
+    if (statusF !== "queue" && l.status !== statusF) return false;
+    return true;
+  });
+
+  const counts = {
+    all: queue.length,
+    agent: queue.filter(l => l.sellerId.startsWith("agent-")).length,
+    direct: queue.filter(l => !l.sellerId.startsWith("agent-")).length,
+  };
+
+  function bulkApprove() {
+    filtered.forEach(l => {
+      const p = {
+        basePrice: l.expectedPrice,
+        refurbishment: Math.round(l.expectedPrice * 0.04),
+        repair: Math.round(l.expectedPrice * 0.02),
+        transportation: 35000, inspection: 18000, documentation: 12000,
+        commission: Math.round(l.expectedPrice * 0.05),
+        margin: Math.round(l.expectedPrice * 0.08),
+      };
+      const finalPrice = calculateFinalPrice(p);
+      updateListing(l.id, { status: "listed", pricing: { ...p, finalPrice } });
+    });
+    toast.success(`${filtered.length} listing(s) approved & published`);
+  }
+
+  return (
+    <div className="space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border/60 bg-card p-3 card-elevated">
+        <div className="flex flex-wrap gap-2">
+          {([
+            ["all", `All (${counts.all})`],
+            ["agent", `Agent onboarded (${counts.agent})`],
+            ["direct", `Direct sellers (${counts.direct})`],
+          ] as const).map(([k, label]) => (
+            <button key={k} onClick={() => setSource(k)}
+              className={`rounded-full border px-3 py-1 text-xs font-medium transition ${source === k ? "border-primary bg-primary/10 text-primary" : "border-border/60 text-muted-foreground hover:text-foreground"}`}>
+              {label}
+            </button>
+          ))}
+          <span className="mx-1 h-6 w-px bg-border/60" />
+          {(["queue", "pending_review", "under_inspection", "approved"] as const).map(k => (
+            <button key={k} onClick={() => setStatusF(k)}
+              className={`rounded-full border px-3 py-1 text-xs font-medium capitalize transition ${statusF === k ? "border-primary bg-primary/10 text-primary" : "border-border/60 text-muted-foreground hover:text-foreground"}`}>
+              {k === "queue" ? "All statuses" : k.replace("_", " ")}
+            </button>
+          ))}
+        </div>
+        {filtered.length > 0 && (
+          <Button size="sm" variant="outline" onClick={bulkApprove}>
+            <CheckCircle2 className="mr-1 h-4 w-4" />Approve all ({filtered.length})
+          </Button>
+        )}
+      </div>
+
+      {filtered.length === 0 ? (
+        <div className="rounded-2xl border border-border/60 bg-card p-10 text-center text-sm text-muted-foreground">
+          Nothing in the queue matches these filters.
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {filtered.map(l => <ApprovalRow key={l.id} listing={l} />)}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function ApprovalRow({ listing }: { listing: Listing }) {
   const { updateListing } = useApp();
   const [open, setOpen] = useState(false);
@@ -222,23 +312,52 @@ function ApprovalRow({ listing }: { listing: Listing }) {
   }
   function reject() { updateListing(listing.id, { status: "rejected" }); toast.success("Listing rejected"); }
 
+  const score = inspectionScore(listing.id);
+  const isAgent = listing.sellerId.startsWith("agent-");
+
+  function quickApprove() {
+    updateListing(listing.id, { status: "listed", pricing: { ...p, finalPrice: final } });
+    toast.success("Listing approved & published");
+  }
+
   return (
     <div className="flex flex-wrap items-center gap-4 rounded-2xl border border-border/60 bg-card p-4 card-elevated">
       <img src={listing.images[0]} alt="" className="h-20 w-28 flex-none rounded-lg object-cover" />
-      <div className="min-w-[200px] flex-1">
-        <div className="font-display font-semibold">{listing.year} {listing.brand} {listing.model}</div>
+      <div className="min-w-[220px] flex-1">
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="font-display font-semibold">{listing.year} {listing.brand} {listing.model}</div>
+          {isAgent && (
+            <span className="inline-flex items-center gap-1 rounded-full border border-accent/40 bg-accent/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-accent">
+              <Briefcase className="h-3 w-3" />Agent
+            </span>
+          )}
+        </div>
         <div className="text-xs text-muted-foreground">{listing.sellerName} · {listing.registrationCity} · {listing.kmDriven.toLocaleString()} km</div>
-        <div className="mt-2"><StatusBadge status={listing.status} /></div>
+        <div className="mt-2 flex flex-wrap items-center gap-2">
+          <StatusBadge status={listing.status} />
+          <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-semibold ${scoreTone(score)}`}>
+            <Gauge className="h-3 w-3" />Inspection {score}/10
+          </span>
+        </div>
       </div>
       <div className="text-right">
         <div className="text-xs text-muted-foreground">Asking</div>
         <div className="font-display text-lg font-bold">{formatPrice(listing.expectedPrice)}</div>
+        <div className="mt-1 text-[11px] text-muted-foreground">Est. final <b className="text-foreground">{formatPrice(final)}</b></div>
       </div>
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2">
+        <Button size="sm" variant="outline" onClick={quickApprove}><CheckCircle2 className="mr-1 h-4 w-4" />Approve</Button>
+        <Button size="sm" variant="ghost" onClick={reject}><XCircle className="mr-1 h-4 w-4" />Reject</Button>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild><Button size="sm">Review & price</Button></DialogTrigger>
           <DialogContent className="max-w-2xl">
-            <DialogHeader><DialogTitle>{listing.year} {listing.brand} {listing.model} {listing.variant}</DialogTitle></DialogHeader>
+            <DialogHeader>
+              <DialogTitle className="flex flex-wrap items-center gap-2">
+                {listing.year} {listing.brand} {listing.model} {listing.variant}
+                {isAgent && <span className="inline-flex items-center gap-1 rounded-full border border-accent/40 bg-accent/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-accent"><Briefcase className="h-3 w-3" />Agent</span>}
+                <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-semibold ${scoreTone(score)}`}><Gauge className="h-3 w-3" />Inspection {score}/10</span>
+              </DialogTitle>
+            </DialogHeader>
             <div className="grid gap-4 md:grid-cols-2">
               <div>
                 <img src={listing.images[0]} className="aspect-video w-full rounded-lg object-cover" alt="" />
