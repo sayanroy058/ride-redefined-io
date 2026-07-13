@@ -84,6 +84,9 @@ export function Navbar() {
               <Button variant="outline" size="sm" onClick={loginAsAdmin} className="hidden lg:inline-flex">
                 <ShieldCheck className="mr-1 h-3.5 w-3.5" />Demo Admin
               </Button>
+              <Button variant="outline" size="sm" onClick={loginAsAgent} className="hidden lg:inline-flex">
+                <ShieldCheck className="mr-1 h-3.5 w-3.5" />Demo Agent
+              </Button>
             </div>
           )}
           <Sheet open={open} onOpenChange={setOpen}>
