@@ -69,7 +69,7 @@ function AgentSell() {
     }
     const listing: Listing = {
       id: "L-" + Date.now(),
-      sellerId: user.id,
+      sellerId: user!.id,
       sellerName: f.sellerName, sellerEmail: f.sellerEmail, sellerPhone: f.sellerPhone,
       brand: f.brand, model: f.model, variant: f.variant, year: f.year,
       registrationYear: f.registrationYear, fuelType: f.fuelType, transmission: f.transmission,
@@ -80,7 +80,7 @@ function AgentSell() {
       exteriorCondition: f.exteriorCondition, interiorCondition: f.interiorCondition,
       engineCondition: f.engineCondition, tireCondition: f.tireCondition,
       batteryCondition: f.batteryCondition, defects: f.defects, modifications: f.modifications,
-      description: `[Agent: ${user.name}] ${f.description}\n\nAgent notes: ${f.agentNotes}`,
+      description: `[Agent: ${user!.name}] ${f.description}\n\nAgent notes: ${f.agentNotes}`,
       expectedPrice: f.expectedPrice, address: f.address,
       preferredContactTime: f.preferredContactTime, bodyType: f.bodyType,
       images: CAR_IMAGES,

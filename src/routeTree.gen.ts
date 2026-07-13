@@ -23,6 +23,7 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AgentIndexRouteImport } from './routes/agent.index'
 import { Route as BuyIdRouteImport } from './routes/buy.$id'
+import { Route as AgentSellRouteImport } from './routes/agent.sell'
 import { Route as BuyIdInspectionRouteImport } from './routes/buy.$id.inspection'
 import { Route as BuyIdDefectsRouteImport } from './routes/buy.$id.defects'
 
@@ -96,6 +97,11 @@ const BuyIdRoute = BuyIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => BuyRoute,
 } as any)
+const AgentSellRoute = AgentSellRouteImport.update({
+  id: '/agent/sell',
+  path: '/agent/sell',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BuyIdInspectionRoute = BuyIdInspectionRouteImport.update({
   id: '/inspection',
   path: '/inspection',
@@ -120,6 +126,7 @@ export interface FileRoutesByFullPath {
   '/sell': typeof SellRoute
   '/support': typeof SupportRoute
   '/verify-otp': typeof VerifyOtpRoute
+  '/agent/sell': typeof AgentSellRoute
   '/buy/$id': typeof BuyIdRouteWithChildren
   '/agent/': typeof AgentIndexRoute
   '/buy/$id/defects': typeof BuyIdDefectsRoute
@@ -138,6 +145,7 @@ export interface FileRoutesByTo {
   '/sell': typeof SellRoute
   '/support': typeof SupportRoute
   '/verify-otp': typeof VerifyOtpRoute
+  '/agent/sell': typeof AgentSellRoute
   '/buy/$id': typeof BuyIdRouteWithChildren
   '/agent': typeof AgentIndexRoute
   '/buy/$id/defects': typeof BuyIdDefectsRoute
@@ -157,6 +165,7 @@ export interface FileRoutesById {
   '/sell': typeof SellRoute
   '/support': typeof SupportRoute
   '/verify-otp': typeof VerifyOtpRoute
+  '/agent/sell': typeof AgentSellRoute
   '/buy/$id': typeof BuyIdRouteWithChildren
   '/agent/': typeof AgentIndexRoute
   '/buy/$id/defects': typeof BuyIdDefectsRoute
@@ -177,6 +186,7 @@ export interface FileRouteTypes {
     | '/sell'
     | '/support'
     | '/verify-otp'
+    | '/agent/sell'
     | '/buy/$id'
     | '/agent/'
     | '/buy/$id/defects'
@@ -195,6 +205,7 @@ export interface FileRouteTypes {
     | '/sell'
     | '/support'
     | '/verify-otp'
+    | '/agent/sell'
     | '/buy/$id'
     | '/agent'
     | '/buy/$id/defects'
@@ -213,6 +224,7 @@ export interface FileRouteTypes {
     | '/sell'
     | '/support'
     | '/verify-otp'
+    | '/agent/sell'
     | '/buy/$id'
     | '/agent/'
     | '/buy/$id/defects'
@@ -232,6 +244,7 @@ export interface RootRouteChildren {
   SellRoute: typeof SellRoute
   SupportRoute: typeof SupportRoute
   VerifyOtpRoute: typeof VerifyOtpRoute
+  AgentSellRoute: typeof AgentSellRoute
   AgentIndexRoute: typeof AgentIndexRoute
 }
 
@@ -335,6 +348,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BuyIdRouteImport
       parentRoute: typeof BuyRoute
     }
+    '/agent/sell': {
+      id: '/agent/sell'
+      path: '/agent/sell'
+      fullPath: '/agent/sell'
+      preLoaderRoute: typeof AgentSellRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/buy/$id/inspection': {
       id: '/buy/$id/inspection'
       path: '/inspection'
@@ -387,6 +407,7 @@ const rootRouteChildren: RootRouteChildren = {
   SellRoute: SellRoute,
   SupportRoute: SupportRoute,
   VerifyOtpRoute: VerifyOtpRoute,
+  AgentSellRoute: AgentSellRoute,
   AgentIndexRoute: AgentIndexRoute,
 }
 export const routeTree = rootRouteImport
