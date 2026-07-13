@@ -312,19 +312,42 @@ function ApprovalRow({ listing }: { listing: Listing }) {
   }
   function reject() { updateListing(listing.id, { status: "rejected" }); toast.success("Listing rejected"); }
 
+  const score = inspectionScore(listing.id);
+  const isAgent = listing.sellerId.startsWith("agent-");
+
+  function quickApprove() {
+    updateListing(listing.id, { status: "listed", pricing: { ...p, finalPrice: final } });
+    toast.success("Listing approved & published");
+  }
+
   return (
     <div className="flex flex-wrap items-center gap-4 rounded-2xl border border-border/60 bg-card p-4 card-elevated">
       <img src={listing.images[0]} alt="" className="h-20 w-28 flex-none rounded-lg object-cover" />
-      <div className="min-w-[200px] flex-1">
-        <div className="font-display font-semibold">{listing.year} {listing.brand} {listing.model}</div>
+      <div className="min-w-[220px] flex-1">
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="font-display font-semibold">{listing.year} {listing.brand} {listing.model}</div>
+          {isAgent && (
+            <span className="inline-flex items-center gap-1 rounded-full border border-accent/40 bg-accent/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-accent">
+              <Briefcase className="h-3 w-3" />Agent
+            </span>
+          )}
+        </div>
         <div className="text-xs text-muted-foreground">{listing.sellerName} · {listing.registrationCity} · {listing.kmDriven.toLocaleString()} km</div>
-        <div className="mt-2"><StatusBadge status={listing.status} /></div>
+        <div className="mt-2 flex flex-wrap items-center gap-2">
+          <StatusBadge status={listing.status} />
+          <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-semibold ${scoreTone(score)}`}>
+            <Gauge className="h-3 w-3" />Inspection {score}/10
+          </span>
+        </div>
       </div>
       <div className="text-right">
         <div className="text-xs text-muted-foreground">Asking</div>
         <div className="font-display text-lg font-bold">{formatPrice(listing.expectedPrice)}</div>
+        <div className="mt-1 text-[11px] text-muted-foreground">Est. final <b className="text-foreground">{formatPrice(final)}</b></div>
       </div>
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2">
+        <Button size="sm" variant="outline" onClick={quickApprove}><CheckCircle2 className="mr-1 h-4 w-4" />Approve</Button>
+        <Button size="sm" variant="ghost" onClick={reject}><XCircle className="mr-1 h-4 w-4" />Reject</Button>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild><Button size="sm">Review & price</Button></DialogTrigger>
           <DialogContent className="max-w-2xl">
