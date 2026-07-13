@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { Activity, Car, CheckCircle2, IndianRupee, Inbox, LifeBuoy, Package, Search, ShieldCheck, TrendingUp, Users, XCircle } from "lucide-react";
+import { Activity, Briefcase, Car, CheckCircle2, Gauge, IndianRupee, Inbox, LifeBuoy, Package, Search, ShieldCheck, TrendingUp, Users, XCircle } from "lucide-react";
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
