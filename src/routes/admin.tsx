@@ -121,11 +121,7 @@ function Admin() {
         </TabsList>
 
         <TabsContent value="approvals" className="mt-6">
-          <div className="space-y-3">
-            {listings.filter(l => l.status === "pending_review" || l.status === "under_inspection" || l.status === "approved").map(l => (
-              <ApprovalRow key={l.id} listing={l} />
-            ))}
-          </div>
+          <ApprovalQueue />
         </TabsContent>
 
         <TabsContent value="inventory" className="mt-6">
