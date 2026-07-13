@@ -351,7 +351,13 @@ function ApprovalRow({ listing }: { listing: Listing }) {
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild><Button size="sm">Review & price</Button></DialogTrigger>
           <DialogContent className="max-w-2xl">
-            <DialogHeader><DialogTitle>{listing.year} {listing.brand} {listing.model} {listing.variant}</DialogTitle></DialogHeader>
+            <DialogHeader>
+              <DialogTitle className="flex flex-wrap items-center gap-2">
+                {listing.year} {listing.brand} {listing.model} {listing.variant}
+                {isAgent && <span className="inline-flex items-center gap-1 rounded-full border border-accent/40 bg-accent/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-accent"><Briefcase className="h-3 w-3" />Agent</span>}
+                <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-semibold ${scoreTone(score)}`}><Gauge className="h-3 w-3" />Inspection {score}/10</span>
+              </DialogTitle>
+            </DialogHeader>
             <div className="grid gap-4 md:grid-cols-2">
               <div>
                 <img src={listing.images[0]} className="aspect-video w-full rounded-lg object-cover" alt="" />
