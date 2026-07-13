@@ -68,6 +68,8 @@ export function Navbar() {
                 <DropdownMenuItem asChild><Link to="/profile"><User2 className="mr-2 h-4 w-4" />Profile</Link></DropdownMenuItem>
                 {user.role === "admin" ? (
                   <DropdownMenuItem asChild><Link to="/admin"><ShieldCheck className="mr-2 h-4 w-4" />Admin</Link></DropdownMenuItem>
+                ) : user.role === "agent" ? (
+                  <DropdownMenuItem asChild><Link to="/agent"><ShieldCheck className="mr-2 h-4 w-4" />Agent console</Link></DropdownMenuItem>
                 ) : (
                   <DropdownMenuItem asChild><Link to="/dashboard"><User2 className="mr-2 h-4 w-4" />Dashboard</Link></DropdownMenuItem>
                 )}
