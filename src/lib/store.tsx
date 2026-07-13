@@ -14,6 +14,7 @@ interface AppState {
   theme: "light" | "dark";
   login: (email: string, password: string) => Promise<User>;
   loginAsAdmin: () => void;
+  loginAsAgent: () => void;
   register: (name: string, email: string, password: string) => Promise<User>;
   logout: () => void;
   toggleWishlist: (id: string) => void;
