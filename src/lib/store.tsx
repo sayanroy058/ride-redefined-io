@@ -85,6 +85,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
     loginAsAdmin() {
       setUser({ id: "admin-1", name: "Admin", email: "admin@drivehub.io", role: "admin" });
     },
+    loginAsAgent() {
+      setUser({ id: "agent-1", name: "Agent Priya", email: "agent@drivehub.io", role: "agent" });
+    },
     async register(name, email) {
       const u: User = { id: "u-" + email, name, email, role: "user" };
       setUser(u); return u;
