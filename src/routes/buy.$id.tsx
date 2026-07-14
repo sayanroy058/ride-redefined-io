@@ -60,8 +60,8 @@ function VehicleDetail() {
     <div className="container mx-auto px-4 py-8">
       <Link to="/buy" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"><ArrowLeft className="h-4 w-4" /> Back to inventory</Link>
 
-      <div className="mt-6 grid gap-8 lg:grid-cols-[1fr_380px]">
-        <div>
+      <div className="mt-6 grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_380px]">
+        <div className="min-w-0">
           {/* Gallery */}
           <div className="overflow-hidden rounded-2xl border border-border/60 card-elevated">
             <div className="relative aspect-[16/10] bg-muted">
