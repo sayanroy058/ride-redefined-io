@@ -40,6 +40,7 @@ function Landing() {
   const { listings } = useApp();
   const nav = useNavigate();
   const featured = listings.filter((l) => l.status === "listed").slice(0, 6);
+  const heroListing = featured[0] ?? listings[0];
   const [heroBrand, setHeroBrand] = useState<string>("");
   const [heroBody, setHeroBody] = useState<string>("");
   const [heroBudget, setHeroBudget] = useState<string>("");
@@ -56,306 +57,406 @@ function Landing() {
   }
 
   return (
-    <div>
-      {/* Hero */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 -z-10" style={{ background: "var(--gradient-hero)" }} />
-        <div className="absolute inset-0 -z-10 grid-bg opacity-40" />
-        <div
-          className="absolute -right-32 top-10 -z-10 h-[600px] w-[600px] rounded-full"
-          style={{ background: "var(--gradient-glow)" }}
-        />
-        <div className="container mx-auto px-4 pb-20 pt-16 md:pt-24 lg:grid lg:grid-cols-2 lg:gap-12 lg:pb-32">
-          <div className="text-white">
-            <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs backdrop-blur">
-              <Sparkles className="h-3.5 w-3.5 text-accent" />
-              <span>200-point inspection · 7-day return</span>
-            </div>
-            <h1 className="mt-6 font-display text-4xl font-bold leading-[1.05] sm:text-5xl lg:text-6xl">
-              The next chapter of <span className="gradient-text">your drive</span> starts here.
-            </h1>
-            <p className="mt-5 max-w-xl text-base text-white/70">
-              Certified pre-owned cars, inspected and refurbished by experts. Transparent pricing,
-              instant EMI, doorstep delivery.
-            </p>
+    <div className="pb-8">
+      <section className="relative px-4 pb-8 pt-8 md:pb-12 md:pt-10">
+        <div className="container mx-auto">
+          <div className="ambient-noise relative overflow-hidden rounded-[2.5rem] border border-border/70 bg-[var(--gradient-hero)] px-6 py-10 text-white shadow-[0_40px_120px_-45px_rgba(0,0,0,0.7)] md:px-10 md:py-14 lg:px-14">
+            <div className="absolute inset-0 grid-bg opacity-20" />
+            <div
+              className="absolute -right-20 top-0 h-[28rem] w-[28rem] rounded-full blur-3xl"
+              style={{ background: "var(--gradient-glow)" }}
+            />
+            <div className="relative grid gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+              <div className="max-w-2xl">
+                <div className="eyebrow border-white/12 bg-white/8 text-white/70">
+                  <Sparkles className="h-3.5 w-3.5 text-accent" />
+                  Handpicked certified inventory
+                </div>
+                <h1 className="mt-6 font-display text-5xl sm:text-6xl lg:text-8xl">
+                  Modern car buying with a calmer point of view.
+                </h1>
+                <p className="mt-5 max-w-xl text-sm leading-7 text-white/72 sm:text-base">
+                  Browse inspected pre-owned cars with transparent pricing, same-day finance
+                  approvals, and a visual experience that feels as premium as the vehicles.
+                </p>
 
-            {/* Search bar */}
-            <div className="mt-8 rounded-2xl border border-white/10 bg-background/70 p-3 backdrop-blur-xl card-elevated">
-              <div className="grid gap-2 sm:grid-cols-[1fr_1fr_1fr_auto]">
-                <Select value={heroBrand || undefined} onValueChange={setHeroBrand}>
-                  <SelectTrigger className="border-0 bg-transparent">
-                    <SelectValue placeholder="Brand" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {BRANDS.slice(0, 8).map((b) => (
-                      <SelectItem key={b} value={b}>
-                        {b}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <Select value={heroBody || undefined} onValueChange={setHeroBody}>
-                  <SelectTrigger className="border-0 bg-transparent">
-                    <SelectValue placeholder="Body type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {BODY_TYPES.map((b) => (
-                      <SelectItem key={b} value={b}>
-                        {b}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <Select value={heroBudget || undefined} onValueChange={setHeroBudget}>
-                  <SelectTrigger className="border-0 bg-transparent">
-                    <SelectValue placeholder="Budget" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="0-1000000">Under ₹10 L</SelectItem>
-                    <SelectItem value="1000000-2500000">₹10 L – ₹25 L</SelectItem>
-                    <SelectItem value="2500000-5000000">₹25 L – ₹50 L</SelectItem>
-                    <SelectItem value="5000000+">₹50 L+</SelectItem>
-                  </SelectContent>
-                </Select>
-                <Button size="lg" className="gap-1.5" onClick={search}>
-                  <Search className="h-4 w-4" />
-                  Search
-                </Button>
+                <div className="mt-8 grid gap-3 rounded-[1.8rem] border border-white/10 bg-white/8 p-3 backdrop-blur-xl sm:grid-cols-[1fr_1fr] xl:grid-cols-[1fr_1fr_1fr_auto]">
+                  <Select value={heroBrand || undefined} onValueChange={setHeroBrand}>
+                    <SelectTrigger className="h-13 rounded-[1.2rem] border-white/10 bg-black/10 text-white shadow-none">
+                      <SelectValue placeholder="Select brand" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {BRANDS.slice(0, 8).map((b) => (
+                        <SelectItem key={b} value={b}>
+                          {b}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Select value={heroBody || undefined} onValueChange={setHeroBody}>
+                    <SelectTrigger className="h-13 rounded-[1.2rem] border-white/10 bg-black/10 text-white shadow-none">
+                      <SelectValue placeholder="Body type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {BODY_TYPES.map((b) => (
+                        <SelectItem key={b} value={b}>
+                          {b}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Select value={heroBudget || undefined} onValueChange={setHeroBudget}>
+                    <SelectTrigger className="h-13 rounded-[1.2rem] border-white/10 bg-black/10 text-white shadow-none">
+                      <SelectValue placeholder="Budget range" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="0-1000000">Under ₹10 L</SelectItem>
+                      <SelectItem value="1000000-2500000">₹10 L - ₹25 L</SelectItem>
+                      <SelectItem value="2500000-5000000">₹25 L - ₹50 L</SelectItem>
+                      <SelectItem value="5000000+">₹50 L+</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Button size="lg" className="h-13 w-full justify-center gap-1.5" onClick={search}>
+                    <Search className="h-4 w-4" />
+                    Search stock
+                  </Button>
+                </div>
+
+                <div className="mt-8 flex flex-wrap gap-3">
+                  <Button asChild size="lg">
+                    <Link to="/buy">
+                      Browse inventory <ArrowRight className="h-4 w-4" />
+                    </Link>
+                  </Button>
+                  <Button
+                    asChild
+                    size="lg"
+                    variant="outline"
+                    className="border-white/16 bg-white/8 text-white hover:bg-white/14 hover:text-white"
+                  >
+                    <Link to="/sell">Sell your car</Link>
+                  </Button>
+                </div>
+
+                <div className="mt-10 grid gap-4 sm:grid-cols-4">
+                  {[
+                    ["12k+", "Cars sold"],
+                    ["4.8/5", "Average rating"],
+                    ["200", "Inspection points"],
+                    ["7-day", "Return promise"],
+                  ].map(([value, label]) => (
+                    <div
+                      key={label}
+                      className="rounded-[1.4rem] border border-white/10 bg-white/6 px-4 py-4"
+                    >
+                      <div className="font-display text-3xl text-white">{value}</div>
+                      <div className="mt-1 text-[11px] font-semibold uppercase tracking-[0.22em] text-white/55">
+                        {label}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="relative">
+                <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/8 p-3 backdrop-blur-xl">
+                  <div className="overflow-hidden rounded-[1.6rem]">
+                    <img
+                      src={heroCar}
+                      alt="Featured electric sedan"
+                      width={1792}
+                      height={1024}
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                  <div className="absolute left-7 right-7 top-7 flex items-center justify-between rounded-full border border-white/10 bg-black/20 px-4 py-2 backdrop-blur">
+                    <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-white/55">
+                      Editorial pick
+                    </div>
+                    <div className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-white/70">
+                      <ShieldCheck className="h-3.5 w-3.5 text-accent" />
+                      Certified
+                    </div>
+                  </div>
+                  <div className="absolute inset-x-7 bottom-7 grid gap-4 rounded-[1.6rem] border border-white/10 bg-background/88 p-5 text-foreground shadow-[0_24px_70px_-35px_rgba(0,0,0,0.65)] backdrop-blur-xl md:grid-cols-[1fr_auto] md:items-end">
+                    <div>
+                      <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-muted-foreground">
+                        Featured model
+                      </div>
+                      <div className="mt-2 font-display text-3xl">
+                        {heroListing
+                          ? `${heroListing.year} ${heroListing.brand} ${heroListing.model}`
+                          : "2022 Tesla Model 3 LR"}
+                      </div>
+                      <p className="mt-2 max-w-md text-sm leading-6 text-muted-foreground">
+                        Low-mileage, professionally detailed, and ready for immediate delivery with
+                        a transparent inspection history.
+                      </p>
+                    </div>
+                    <div className="flex flex-col items-start gap-3 md:items-end">
+                      <div className="text-left md:text-right">
+                        <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-muted-foreground">
+                          Starting from
+                        </div>
+                        <div className="mt-2 font-display text-3xl gradient-text">
+                          {heroListing?.pricing?.finalPrice
+                            ? `₹${new Intl.NumberFormat("en-IN", {
+                                maximumFractionDigits: 0,
+                              }).format(heroListing.pricing.finalPrice)}`
+                            : "₹39,90,000"}
+                        </div>
+                      </div>
+                      <Button asChild size="sm">
+                        <Link to="/buy">Explore now</Link>
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+                <div className="absolute -bottom-6 -left-4 hidden max-w-[16rem] rounded-[1.5rem] border border-white/10 bg-white/8 p-5 text-white backdrop-blur-xl lg:block">
+                  <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-white/55">
+                    Why buyers switch
+                  </div>
+                  <p className="mt-3 text-sm leading-6 text-white/72">
+                    A dealership-grade journey without showroom pressure, hidden fees, or clutter.
+                  </p>
+                </div>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
 
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Button asChild size="lg">
-                <Link to="/buy">
-                  Browse inventory <ArrowRight className="ml-1.5 h-4 w-4" />
-                </Link>
-              </Button>
-              <Button
-                asChild
-                size="lg"
-                variant="outline"
-                className="border-white/20 bg-white/5 text-white hover:bg-white/10 hover:text-white"
-              >
-                <Link to="/sell">Sell your car</Link>
-              </Button>
+      <section className="container mx-auto px-4 py-8 md:py-10">
+        <div className="section-shell">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+            <div>
+              <div className="eyebrow">Discover by lifestyle</div>
+              <h2 className="mt-4 font-display text-4xl md:text-5xl">Shop by body type</h2>
             </div>
+            <p className="max-w-xl text-sm leading-6 text-muted-foreground">
+              A cleaner way to browse, from compact city cars to long-distance tourers and family
+              SUVs.
+            </p>
+          </div>
+          <div className="mt-8 grid grid-cols-2 gap-3 md:grid-cols-4 xl:grid-cols-7">
+            {BODY_TYPES.map((b, index) => (
+              <Link
+                key={b}
+                to="/buy"
+                className="group relative overflow-hidden rounded-[1.6rem] border border-border/70 bg-white/60 p-5 transition-all duration-300 hover:-translate-y-1 hover:border-accent/60 hover:bg-white"
+              >
+                <div className="absolute inset-x-0 top-0 h-1 bg-[var(--gradient-primary)] opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+                  {String(index + 1).padStart(2, "0")}
+                </div>
+                <Car className="mt-8 h-7 w-7 text-primary transition-transform duration-300 group-hover:scale-110 group-hover:text-accent" />
+                <div className="mt-4 font-medium">{b}</div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
 
-            <div className="mt-10 flex flex-wrap gap-8 text-white/70">
+      <section className="container mx-auto px-4 py-8 md:py-10">
+        <div className="grid gap-6 lg:grid-cols-[0.8fr_1.2fr]">
+          <div className="section-shell">
+            <div className="eyebrow">Why DriveHub</div>
+            <h2 className="mt-4 font-display text-4xl md:text-5xl">
+              A more trustworthy experience.
+            </h2>
+            <p className="mt-4 text-sm leading-7 text-muted-foreground">
+              Every key moment is designed to reduce friction, build confidence, and keep the focus
+              on the right car instead of the sales process.
+            </p>
+            <div className="mt-8 grid gap-4">
               {[
-                ["12k+", "Cars sold"],
-                ["4.8★", "Avg rating"],
-                ["200+", "Inspection pts"],
-                ["7-day", "Returns"],
-              ].map(([n, l]) => (
-                <div key={l as string}>
-                  <div className="font-display text-2xl font-bold text-white">{n}</div>
-                  <div className="text-xs uppercase tracking-wider">{l}</div>
+                {
+                  i: ShieldCheck,
+                  t: "200-point inspection",
+                  d: "Master technicians verify safety, performance, and cosmetic quality before listing.",
+                },
+                {
+                  i: Wrench,
+                  t: "Refurbished in-house",
+                  d: "Each vehicle is detailed, repaired, and photographed to showroom standards.",
+                },
+                {
+                  i: Banknote,
+                  t: "Instant financing",
+                  d: "Pre-approved EMI options arrive in minutes, not after endless callbacks.",
+                },
+                {
+                  i: BadgeCheck,
+                  t: "7-day return",
+                  d: "If the car is not right, return it within seven days with full transparency.",
+                },
+              ].map((x) => (
+                <div
+                  key={x.t}
+                  className="flex gap-4 rounded-[1.5rem] border border-border/70 bg-white/55 p-4"
+                >
+                  <div className="grid h-12 w-12 shrink-0 place-items-center rounded-[1rem] bg-primary text-primary-foreground">
+                    <x.i className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <h3 className="font-display text-2xl">{x.t}</h3>
+                    <p className="mt-2 text-sm leading-6 text-muted-foreground">{x.d}</p>
+                  </div>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="relative mt-12 lg:mt-0">
-            <div className="relative overflow-hidden rounded-3xl border border-white/10 shadow-2xl">
-              <img
-                src={heroCar}
-                alt="Featured electric sedan"
-                width={1792}
-                height={1024}
-                className="h-full w-full object-cover"
-              />
-              <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between rounded-2xl border border-white/10 bg-background/80 p-4 backdrop-blur-xl">
-                <div>
-                  <div className="text-xs text-muted-foreground">Editor's pick</div>
-                  <div className="font-display text-lg font-semibold">2022 Tesla Model 3 LR</div>
-                </div>
-                <Button asChild size="sm">
-                  <Link to="/buy">Explore</Link>
+          <div className="section-shell">
+            <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+              <div>
+                <div className="eyebrow">Curated this week</div>
+                <h2 className="mt-4 font-display text-4xl md:text-5xl">Featured arrivals</h2>
+              </div>
+              <Button asChild variant="ghost" className="w-fit rounded-full">
+                <Link to="/buy">
+                  See all cars <ChevronRight className="h-4 w-4" />
+                </Link>
+              </Button>
+            </div>
+            <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+              {featured.map((l) => (
+                <CarCard key={l.id} listing={l} />
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="container mx-auto px-4 py-8 md:py-10">
+        <div className="ambient-noise relative overflow-hidden rounded-[2.25rem] border border-border/70 bg-[var(--gradient-hero)] px-6 py-10 text-white shadow-[0_36px_110px_-48px_rgba(0,0,0,0.7)] md:px-10 md:py-14">
+          <div
+            className="absolute -right-20 -top-20 h-72 w-72 rounded-full blur-3xl"
+            style={{ background: "var(--gradient-glow)" }}
+          />
+          <div className="relative grid gap-8 lg:grid-cols-[1fr_0.8fr] lg:items-center">
+            <div className="max-w-2xl">
+              <div className="eyebrow border-white/12 bg-white/8 text-white/70">
+                Sell with confidence
+              </div>
+              <h2 className="mt-5 font-display text-5xl sm:text-6xl">
+                Sell your car in 48 hours, minus the dealership theatre.
+              </h2>
+              <p className="mt-5 max-w-xl text-sm leading-7 text-white/72 sm:text-base">
+                Schedule a home inspection, receive a verified offer, and finish paperwork digitally
+                without chasing buyers or negotiating in parking lots.
+              </p>
+              <div className="mt-8 flex flex-wrap gap-3">
+                <Button asChild size="lg">
+                  <Link to="/sell">Get instant quote</Link>
+                </Button>
+                <Button
+                  asChild
+                  size="lg"
+                  variant="outline"
+                  className="border-white/16 bg-white/8 text-white hover:bg-white/14 hover:text-white"
+                >
+                  <Link to="/about">How it works</Link>
                 </Button>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Categories */}
-      <section className="container mx-auto px-4 py-16">
-        <div className="mb-8 flex items-end justify-between">
-          <div>
-            <h2 className="font-display text-3xl font-bold">Shop by body type</h2>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Find your fit, from city hatchbacks to family SUVs.
-            </p>
-          </div>
-          <Link to="/buy" className="hidden text-sm text-primary hover:underline md:inline-flex">
-            View all <ChevronRight className="h-4 w-4" />
-          </Link>
-        </div>
-        <div className="grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-7">
-          {BODY_TYPES.map((b) => (
-            <Link
-              key={b}
-              to="/buy"
-              className="group relative overflow-hidden rounded-2xl border border-border/60 bg-card p-5 text-center transition hover:-translate-y-0.5 hover:border-primary/40 card-elevated"
-            >
-              <Car className="mx-auto h-7 w-7 text-primary transition-transform group-hover:scale-110" />
-              <div className="mt-3 text-sm font-medium">{b}</div>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      {/* Featured cars */}
-      <section className="container mx-auto px-4 py-12">
-        <div className="mb-8 flex items-end justify-between">
-          <div>
-            <h2 className="font-display text-3xl font-bold">Featured this week</h2>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Hand-picked, fully inspected, ready to drive.
-            </p>
-          </div>
-          <Button asChild variant="ghost">
-            <Link to="/buy">
-              See all <ChevronRight className="h-4 w-4" />
-            </Link>
-          </Button>
-        </div>
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {featured.map((l) => (
-            <CarCard key={l.id} listing={l} />
-          ))}
-        </div>
-      </section>
-
-      {/* Trust indicators */}
-      <section className="container mx-auto px-4 py-16">
-        <div className="grid gap-4 md:grid-cols-4">
-          {[
-            {
-              i: ShieldCheck,
-              t: "200-point inspection",
-              d: "Every car certified by master technicians.",
-            },
-            { i: Wrench, t: "Refurbished in-house", d: "Detailed, repaired, and ready to drive." },
-            { i: Banknote, t: "Instant financing", d: "Pre-approved EMI in under 5 minutes." },
-            { i: BadgeCheck, t: "7-day return", d: "Not in love? Return for a full refund." },
-          ].map((x) => (
-            <div
-              key={x.t}
-              className="rounded-2xl border border-border/60 bg-card p-6 card-elevated"
-            >
-              <div className="grid h-11 w-11 place-items-center rounded-xl bg-gradient-to-br from-primary/15 to-accent/15 text-primary">
-                <x.i className="h-5 w-5" />
-              </div>
-              <h3 className="mt-4 font-display text-base font-semibold">{x.t}</h3>
-              <p className="mt-1 text-sm text-muted-foreground">{x.d}</p>
+            <div className="grid gap-4 rounded-[1.8rem] border border-white/10 bg-white/8 p-6 backdrop-blur-xl">
+              {[
+                ["1", "Share car details and service history."],
+                ["2", "Book a doorstep inspection slot."],
+                ["3", "Approve the offer and get paid fast."],
+              ].map(([step, text]) => (
+                <div
+                  key={step}
+                  className="flex items-start gap-4 rounded-[1.4rem] border border-white/10 bg-black/10 p-4"
+                >
+                  <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-white/12 bg-white/10 font-display text-xl">
+                    {step}
+                  </div>
+                  <p className="pt-1 text-sm leading-6 text-white/72">{text}</p>
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
         </div>
       </section>
 
-      {/* Sell CTA */}
-      <section className="container mx-auto px-4 py-16">
-        <div
-          className="relative overflow-hidden rounded-3xl border border-border/60 p-10 md:p-14"
-          style={{ background: "var(--gradient-hero)" }}
-        >
-          <div
-            className="absolute -right-20 -top-20 h-72 w-72 rounded-full"
-            style={{ background: "var(--gradient-glow)" }}
-          />
-          <div className="relative max-w-2xl text-white">
-            <h2 className="font-display text-3xl font-bold md:text-4xl">
-              Sell your car in <span className="gradient-text">48 hours</span>
+      <section className="container mx-auto px-4 py-8 md:py-10">
+        <div className="grid gap-6 lg:grid-cols-[1fr_0.95fr]">
+          <div className="section-shell">
+            <div className="eyebrow">Loved by drivers</div>
+            <h2 className="mt-4 font-display text-4xl md:text-5xl">
+              Customers notice the difference.
             </h2>
-            <p className="mt-3 text-white/70">
-              Submit details, get a verified inspection at home, accept the best offer. No haggling.
-            </p>
-            <div className="mt-6 flex flex-wrap gap-3">
-              <Button asChild size="lg">
-                <Link to="/sell">Get instant quote</Link>
-              </Button>
-              <Button
-                asChild
-                size="lg"
-                variant="outline"
-                className="border-white/20 bg-white/5 text-white hover:bg-white/10 hover:text-white"
-              >
-                <Link to="/about">How it works</Link>
-              </Button>
+            <div className="mt-8 grid gap-4 md:grid-cols-3">
+              {[
+                {
+                  n: "Priya R.",
+                  t: "Sold my old hatchback in 36 hours. The inspection came to me, payment hit my account the same day.",
+                  r: 5,
+                },
+                {
+                  n: "Marcus B.",
+                  t: "Bought a Polestar 2. The refurbishment was honestly better than the demo car at the dealer.",
+                  r: 5,
+                },
+                {
+                  n: "Lina K.",
+                  t: "Financing was approved while I was still browsing. Picked up the keys two days later.",
+                  r: 5,
+                },
+              ].map((x) => (
+                <div
+                  key={x.n}
+                  className="rounded-[1.6rem] border border-border/70 bg-white/55 p-5 card-elevated"
+                >
+                  <div className="flex gap-1 text-accent">
+                    {Array.from({ length: x.r }).map((_, i) => (
+                      <Star key={i} className="h-4 w-4 fill-current" />
+                    ))}
+                  </div>
+                  <p className="mt-4 text-sm leading-7">{x.t}</p>
+                  <div className="mt-5 text-[11px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+                    {x.n}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
-        </div>
-      </section>
 
-      {/* Testimonials */}
-      <section className="container mx-auto px-4 py-16">
-        <h2 className="font-display text-3xl font-bold">Drivers love DriveHub</h2>
-        <div className="mt-8 grid gap-5 md:grid-cols-3">
-          {[
-            {
-              n: "Priya R.",
-              t: "Sold my old hatchback in 36 hours. The inspection came to me, payment hit my account same day.",
-              r: 5,
-            },
-            {
-              n: "Marcus B.",
-              t: "Bought a Polestar 2. The refurbishment was honestly better than the demo car at the dealer.",
-              r: 5,
-            },
-            {
-              n: "Lina K.",
-              t: "Financing was approved while I was still browsing. Picked up the keys two days later.",
-              r: 5,
-            },
-          ].map((x) => (
-            <div
-              key={x.n}
-              className="rounded-2xl border border-border/60 bg-card p-6 card-elevated"
-            >
-              <div className="flex gap-1 text-accent">
-                {Array.from({ length: x.r }).map((_, i) => (
-                  <Star key={i} className="h-4 w-4 fill-current" />
-                ))}
-              </div>
-              <p className="mt-3 text-sm">{x.t}</p>
-              <div className="mt-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                — {x.n}
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section className="container mx-auto px-4 py-16">
-        <div className="mx-auto max-w-3xl">
-          <h2 className="text-center font-display text-3xl font-bold">Frequently asked</h2>
-          <Accordion type="single" collapsible className="mt-8">
-            {[
-              {
-                q: "How is the price calculated?",
-                a: "We start from your expected price, add refurbishment, inspection, transport, documentation, commission, and a small margin. The final listing price is transparent on every car.",
-              },
-              {
-                q: "Do you offer financing?",
-                a: "Yes — pre-approved EMI in under 5 minutes, with rates starting at 7.9% APR for qualified buyers.",
-              },
-              {
-                q: "What's covered by the 7-day return?",
-                a: "Any reason. Return the car within 7 days or 300 miles for a full refund (minus minor wear charges).",
-              },
-              {
-                q: "How do you inspect cars?",
-                a: "Every car goes through a 200-point inspection by certified master technicians before listing.",
-              },
-            ].map((x, i) => (
-              <AccordionItem key={i} value={`q-${i}`}>
-                <AccordionTrigger className="text-left text-base">{x.q}</AccordionTrigger>
-                <AccordionContent className="text-muted-foreground">{x.a}</AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
+          <div className="section-shell">
+            <div className="eyebrow">Answers first</div>
+            <h2 className="mt-4 text-center font-display text-4xl md:text-5xl">Frequently asked</h2>
+            <Accordion type="single" collapsible className="mt-8">
+              {[
+                {
+                  q: "How is the price calculated?",
+                  a: "We start from your expected price, add refurbishment, inspection, transport, documentation, commission, and a small margin. Every listing shows transparent pricing so buyers understand the value.",
+                },
+                {
+                  q: "Do you offer financing?",
+                  a: "Yes. Pre-approved EMI options are available in under five minutes, with rates starting at 7.9% APR for qualified buyers.",
+                },
+                {
+                  q: "What's covered by the 7-day return?",
+                  a: "Any reason. Return the car within 7 days or 300 miles for a full refund, excluding documented minor wear charges.",
+                },
+                {
+                  q: "How do you inspect cars?",
+                  a: "Every vehicle passes through a 200-point inspection performed by certified master technicians before it appears on DriveHub.",
+                },
+              ].map((x, i) => (
+                <AccordionItem key={i} value={`q-${i}`} className="border-border/70">
+                  <AccordionTrigger className="text-left text-base font-semibold hover:no-underline">
+                    {x.q}
+                  </AccordionTrigger>
+                  <AccordionContent className="text-sm leading-7 text-muted-foreground">
+                    {x.a}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </div>
         </div>
       </section>
     </div>
