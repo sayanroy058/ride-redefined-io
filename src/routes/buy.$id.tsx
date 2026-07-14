@@ -73,7 +73,7 @@ function VehicleDetail() {
                 <PlayCircle className="h-4 w-4" /> Walkaround video
               </button>
             </div>
-            <div className="flex gap-2 overflow-x-auto p-3">
+            <div className="flex min-w-0 max-w-full gap-2 overflow-x-auto p-3">
               {listing.images.map((src, i) => (
                 <button key={i} onClick={() => setActive(i)} className={`relative h-16 w-24 flex-none overflow-hidden rounded-lg border-2 transition ${i === active ? "border-primary" : "border-transparent"}`}>
                   <img src={src} alt="" className="h-full w-full object-cover" />
