@@ -12,7 +12,7 @@ import { EmptyState } from "@/components/site/States";
 import { BODY_TYPES, BRANDS, FUEL_TYPES, OWNERSHIP, STATES, TRANSMISSIONS } from "@/lib/mock-data";
 import { useApp } from "@/lib/store";
 
-export const Route = createFileRoute("/buy")({
+export const Route = createFileRoute("/buy/")({
   head: () => ({
     meta: [
       { title: "Buy Used Cars — DriveHub Inventory" },
