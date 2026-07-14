@@ -120,8 +120,8 @@ function AgentDashboard() {
             <AreaChart data={perf}>
               <defs>
                 <linearGradient id="ga" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="oklch(0.72 0.18 240)" stopOpacity={0.6} />
-                  <stop offset="100%" stopColor="oklch(0.72 0.18 240)" stopOpacity={0} />
+                  <stop offset="0%" stopColor="oklch(0.6 0.13 185)" stopOpacity={0.6} />
+                  <stop offset="100%" stopColor="oklch(0.6 0.13 185)" stopOpacity={0} />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="oklch(1 0 0 / 0.06)" />
@@ -134,7 +134,7 @@ function AgentDashboard() {
                   borderRadius: 8,
                 }}
               />
-              <Area type="monotone" dataKey="cars" stroke="oklch(0.72 0.18 240)" fill="url(#ga)" />
+              <Area type="monotone" dataKey="cars" stroke="oklch(0.6 0.13 185)" fill="url(#ga)" />
             </AreaChart>
           </ResponsiveContainer>
         </div>

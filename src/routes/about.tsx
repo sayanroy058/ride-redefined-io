@@ -8,7 +8,7 @@ export const Route = createFileRoute("/about")({
 function About() {
   return (
     <div>
-      <section className="relative overflow-hidden bg-[var(--gradient-hero)]">
+      <section className="relative overflow-hidden" style={{ background: "var(--gradient-hero)" }}>
         <div className="absolute inset-0 grid-bg opacity-30" />
         <div className="container relative mx-auto px-4 py-20 text-white">
           <h1 className="max-w-2xl text-4xl font-bold tracking-tight md:text-5xl">

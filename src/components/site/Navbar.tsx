@@ -381,80 +381,88 @@ export function Navbar() {
 
 export function Footer() {
   return (
-    <footer className="border-t border-border/60 bg-card mt-20">
-      <div className="container mx-auto">
-        <div className="grid gap-12 px-1 py-14 lg:grid-cols-[1.2fr_0.8fr]">
+    <footer className="relative mt-24 overflow-hidden text-white" style={{ background: "var(--gradient-hero)" }}>
+      <div
+        className="pointer-events-none absolute -right-24 -top-24 h-80 w-80 rounded-full blur-3xl"
+        style={{ background: "var(--gradient-glow)" }}
+      />
+      <div className="absolute inset-0 grid-bg opacity-30" />
+      <div className="container relative mx-auto px-4">
+        {/* CTA band */}
+        <div className="flex flex-col gap-6 border-b border-white/10 py-14 lg:flex-row lg:items-center lg:justify-between">
           <div className="max-w-xl">
             <div className="flex items-center gap-2.5">
-              <span className="grid h-9 w-9 place-items-center rounded-lg bg-primary text-primary-foreground">
+              <span className="grid h-9 w-9 place-items-center rounded-lg bg-white/10 text-white ring-1 ring-white/15 backdrop-blur">
                 <Car className="h-5 w-5" />
               </span>
               <span className="text-lg font-bold tracking-tight">
-                Drive<span className="text-primary">Hub</span>
+                Drive<span className="text-accent">Hub</span>
               </span>
             </div>
-            <h2 className="mt-6 text-2xl font-bold tracking-tight">
+            <h2 className="mt-6 text-3xl font-bold tracking-tight md:text-4xl">
               The calmest place to buy or sell your next car.
             </h2>
-            <p className="mt-3 max-w-md text-sm leading-6 text-muted-foreground">
+            <p className="mt-3 max-w-md text-sm leading-6 text-white/70">
               Verified inspections, elegant financing, and a buying journey designed with the
               same care as the vehicles themselves.
             </p>
-            <div className="mt-6 flex flex-wrap gap-3">
-              <Button asChild size="default">
-                <Link to="/buy">
-                  Explore inventory <ArrowRight className="h-4 w-4" />
-                </Link>
-              </Button>
-              <Button asChild variant="outline" size="default">
-                <Link to="/sell">Get a valuation</Link>
-              </Button>
-            </div>
           </div>
-
-          <div className="grid gap-8 sm:grid-cols-2">
-            <div>
-              <h4 className="text-sm font-semibold">Buy & Sell</h4>
-              <ul className="mt-3 space-y-2.5 text-sm text-muted-foreground">
-                <li>
-                  <Link to="/buy" className="hover:text-foreground">Browse inventory</Link>
-                </li>
-                <li>
-                  <Link to="/sell" className="hover:text-foreground">Sell your car</Link>
-                </li>
-                <li>
-                  <Link to="/finance" className="hover:text-foreground">Finance & EMI</Link>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-sm font-semibold">Company</h4>
-              <ul className="mt-3 space-y-2.5 text-sm text-muted-foreground">
-                <li>
-                  <Link to="/about" className="hover:text-foreground">About</Link>
-                </li>
-                <li>
-                  <Link to="/support" className="hover:text-foreground">Support</Link>
-                </li>
-                <li>
-                  <Link to="/contact" className="hover:text-foreground">Contact</Link>
-                </li>
-                <li>
-                  <Link to="/privacy" className="hover:text-foreground">Privacy</Link>
-                </li>
-                <li>
-                  <Link to="/terms" className="hover:text-foreground">Terms</Link>
-                </li>
-              </ul>
-            </div>
+          <div className="flex flex-wrap gap-3">
+            <Button asChild size="lg" variant="secondary">
+              <Link to="/buy">
+                Explore inventory <ArrowRight className="h-4 w-4" />
+              </Link>
+            </Button>
+            <Button
+              asChild
+              size="lg"
+              variant="ghost"
+              className="border border-white/20 text-white hover:bg-white/10 hover:text-white"
+            >
+              <Link to="/sell">Get a valuation</Link>
+            </Button>
           </div>
         </div>
 
-        <div className="border-t border-border/60 py-6">
-          <div className="flex flex-col gap-2 text-sm text-muted-foreground md:flex-row md:items-center md:justify-between">
-            <span>&copy; {new Date().getFullYear()} DriveHub. All rights reserved.</span>
-            <span className="text-xs">Mock marketplace for demonstration purposes</span>
+        {/* Link columns */}
+        <div className="grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="sm:col-span-2 lg:col-span-1">
+            <h4 className="text-sm font-semibold text-white">DriveHub</h4>
+            <p className="mt-3 max-w-xs text-sm leading-6 text-white/60">
+              Premium pre-owned cars, inspected and refurbished — delivered with total
+              transparency.
+            </p>
           </div>
+          <div>
+            <h4 className="text-sm font-semibold text-white">Buy &amp; Sell</h4>
+            <ul className="mt-4 space-y-3 text-sm text-white/60">
+              <li><Link to="/buy" className="transition-colors hover:text-white">Browse inventory</Link></li>
+              <li><Link to="/sell" className="transition-colors hover:text-white">Sell your car</Link></li>
+              <li><Link to="/finance" className="transition-colors hover:text-white">Finance &amp; EMI</Link></li>
+              <li><Link to="/compare" className="transition-colors hover:text-white">Compare cars</Link></li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="text-sm font-semibold text-white">Company</h4>
+            <ul className="mt-4 space-y-3 text-sm text-white/60">
+              <li><Link to="/about" className="transition-colors hover:text-white">About</Link></li>
+              <li><Link to="/support" className="transition-colors hover:text-white">Support</Link></li>
+              <li><Link to="/contact" className="transition-colors hover:text-white">Contact</Link></li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="text-sm font-semibold text-white">Legal</h4>
+            <ul className="mt-4 space-y-3 text-sm text-white/60">
+              <li><Link to="/privacy" className="transition-colors hover:text-white">Privacy</Link></li>
+              <li><Link to="/terms" className="transition-colors hover:text-white">Terms</Link></li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Bottom bar */}
+        <div className="flex flex-col gap-2 border-t border-white/10 py-6 text-sm text-white/50 md:flex-row md:items-center md:justify-between">
+          <span>&copy; {new Date().getFullYear()} DriveHub. All rights reserved.</span>
+          <span className="text-xs">Mock marketplace for demonstration purposes</span>
         </div>
       </div>
     </footer>

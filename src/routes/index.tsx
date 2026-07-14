@@ -6,6 +6,7 @@ import {
   Banknote,
   Car,
   ChevronRight,
+  Quote,
   Search,
   ShieldCheck,
   Sparkles,
@@ -59,7 +60,7 @@ function Landing() {
   return (
     <div className="pb-8">
       {/* Hero */}
-      <section className="relative overflow-hidden bg-[var(--gradient-hero)]">
+      <section className="relative overflow-hidden" style={{ background: "var(--gradient-hero)" }}>
         <div className="absolute inset-0 grid-bg opacity-40" />
         <div
           className="absolute right-0 top-0 h-[40rem] w-[40rem] rounded-full blur-3xl"
@@ -272,7 +273,7 @@ function Landing() {
 
       {/* Sell CTA */}
       <section className="container mx-auto px-4 py-16">
-        <div className="relative overflow-hidden rounded-3xl bg-[var(--gradient-hero)] px-8 py-12 text-white md:px-12 md:py-16">
+        <div className="relative overflow-hidden rounded-3xl px-8 py-12 text-white md:px-12 md:py-16" style={{ background: "var(--gradient-hero)" }}>
           <div
             className="absolute -right-20 -top-20 h-72 w-72 rounded-full blur-3xl"
             style={{ background: "var(--gradient-glow)" }}
@@ -334,46 +335,78 @@ function Landing() {
             <h2 className="mt-3 text-3xl font-bold tracking-tight">
               Customers notice the difference.
             </h2>
+            <p className="mt-3 max-w-md text-sm leading-7 text-muted-foreground">
+              Thousands of buyers and sellers trust DriveHub for a calmer, more transparent way to
+              change cars.
+            </p>
             <div className="mt-6 grid gap-4">
               {[
-                { n: "Priya R.", t: "Sold my old hatchback in 36 hours. The inspection came to me, payment hit my account the same day.", r: 5 },
-                { n: "Marcus B.", t: "Bought a Polestar 2. The refurbishment was honestly better than the demo car at the dealer.", r: 5 },
-                { n: "Lina K.", t: "Financing was approved while I was still browsing. Picked up the keys two days later.", r: 5 },
+                { n: "Priya R.", role: "Sold a hatchback", t: "Sold my old hatchback in 36 hours. The inspection came to me, payment hit my account the same day.", r: 5 },
+                { n: "Marcus B.", role: "Bought a Polestar 2", t: "The refurbishment was honestly better than the demo car at the dealer.", r: 5 },
+                { n: "Lina K.", role: "Financed in minutes", t: "Financing was approved while I was still browsing. Picked up the keys two days later.", r: 5 },
               ].map((x) => (
-                <div key={x.n} className="rounded-2xl border border-border/60 bg-card p-5">
-                  <div className="flex gap-1 text-accent">
+                <div
+                  key={x.n}
+                  className="group relative rounded-2xl border border-border/60 bg-card p-6 transition-all hover:border-primary/30 hover:shadow-md"
+                >
+                  <Quote className="absolute right-5 top-5 h-8 w-8 text-primary/10" />
+                  <div className="flex gap-0.5 text-accent">
                     {Array.from({ length: x.r }).map((_, i) => (
                       <Star key={i} className="h-4 w-4 fill-current" />
                     ))}
                   </div>
-                  <p className="mt-3 text-sm leading-7">{x.t}</p>
-                  <div className="mt-3 text-sm font-medium">{x.n}</div>
+                  <p className="mt-3 text-sm leading-7 text-foreground/90">"{x.t}"</p>
+                  <div className="mt-4 flex items-center gap-3 border-t border-border/60 pt-4">
+                    <span className="grid h-9 w-9 place-items-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
+                      {x.n.slice(0, 1)}
+                    </span>
+                    <div>
+                      <div className="text-sm font-semibold">{x.n}</div>
+                      <div className="text-xs text-muted-foreground">{x.role}</div>
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>
           </div>
 
           {/* FAQ */}
-          <div>
-            <div className="eyebrow">Answers first</div>
-            <h2 className="mt-3 text-3xl font-bold tracking-tight">Frequently asked</h2>
-            <Accordion type="single" collapsible className="mt-6">
-              {[
-                { q: "How is the price calculated?", a: "We start from your expected price, add refurbishment, inspection, transport, documentation, commission, and a small margin. Every listing shows transparent pricing." },
-                { q: "Do you offer financing?", a: "Yes. Pre-approved EMI options are available in under five minutes, with rates starting at 7.9% APR for qualified buyers." },
-                { q: "What's covered by the 7-day return?", a: "Any reason. Return the car within 7 days or 300 miles for a full refund, excluding documented minor wear charges." },
-                { q: "How do you inspect cars?", a: "Every vehicle passes through a 200-point inspection performed by certified master technicians before it appears on DriveHub." },
-              ].map((x, i) => (
-                <AccordionItem key={i} value={`q-${i}`} className="border-b border-border/60">
-                  <AccordionTrigger className="text-left text-base font-medium hover:no-underline">
-                    {x.q}
-                  </AccordionTrigger>
-                  <AccordionContent className="text-sm leading-7 text-muted-foreground">
-                    {x.a}
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
+          <div className="lg:pl-4">
+            <div className="rounded-3xl border border-border/60 bg-card p-6 md:p-8">
+              <div className="eyebrow">Answers first</div>
+              <h2 className="mt-3 text-3xl font-bold tracking-tight">Frequently asked</h2>
+              <p className="mt-3 text-sm leading-7 text-muted-foreground">
+                Everything you need to know before you buy or sell.
+              </p>
+              <Accordion type="single" collapsible className="mt-4">
+                {[
+                  { q: "How is the price calculated?", a: "We start from your expected price, add refurbishment, inspection, transport, documentation, commission, and a small margin. Every listing shows transparent pricing." },
+                  { q: "Do you offer financing?", a: "Yes. Pre-approved EMI options are available in under five minutes, with rates starting at 7.9% APR for qualified buyers." },
+                  { q: "What's covered by the 7-day return?", a: "Any reason. Return the car within 7 days or 300 miles for a full refund, excluding documented minor wear charges." },
+                  { q: "How do you inspect cars?", a: "Every vehicle passes through a 200-point inspection performed by certified master technicians before it appears on DriveHub." },
+                ].map((x, i) => (
+                  <AccordionItem key={i} value={`q-${i}`} className="border-b border-border/60 last:border-0">
+                    <AccordionTrigger className="text-left text-base font-medium hover:no-underline">
+                      {x.q}
+                    </AccordionTrigger>
+                    <AccordionContent className="text-sm leading-7 text-muted-foreground">
+                      {x.a}
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+              <div className="mt-6 flex items-center justify-between rounded-2xl bg-secondary/60 p-4">
+                <div>
+                  <div className="text-sm font-semibold">Still have questions?</div>
+                  <div className="text-xs text-muted-foreground">Our team replies within an hour.</div>
+                </div>
+                <Button asChild size="sm" variant="secondary">
+                  <Link to="/support">
+                    Contact us <ChevronRight className="h-4 w-4" />
+                  </Link>
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
       </section>

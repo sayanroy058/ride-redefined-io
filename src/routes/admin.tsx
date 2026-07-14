@@ -129,7 +129,7 @@ function Admin() {
     "oklch(0.78 0.16 75)",
     "oklch(0.78 0.16 195)",
     "oklch(0.65 0.16 160)",
-    "oklch(0.72 0.18 240)",
+    "oklch(0.6 0.13 185)",
     "oklch(0.55 0.04 260)",
     "oklch(0.65 0.22 25)",
   ];
@@ -183,8 +183,8 @@ function Admin() {
             <AreaChart data={monthly}>
               <defs>
                 <linearGradient id="gp" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="oklch(0.72 0.18 240)" stopOpacity={0.6} />
-                  <stop offset="100%" stopColor="oklch(0.72 0.18 240)" stopOpacity={0} />
+                  <stop offset="0%" stopColor="oklch(0.6 0.13 185)" stopOpacity={0.6} />
+                  <stop offset="100%" stopColor="oklch(0.6 0.13 185)" stopOpacity={0} />
                 </linearGradient>
                 <linearGradient id="gr" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stopColor="oklch(0.78 0.16 195)" stopOpacity={0.5} />
@@ -201,7 +201,7 @@ function Admin() {
                   borderRadius: 8,
                 }}
               />
-              <Area type="monotone" dataKey="sales" stroke="oklch(0.72 0.18 240)" fill="url(#gp)" />
+              <Area type="monotone" dataKey="sales" stroke="oklch(0.6 0.13 185)" fill="url(#gp)" />
               <Area
                 type="monotone"
                 dataKey="revenue"
@@ -357,7 +357,7 @@ function Admin() {
                   }}
                 />
                 <Legend wrapperStyle={{ fontSize: 11 }} />
-                <Bar dataKey="sellers" fill="oklch(0.72 0.18 240)" radius={[6, 6, 0, 0]} />
+                <Bar dataKey="sellers" fill="oklch(0.6 0.13 185)" radius={[6, 6, 0, 0]} />
                 <Bar dataKey="buyers" fill="oklch(0.78 0.16 195)" radius={[6, 6, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
