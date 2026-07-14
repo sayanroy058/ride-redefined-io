@@ -11,18 +11,38 @@ export const Route = createFileRoute("/buy/$id/inspection")({
   notFoundComponent: () => (
     <div className="container mx-auto px-4 py-20 text-center">
       <h1 className="font-display text-3xl font-bold">Report not found</h1>
-      <Button asChild className="mt-4"><Link to="/buy">Back to inventory</Link></Button>
+      <Button asChild className="mt-4">
+        <Link to="/buy">Back to inventory</Link>
+      </Button>
     </div>
   ),
 });
 
-const SECTIONS: { title: string; items: { label: string; status: string; pct: number; note?: string }[] }[] = [
+const SECTIONS: {
+  title: string;
+  items: { label: string; status: string; pct: number; note?: string }[];
+}[] = [
   {
     title: "Engine & transmission",
     items: [
-      { label: "Engine start & idle", status: "Excellent", pct: 96, note: "Smooth cold start, no abnormal noise." },
-      { label: "Engine oil condition", status: "Good", pct: 88, note: "Clear, within service interval." },
-      { label: "Transmission shifting", status: "Excellent", pct: 95, note: "Crisp shifts in all gears." },
+      {
+        label: "Engine start & idle",
+        status: "Excellent",
+        pct: 96,
+        note: "Smooth cold start, no abnormal noise.",
+      },
+      {
+        label: "Engine oil condition",
+        status: "Good",
+        pct: 88,
+        note: "Clear, within service interval.",
+      },
+      {
+        label: "Transmission shifting",
+        status: "Excellent",
+        pct: 95,
+        note: "Crisp shifts in all gears.",
+      },
       { label: "Clutch / torque converter", status: "Very Good", pct: 90 },
       { label: "Exhaust emissions", status: "Pass", pct: 92 },
     ],
@@ -40,7 +60,12 @@ const SECTIONS: { title: string; items: { label: string; status: string; pct: nu
   {
     title: "Exterior & body",
     items: [
-      { label: "Paint thickness uniformity", status: "Good", pct: 84, note: "Minor repaint on front bumper." },
+      {
+        label: "Paint thickness uniformity",
+        status: "Good",
+        pct: 84,
+        note: "Minor repaint on front bumper.",
+      },
       { label: "Panel gaps", status: "Excellent", pct: 96 },
       { label: "Glass & windshield", status: "Good", pct: 88 },
       { label: "Lights & indicators", status: "Excellent", pct: 98 },
@@ -70,7 +95,7 @@ const SECTIONS: { title: string; items: { label: string; status: string; pct: nu
 function InspectionReport() {
   const { id } = useParams({ from: "/buy/$id/inspection" });
   const { listings } = useApp();
-  const listing = listings.find(l => l.id === id);
+  const listing = listings.find((l) => l.id === id);
   if (!listing) throw notFound();
 
   const total = SECTIONS.reduce((a, s) => a + s.items.reduce((x, i) => x + i.pct, 0), 0);
@@ -79,28 +104,51 @@ function InspectionReport() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <Link to="/buy/$id" params={{ id: listing.id }} className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
+      <Link
+        to="/buy/$id"
+        params={{ id: listing.id }}
+        className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
+      >
         <ArrowLeft className="h-4 w-4" /> Back to car details
       </Link>
 
       <div className="mt-6 flex flex-wrap items-start justify-between gap-4">
         <div>
-          <Badge variant="secondary" className="mb-2">200-point inspection</Badge>
+          <Badge variant="secondary" className="mb-2">
+            200-point inspection
+          </Badge>
           <h1 className="font-display text-3xl font-bold">Inspection Report</h1>
-          <p className="text-muted-foreground">{listing.year} {listing.brand} {listing.model} · {listing.variant}</p>
-          <p className="text-xs text-muted-foreground">VIN {listing.vin} · {listing.registrationCity}, {listing.registrationState}</p>
+          <p className="text-muted-foreground">
+            {listing.year} {listing.brand} {listing.model} · {listing.variant}
+          </p>
+          <p className="text-xs text-muted-foreground">
+            VIN {listing.vin} · {listing.registrationCity}, {listing.registrationState}
+          </p>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={() => window.print()}><Printer className="mr-2 h-4 w-4" />Print</Button>
-          <Button variant="outline" size="sm"><Download className="mr-2 h-4 w-4" />Download PDF</Button>
+          <Button variant="outline" size="sm" onClick={() => window.print()}>
+            <Printer className="mr-2 h-4 w-4" />
+            Print
+          </Button>
+          <Button variant="outline" size="sm">
+            <Download className="mr-2 h-4 w-4" />
+            Download PDF
+          </Button>
         </div>
       </div>
 
       <div className="mt-6 grid gap-4 md:grid-cols-3">
         <div className="rounded-2xl border border-success/30 bg-success/5 p-5 md:col-span-1">
-          <div className="flex items-center gap-2 text-sm font-semibold"><ShieldCheck className="h-4 w-4 text-success" /> Overall score</div>
-          <div className="mt-2 font-display text-5xl font-bold text-success">{overall}<span className="text-xl text-muted-foreground">/10</span></div>
-          <p className="mt-1 text-xs text-muted-foreground">{count} checkpoints across {SECTIONS.length} systems</p>
+          <div className="flex items-center gap-2 text-sm font-semibold">
+            <ShieldCheck className="h-4 w-4 text-success" /> Overall score
+          </div>
+          <div className="mt-2 font-display text-5xl font-bold text-success">
+            {overall}
+            <span className="text-xl text-muted-foreground">/10</span>
+          </div>
+          <p className="mt-1 text-xs text-muted-foreground">
+            {count} checkpoints across {SECTIONS.length} systems
+          </p>
         </div>
         <div className="rounded-2xl border border-border/60 bg-card p-5 md:col-span-2">
           <div className="grid grid-cols-2 gap-4 text-sm md:grid-cols-4">
@@ -110,20 +158,29 @@ function InspectionReport() {
             <Stat label="Odometer" value={`${listing.kmDriven.toLocaleString()} km`} />
           </div>
           <Separator className="my-4" />
-          <p className="text-xs text-muted-foreground">This report covers mechanical, electrical, structural and cosmetic checks. Each item is graded by a certified engineer using calibrated tools. Defects flagged here are mirrored on the Defects page.</p>
+          <p className="text-xs text-muted-foreground">
+            This report covers mechanical, electrical, structural and cosmetic checks. Each item is
+            graded by a certified engineer using calibrated tools. Defects flagged here are mirrored
+            on the Defects page.
+          </p>
         </div>
       </div>
 
       <div className="mt-8 space-y-6">
-        {SECTIONS.map(sec => (
+        {SECTIONS.map((sec) => (
           <section key={sec.title} className="rounded-2xl border border-border/60 bg-card p-5">
             <h2 className="font-display text-lg font-semibold">{sec.title}</h2>
             <div className="mt-4 grid gap-3 md:grid-cols-2">
-              {sec.items.map(it => (
+              {sec.items.map((it) => (
                 <div key={it.label} className="rounded-xl border border-border/60 p-4">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="font-medium flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-success" />{it.label}</span>
-                    <Badge variant="outline" className="text-xs">{it.status}</Badge>
+                    <span className="font-medium flex items-center gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-success" />
+                      {it.label}
+                    </span>
+                    <Badge variant="outline" className="text-xs">
+                      {it.status}
+                    </Badge>
                   </div>
                   <Progress value={it.pct} className="mt-2 h-1.5" />
                   {it.note && <p className="mt-2 text-xs text-muted-foreground">{it.note}</p>}
@@ -135,8 +192,16 @@ function InspectionReport() {
       </div>
 
       <div className="mt-8 flex flex-wrap gap-3">
-        <Button asChild><Link to="/buy/$id" params={{ id: listing.id }}>Back to details</Link></Button>
-        <Button asChild variant="outline"><Link to="/buy/$id/defects" params={{ id: listing.id }}>View defects report</Link></Button>
+        <Button asChild>
+          <Link to="/buy/$id" params={{ id: listing.id }}>
+            Back to details
+          </Link>
+        </Button>
+        <Button asChild variant="outline">
+          <Link to="/buy/$id/defects" params={{ id: listing.id }}>
+            View defects report
+          </Link>
+        </Button>
       </div>
     </div>
   );

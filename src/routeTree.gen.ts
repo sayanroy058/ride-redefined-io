@@ -9,32 +9,56 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as WishlistRouteImport } from './routes/wishlist'
 import { Route as VerifyOtpRouteImport } from './routes/verify-otp'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SupportRouteImport } from './routes/support'
+import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as SellRouteImport } from './routes/sell'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
+import { Route as FinanceRouteImport } from './routes/finance'
 import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as CompareRouteImport } from './routes/compare'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BuyIndexRouteImport } from './routes/buy.index'
 import { Route as AgentIndexRouteImport } from './routes/agent.index'
+import { Route as CheckoutIdRouteImport } from './routes/checkout.$id'
 import { Route as BuyIdRouteImport } from './routes/buy.$id'
 import { Route as AgentSellRouteImport } from './routes/agent.sell'
 import { Route as BuyIdInspectionRouteImport } from './routes/buy.$id.inspection'
 import { Route as BuyIdDefectsRouteImport } from './routes/buy.$id.defects'
 
+const WishlistRoute = WishlistRouteImport.update({
+  id: '/wishlist',
+  path: '/wishlist',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const VerifyOtpRoute = VerifyOtpRouteImport.update({
   id: '/verify-otp',
   path: '/verify-otp',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SupportRoute = SupportRouteImport.update({
   id: '/support',
   path: '/support',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SellRoute = SellRouteImport.update({
@@ -52,6 +76,16 @@ const ProfileRoute = ProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NotificationsRoute = NotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -62,9 +96,24 @@ const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
   path: '/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FinanceRoute = FinanceRouteImport.update({
+  id: '/finance',
+  path: '/finance',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CompareRoute = CompareRouteImport.update({
+  id: '/compare',
+  path: '/compare',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRoute = AdminRouteImport.update({
@@ -92,6 +141,11 @@ const AgentIndexRoute = AgentIndexRouteImport.update({
   path: '/agent/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CheckoutIdRoute = CheckoutIdRouteImport.update({
+  id: '/checkout/$id',
+  path: '/checkout/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BuyIdRoute = BuyIdRouteImport.update({
   id: '/buy/$id',
   path: '/buy/$id',
@@ -117,16 +171,25 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
+  '/compare': typeof CompareRoute
+  '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
+  '/finance': typeof FinanceRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/notifications': typeof NotificationsRoute
+  '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
   '/register': typeof RegisterRoute
   '/sell': typeof SellRoute
+  '/settings': typeof SettingsRoute
   '/support': typeof SupportRoute
+  '/terms': typeof TermsRoute
   '/verify-otp': typeof VerifyOtpRoute
+  '/wishlist': typeof WishlistRoute
   '/agent/sell': typeof AgentSellRoute
   '/buy/$id': typeof BuyIdRouteWithChildren
+  '/checkout/$id': typeof CheckoutIdRoute
   '/agent/': typeof AgentIndexRoute
   '/buy/': typeof BuyIndexRoute
   '/buy/$id/defects': typeof BuyIdDefectsRoute
@@ -136,16 +199,25 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
+  '/compare': typeof CompareRoute
+  '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
+  '/finance': typeof FinanceRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/notifications': typeof NotificationsRoute
+  '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
   '/register': typeof RegisterRoute
   '/sell': typeof SellRoute
+  '/settings': typeof SettingsRoute
   '/support': typeof SupportRoute
+  '/terms': typeof TermsRoute
   '/verify-otp': typeof VerifyOtpRoute
+  '/wishlist': typeof WishlistRoute
   '/agent/sell': typeof AgentSellRoute
   '/buy/$id': typeof BuyIdRouteWithChildren
+  '/checkout/$id': typeof CheckoutIdRoute
   '/agent': typeof AgentIndexRoute
   '/buy': typeof BuyIndexRoute
   '/buy/$id/defects': typeof BuyIdDefectsRoute
@@ -156,16 +228,25 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
+  '/compare': typeof CompareRoute
+  '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
+  '/finance': typeof FinanceRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/notifications': typeof NotificationsRoute
+  '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
   '/register': typeof RegisterRoute
   '/sell': typeof SellRoute
+  '/settings': typeof SettingsRoute
   '/support': typeof SupportRoute
+  '/terms': typeof TermsRoute
   '/verify-otp': typeof VerifyOtpRoute
+  '/wishlist': typeof WishlistRoute
   '/agent/sell': typeof AgentSellRoute
   '/buy/$id': typeof BuyIdRouteWithChildren
+  '/checkout/$id': typeof CheckoutIdRoute
   '/agent/': typeof AgentIndexRoute
   '/buy/': typeof BuyIndexRoute
   '/buy/$id/defects': typeof BuyIdDefectsRoute
@@ -177,16 +258,25 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/admin'
+    | '/compare'
+    | '/contact'
     | '/dashboard'
+    | '/finance'
     | '/forgot-password'
     | '/login'
+    | '/notifications'
+    | '/privacy'
     | '/profile'
     | '/register'
     | '/sell'
+    | '/settings'
     | '/support'
+    | '/terms'
     | '/verify-otp'
+    | '/wishlist'
     | '/agent/sell'
     | '/buy/$id'
+    | '/checkout/$id'
     | '/agent/'
     | '/buy/'
     | '/buy/$id/defects'
@@ -196,16 +286,25 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/admin'
+    | '/compare'
+    | '/contact'
     | '/dashboard'
+    | '/finance'
     | '/forgot-password'
     | '/login'
+    | '/notifications'
+    | '/privacy'
     | '/profile'
     | '/register'
     | '/sell'
+    | '/settings'
     | '/support'
+    | '/terms'
     | '/verify-otp'
+    | '/wishlist'
     | '/agent/sell'
     | '/buy/$id'
+    | '/checkout/$id'
     | '/agent'
     | '/buy'
     | '/buy/$id/defects'
@@ -215,16 +314,25 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/admin'
+    | '/compare'
+    | '/contact'
     | '/dashboard'
+    | '/finance'
     | '/forgot-password'
     | '/login'
+    | '/notifications'
+    | '/privacy'
     | '/profile'
     | '/register'
     | '/sell'
+    | '/settings'
     | '/support'
+    | '/terms'
     | '/verify-otp'
+    | '/wishlist'
     | '/agent/sell'
     | '/buy/$id'
+    | '/checkout/$id'
     | '/agent/'
     | '/buy/'
     | '/buy/$id/defects'
@@ -235,22 +343,38 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   AdminRoute: typeof AdminRoute
+  CompareRoute: typeof CompareRoute
+  ContactRoute: typeof ContactRoute
   DashboardRoute: typeof DashboardRoute
+  FinanceRoute: typeof FinanceRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   LoginRoute: typeof LoginRoute
+  NotificationsRoute: typeof NotificationsRoute
+  PrivacyRoute: typeof PrivacyRoute
   ProfileRoute: typeof ProfileRoute
   RegisterRoute: typeof RegisterRoute
   SellRoute: typeof SellRoute
+  SettingsRoute: typeof SettingsRoute
   SupportRoute: typeof SupportRoute
+  TermsRoute: typeof TermsRoute
   VerifyOtpRoute: typeof VerifyOtpRoute
+  WishlistRoute: typeof WishlistRoute
   AgentSellRoute: typeof AgentSellRoute
   BuyIdRoute: typeof BuyIdRouteWithChildren
+  CheckoutIdRoute: typeof CheckoutIdRoute
   AgentIndexRoute: typeof AgentIndexRoute
   BuyIndexRoute: typeof BuyIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/wishlist': {
+      id: '/wishlist'
+      path: '/wishlist'
+      fullPath: '/wishlist'
+      preLoaderRoute: typeof WishlistRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/verify-otp': {
       id: '/verify-otp'
       path: '/verify-otp'
@@ -258,11 +382,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VerifyOtpRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/support': {
       id: '/support'
       path: '/support'
       fullPath: '/support'
       preLoaderRoute: typeof SupportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sell': {
@@ -286,6 +424,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/notifications': {
+      id: '/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof NotificationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
@@ -300,11 +452,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/finance': {
+      id: '/finance'
+      path: '/finance'
+      fullPath: '/finance'
+      preLoaderRoute: typeof FinanceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard': {
       id: '/dashboard'
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/compare': {
+      id: '/compare'
+      path: '/compare'
+      fullPath: '/compare'
+      preLoaderRoute: typeof CompareRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin': {
@@ -340,6 +513,13 @@ declare module '@tanstack/react-router' {
       path: '/agent'
       fullPath: '/agent/'
       preLoaderRoute: typeof AgentIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/checkout/$id': {
+      id: '/checkout/$id'
+      path: '/checkout/$id'
+      fullPath: '/checkout/$id'
+      preLoaderRoute: typeof CheckoutIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/buy/$id': {
@@ -389,29 +569,28 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   AdminRoute: AdminRoute,
+  CompareRoute: CompareRoute,
+  ContactRoute: ContactRoute,
   DashboardRoute: DashboardRoute,
+  FinanceRoute: FinanceRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
   LoginRoute: LoginRoute,
+  NotificationsRoute: NotificationsRoute,
+  PrivacyRoute: PrivacyRoute,
   ProfileRoute: ProfileRoute,
   RegisterRoute: RegisterRoute,
   SellRoute: SellRoute,
+  SettingsRoute: SettingsRoute,
   SupportRoute: SupportRoute,
+  TermsRoute: TermsRoute,
   VerifyOtpRoute: VerifyOtpRoute,
+  WishlistRoute: WishlistRoute,
   AgentSellRoute: AgentSellRoute,
   BuyIdRoute: BuyIdRouteWithChildren,
+  CheckoutIdRoute: CheckoutIdRoute,
   AgentIndexRoute: AgentIndexRoute,
   BuyIndexRoute: BuyIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

@@ -1,10 +1,5 @@
 export type ListingStatus =
-  | "pending_review"
-  | "under_inspection"
-  | "approved"
-  | "rejected"
-  | "listed"
-  | "sold";
+  "pending_review" | "under_inspection" | "approved" | "rejected" | "listed" | "sold";
 
 export type TicketStatus = "open" | "in_progress" | "waiting_customer" | "resolved";
 
@@ -83,11 +78,35 @@ export interface Ticket {
   createdAt: number;
 }
 
+export type OfferState = "pending" | "accepted" | "declined" | "countered";
+
 export interface Offer {
   id: string;
   listingId: string;
+  buyerId?: string;
   buyerName: string;
   amount: number;
   message: string;
+  state?: OfferState;
+  counterAmount?: number;
+  createdAt: number;
+}
+
+export type BookingType = "reserve" | "purchase";
+export type BookingStatus = "pending" | "confirmed" | "cancelled" | "completed";
+
+export interface Booking {
+  id: string;
+  listingId: string;
+  userId: string;
+  buyerName: string;
+  buyerEmail: string;
+  buyerPhone: string;
+  type: BookingType;
+  amount: number;
+  reserveFee?: number;
+  tenure?: number;
+  downPayment?: number;
+  status: BookingStatus;
   createdAt: number;
 }
