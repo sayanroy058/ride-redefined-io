@@ -37,7 +37,7 @@ function FinancePage() {
             <Banknote className="h-3.5 w-3.5 text-accent" />
             Financing in minutes
           </div>
-          <h1 className="mt-6 max-w-2xl font-display text-4xl font-bold md:text-5xl">
+          <h1 className="mt-6 max-w-2xl text-4xl font-bold tracking-tight md:text-5xl">
             Drive now, pay over <span className="gradient-text">time</span>.
           </h1>
           <p className="mt-4 max-w-xl text-white/70">
@@ -64,7 +64,7 @@ function FinancePage() {
       <section className="container mx-auto px-4 py-16">
         <div className="grid gap-8 lg:grid-cols-2">
           <div>
-            <h2 className="font-display text-2xl font-bold">EMI calculator</h2>
+            <h2 className="text-2xl font-bold tracking-tight">EMI calculator</h2>
             <p className="mt-1 text-sm text-muted-foreground">
               Adjust the car price and your loan terms to estimate monthly payments.
             </p>
@@ -79,7 +79,7 @@ function FinancePage() {
               />
             </div>
           </div>
-          <div className="rounded-2xl border border-border/60 bg-card p-6 card-elevated">
+          <div className="rounded-2xl border border-border/60 bg-card p-6 shadow-sm">
             <EmiCalculator price={price} />
           </div>
         </div>
@@ -87,7 +87,7 @@ function FinancePage() {
 
       {/* Eligibility */}
       <section className="container mx-auto px-4 py-12">
-        <h2 className="font-display text-2xl font-bold">Eligibility & documents</h2>
+        <h2 className="text-2xl font-bold tracking-tight">Eligibility & documents</h2>
         <div className="mt-6 grid gap-4 md:grid-cols-3">
           {[
             { i: CheckCircle2, t: "Age 21–65", d: "Salaried or self-employed Indian resident." },
@@ -104,12 +104,12 @@ function FinancePage() {
           ].map((x) => (
             <div
               key={x.t}
-              className="rounded-2xl border border-border/60 bg-card p-5 card-elevated"
+              className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm"
             >
-              <div className="grid h-11 w-11 place-items-center rounded-xl bg-gradient-to-br from-primary/15 to-accent/15 text-primary">
+              <div className="grid h-11 w-11 place-items-center rounded-xl bg-primary/10 text-primary">
                 <x.i className="h-5 w-5" />
               </div>
-              <h3 className="mt-4 font-display text-base font-semibold">{x.t}</h3>
+              <h3 className="mt-4 text-base font-semibold">{x.t}</h3>
               <p className="mt-1 text-sm text-muted-foreground">{x.d}</p>
             </div>
           ))}
@@ -118,7 +118,7 @@ function FinancePage() {
 
       {/* Partners */}
       <section className="container mx-auto px-4 py-12">
-        <h2 className="font-display text-2xl font-bold">Lending partners</h2>
+        <h2 className="text-2xl font-bold tracking-tight">Lending partners</h2>
         <p className="mt-1 text-sm text-muted-foreground">
           Compare indicative rates. Final rate depends on your credit profile.
         </p>
@@ -126,13 +126,13 @@ function FinancePage() {
           {PARTNERS.map((p) => (
             <div
               key={p.name}
-              className="flex items-center gap-4 rounded-2xl border border-border/60 bg-card p-5 card-elevated"
+              className="flex items-center gap-4 rounded-2xl border border-border/60 bg-card p-5 shadow-sm"
             >
-              <div className="grid h-12 w-12 place-items-center rounded-xl bg-gradient-to-br from-primary to-accent text-sm font-bold text-primary-foreground">
+              <div className="grid h-12 w-12 place-items-center rounded-xl bg-primary text-sm font-bold text-primary-foreground">
                 {p.logo}
               </div>
               <div>
-                <div className="font-display font-semibold">{p.name}</div>
+                <div className="font-semibold">{p.name}</div>
                 <div className="text-xs text-muted-foreground">
                   From {p.rate} · up to {p.max}
                 </div>
@@ -146,7 +146,7 @@ function FinancePage() {
       {/* FAQ */}
       <section className="container mx-auto px-4 py-12">
         <div className="mx-auto max-w-3xl">
-          <h2 className="text-center font-display text-2xl font-bold">Financing FAQ</h2>
+          <h2 className="text-center text-2xl font-bold tracking-tight">Financing FAQ</h2>
           <Accordion type="single" collapsible className="mt-6">
             {[
               {

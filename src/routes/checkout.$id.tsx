@@ -24,7 +24,7 @@ export const Route = createFileRoute("/checkout/$id")({
   component: CheckoutPage,
   notFoundComponent: () => (
     <div className="container mx-auto px-4 py-20 text-center">
-      <h1 className="font-display text-3xl font-bold">Listing not found</h1>
+      <h1 className="text-3xl font-bold tracking-tight">Listing not found</h1>
       <Button asChild className="mt-4">
         <Link to="/buy">Back to inventory</Link>
       </Button>
@@ -88,7 +88,7 @@ function CheckoutPage() {
         <div className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-success/15 text-success">
           <CheckCircle2 className="h-8 w-8" />
         </div>
-        <h1 className="mt-5 font-display text-3xl font-bold">
+        <h1 className="mt-5 text-3xl font-bold tracking-tight">
           {type === "reserve" ? "Car reserved!" : "Purchase confirmed!"}
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
@@ -121,7 +121,7 @@ function CheckoutPage() {
         <ArrowLeft className="h-4 w-4" /> Back to {listing.brand} {listing.model}
       </Link>
 
-      <h1 className="mt-4 font-display text-3xl font-bold">Checkout</h1>
+      <h1 className="mt-4 text-3xl font-bold tracking-tight">Checkout</h1>
       <p className="text-sm text-muted-foreground">
         {listing.year} {listing.brand} {listing.model} · {listing.variant}
       </p>
@@ -138,8 +138,8 @@ function CheckoutPage() {
       <form onSubmit={confirm} className="mt-6 grid gap-6 lg:grid-cols-[1fr_360px]">
         <div className="space-y-6">
           {/* Type */}
-          <section className="rounded-2xl border border-border/60 bg-card p-6 card-elevated">
-            <h2 className="font-display text-lg font-semibold">Choose an option</h2>
+          <section className="rounded-2xl border border-border/60 bg-card p-6 shadow-sm">
+            <h2 className="text-lg font-semibold">Choose an option</h2>
             <div className="mt-4 grid gap-3 sm:grid-cols-2">
               <TypeCard
                 active={type === "reserve"}
@@ -161,8 +161,8 @@ function CheckoutPage() {
           </section>
 
           {/* Finance */}
-          <section className="rounded-2xl border border-border/60 bg-card p-6 card-elevated">
-            <h2 className="font-display text-lg font-semibold">Financing</h2>
+          <section className="rounded-2xl border border-border/60 bg-card p-6 shadow-sm">
+            <h2 className="text-lg font-semibold">Financing</h2>
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
               <Range
                 label={`Down payment (${downPct}%)`}
@@ -195,8 +195,8 @@ function CheckoutPage() {
           </section>
 
           {/* Details */}
-          <section className="rounded-2xl border border-border/60 bg-card p-6 card-elevated">
-            <h2 className="font-display text-lg font-semibold">Your details</h2>
+          <section className="rounded-2xl border border-border/60 bg-card p-6 shadow-sm">
+            <h2 className="text-lg font-semibold">Your details</h2>
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
               <div>
                 <Label className="mb-1.5 inline-block">Full name</Label>
@@ -225,10 +225,10 @@ function CheckoutPage() {
 
         {/* Summary */}
         <aside className="space-y-4 lg:sticky lg:top-20 lg:self-start">
-          <div className="overflow-hidden rounded-2xl border border-border/60 bg-card card-elevated">
+          <div className="overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm">
             <img src={listing.images[0]} alt="" className="aspect-[16/9] w-full object-cover" />
             <div className="p-5">
-              <div className="font-display text-lg font-bold">
+              <div className="text-lg font-bold tracking-tight">
                 {listing.brand} {listing.model}
               </div>
               <div className="text-xs text-muted-foreground">
@@ -242,7 +242,7 @@ function CheckoutPage() {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Due now</span>
-                  <span className="font-display text-xl font-bold gradient-text">
+                  <span className="text-xl font-bold tracking-tight gradient-text">
                     {formatPrice(dueNow)}
                   </span>
                 </div>
@@ -303,7 +303,7 @@ function TypeCard({
         <Icon className={`h-5 w-5 ${active ? "text-primary" : "text-muted-foreground"}`} />
         {active && <CheckCircle2 className="h-4 w-4 text-primary" />}
       </div>
-      <div className="mt-2 font-display text-base font-semibold">{title}</div>
+      <div className="mt-2 text-base font-semibold">{title}</div>
       <div className="text-xs text-muted-foreground">{desc}</div>
       <div className="mt-2 text-sm font-medium">{amount}</div>
     </button>

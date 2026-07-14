@@ -56,7 +56,7 @@ export function CompareTable({ listings }: { listings: Listing[] }) {
   };
 
   return (
-    <div className="overflow-x-auto rounded-2xl border border-border/60 bg-card card-elevated">
+    <div className="overflow-x-auto rounded-2xl border border-border/60 bg-card shadow-sm">
       <table className="w-full min-w-[640px] text-sm">
         <thead>
           <tr className="border-b border-border/60">
@@ -73,11 +73,11 @@ export function CompareTable({ listings }: { listings: Listing[] }) {
                       alt=""
                       className="mb-3 h-24 w-full rounded-lg object-cover"
                     />
-                    <div className="font-display font-semibold leading-tight">
+                    <div className="font-semibold leading-tight">
                       {l.year} {l.brand} {l.model}
                     </div>
                     <div className="text-xs text-muted-foreground">{l.variant}</div>
-                    <div className="mt-1 font-display text-base font-bold gradient-text">
+                    <div className="mt-1 text-base font-bold tracking-tight gradient-text">
                       {formatPriceShort(price)}
                     </div>
                   </Link>

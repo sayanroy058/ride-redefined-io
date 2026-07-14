@@ -43,7 +43,7 @@ export const Route = createFileRoute("/buy/$id")({
   component: VehicleDetail,
   notFoundComponent: () => (
     <div className="container mx-auto px-4 py-20 text-center">
-      <h1 className="font-display text-3xl font-bold">Car not found</h1>
+      <h1 className="text-3xl font-bold tracking-tight">Car not found</h1>
       <Button asChild className="mt-4">
         <Link to="/buy">Back to inventory</Link>
       </Button>
@@ -172,7 +172,7 @@ function VehicleDetail() {
       <div className="mt-6 grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_380px]">
         <div className="min-w-0">
           {/* Gallery */}
-          <div className="overflow-hidden rounded-2xl border border-border/60 card-elevated">
+          <div className="overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm">
             <div className="relative aspect-[16/10] bg-muted">
               <img
                 src={listing.images[active]}
@@ -180,14 +180,14 @@ function VehicleDetail() {
                 className="h-full w-full object-cover"
               />
               <button
-                className="absolute right-4 top-4 grid h-10 w-10 place-items-center rounded-full bg-background/80 backdrop-blur"
+                className="absolute right-4 top-4 grid h-10 w-10 place-items-center rounded-full bg-background"
                 onClick={() => toggleWishlist(listing.id)}
               >
                 <Heart className={`h-4 w-4 ${fav ? "fill-destructive text-destructive" : ""}`} />
               </button>
               <button
                 onClick={() => setVideo(true)}
-                className="absolute bottom-4 left-4 inline-flex items-center gap-2 rounded-full bg-background/80 px-4 py-2 text-sm font-medium backdrop-blur transition hover:bg-background"
+                className="absolute bottom-4 left-4 inline-flex items-center gap-2 rounded-full bg-background px-4 py-2 text-sm font-medium transition hover:bg-background/90"
               >
                 <PlayCircle className="h-4 w-4" /> Walkaround video
               </button>
@@ -211,7 +211,7 @@ function VehicleDetail() {
                 <Badge variant="secondary" className="mb-2">
                   {listing.bodyType}
                 </Badge>
-                <h1 className="font-display text-3xl font-bold">
+                <h1 className="text-3xl font-bold tracking-tight">
                   {listing.year} {listing.brand} {listing.model}
                 </h1>
                 <p className="text-muted-foreground">{listing.variant}</p>
@@ -523,7 +523,7 @@ function VehicleDetail() {
               </TabsContent>
 
               <TabsContent value="emi" className="pt-4">
-                <div className="rounded-2xl border border-border/60 bg-card p-5 card-elevated">
+                <div className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm">
                   <h3 className="mb-4 font-display text-base font-semibold">EMI calculator</h3>
                   <EmiCalculator price={price} />
                 </div>
@@ -534,7 +534,7 @@ function VehicleDetail() {
 
         {/* Sticky sidebar */}
         <aside className="space-y-4 lg:sticky lg:top-20 lg:self-start">
-          <div className="rounded-2xl border border-border/60 bg-card p-5 card-elevated">
+          <div className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm">
             <div className="text-xs uppercase tracking-wider text-muted-foreground">
               Total drive-away
             </div>
@@ -587,14 +587,14 @@ function VehicleDetail() {
               </div>
             </div>
           </div>
-          <div className="rounded-2xl border border-border/60 bg-card p-5 card-elevated">
+          <div className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm">
             <h3 className="font-display text-sm font-semibold">Location</h3>
             <div className="mt-2 flex items-center gap-2 text-sm text-muted-foreground">
               <MapPin className="h-4 w-4" />
               {listing.registrationCity}, {listing.registrationState}
             </div>
           </div>
-          <div className="rounded-2xl border border-border/60 bg-card p-5 card-elevated">
+          <div className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm">
             <OfferForm listing={listing} />
           </div>
         </aside>

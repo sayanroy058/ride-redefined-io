@@ -16,7 +16,7 @@ function ComparePage() {
   return (
     <div className="container mx-auto px-4 py-10">
       <div className="mb-6">
-        <h1 className="font-display text-3xl font-bold">Compare cars</h1>
+        <h1 className="text-3xl font-bold tracking-tight">Compare cars</h1>
         <p className="text-sm text-muted-foreground">
           Side-by-side specs for up to 3 cars. Best value in each row is highlighted.
         </p>

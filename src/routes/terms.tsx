@@ -7,7 +7,7 @@ export const Route = createFileRoute("/terms")({
 function TermsPage() {
   return (
     <div className="container mx-auto max-w-3xl px-4 py-12">
-      <h1 className="font-display text-3xl font-bold">Terms of Service</h1>
+      <h1 className="text-3xl font-bold tracking-tight">Terms of Service</h1>
       <p className="mt-2 text-xs text-muted-foreground">Last updated: July 2026 · Demo document</p>
       <div className="mt-8 space-y-6">
         <Section title="Acceptance of terms">
@@ -53,8 +53,8 @@ function TermsPage() {
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <section className="rounded-2xl border border-border/60 bg-card p-6 card-elevated">
-      <h2 className="font-display text-lg font-semibold">{title}</h2>
+    <section className="rounded-2xl border border-border/60 bg-card p-6 shadow-sm">
+      <h2 className="text-lg font-semibold">{title}</h2>
       <div className="mt-3 space-y-2 text-sm leading-relaxed text-muted-foreground">{children}</div>
     </section>
   );

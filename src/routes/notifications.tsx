@@ -98,7 +98,7 @@ function NotificationsPage() {
     <div className="container mx-auto max-w-3xl px-4 py-10">
       <div className="mb-6 flex items-center gap-2">
         <Bell className="h-5 w-5 text-primary" />
-        <h1 className="font-display text-3xl font-bold">Notifications</h1>
+        <h1 className="text-3xl font-bold tracking-tight">Notifications</h1>
       </div>
 
       {items.length === 0 ? (
@@ -121,14 +121,14 @@ function NotificationsPage() {
                 key={it.id}
                 to={it.href?.to ?? "/dashboard"}
                 params={it.href?.params}
-                className="flex items-start gap-3 rounded-2xl border border-border/60 bg-card p-4 card-elevated transition hover:border-primary/40"
+                className="flex items-start gap-3 rounded-2xl border border-border/60 bg-card p-4 shadow-sm transition hover:border-primary/40"
               >
                 <div className="grid h-10 w-10 flex-none place-items-center rounded-full bg-primary/10 text-primary">
                   <Icon className="h-5 w-5" />
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center justify-between gap-2">
-                    <div className="font-display text-sm font-semibold">{it.title}</div>
+                    <div className="text-sm font-semibold">{it.title}</div>
                     {it.badge && (
                       <Badge variant="outline" className="capitalize text-[10px]">
                         {it.badge}

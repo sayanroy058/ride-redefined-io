@@ -16,7 +16,7 @@ function WishlistPage() {
   return (
     <div className="container mx-auto px-4 py-10">
       <div className="mb-6">
-        <h1 className="font-display text-3xl font-bold">Your wishlist</h1>
+        <h1 className="text-3xl font-bold tracking-tight">Your wishlist</h1>
         <p className="text-sm text-muted-foreground">
           {wished.length} saved {wished.length === 1 ? "car" : "cars"}. Tap the heart again to
           remove.

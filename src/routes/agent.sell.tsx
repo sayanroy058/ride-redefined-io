@@ -174,7 +174,7 @@ function AgentSell() {
       </div>
       <Progress value={progress} className="mt-2" />
 
-      <div className="mt-6 rounded-2xl border border-border/60 bg-card p-6 card-elevated">
+      <div className="mt-6 rounded-2xl border border-border/60 bg-card p-6 shadow-sm">
         {step === 0 && (
           <div className="grid gap-4 md:grid-cols-2">
             <Field label="Seller name *">

@@ -10,7 +10,7 @@ export const Route = createFileRoute("/buy/$id/inspection")({
   component: InspectionReport,
   notFoundComponent: () => (
     <div className="container mx-auto px-4 py-20 text-center">
-      <h1 className="font-display text-3xl font-bold">Report not found</h1>
+      <h1 className="text-3xl font-bold tracking-tight">Report not found</h1>
       <Button asChild className="mt-4">
         <Link to="/buy">Back to inventory</Link>
       </Button>
@@ -117,7 +117,7 @@ function InspectionReport() {
           <Badge variant="secondary" className="mb-2">
             200-point inspection
           </Badge>
-          <h1 className="font-display text-3xl font-bold">Inspection Report</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Inspection Report</h1>
           <p className="text-muted-foreground">
             {listing.year} {listing.brand} {listing.model} · {listing.variant}
           </p>
@@ -169,7 +169,7 @@ function InspectionReport() {
       <div className="mt-8 space-y-6">
         {SECTIONS.map((sec) => (
           <section key={sec.title} className="rounded-2xl border border-border/60 bg-card p-5">
-            <h2 className="font-display text-lg font-semibold">{sec.title}</h2>
+            <h2 className="text-lg font-semibold">{sec.title}</h2>
             <div className="mt-4 grid gap-3 md:grid-cols-2">
               {sec.items.map((it) => (
                 <div key={it.label} className="rounded-xl border border-border/60 p-4">

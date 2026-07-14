@@ -24,7 +24,7 @@ function Register() {
   }
   return (
     <AuthShell>
-      <h1 className="font-display text-2xl font-bold">Create your account</h1>
+      <h1 className="text-2xl font-bold tracking-tight">Create your account</h1>
       <p className="mt-1 text-sm text-muted-foreground">Free to start. No credit card required.</p>
       <form onSubmit={submit} className="mt-6 grid gap-4">
         <div>

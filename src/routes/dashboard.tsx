@@ -36,7 +36,7 @@ function Dashboard() {
     <div className="container mx-auto px-4 py-10">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="font-display text-3xl font-bold">Hi {user.name} 👋</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Hi {user.name} 👋</h1>
           <p className="text-sm text-muted-foreground">
             Track your listings, offers, and support tickets.
           </p>
@@ -53,7 +53,7 @@ function Dashboard() {
         {stats.map((s) => (
           <div
             key={s.label}
-            className="rounded-2xl border border-border/60 bg-card p-5 card-elevated"
+            className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm"
           >
             <div className="flex items-center justify-between">
               <div className="text-xs uppercase tracking-wider text-muted-foreground">
@@ -61,7 +61,7 @@ function Dashboard() {
               </div>
               <s.i className="h-4 w-4 text-primary" />
             </div>
-            <div className="mt-2 font-display text-3xl font-bold">{s.value}</div>
+            <div className="mt-2 text-3xl font-bold tracking-tight">{s.value}</div>
           </div>
         ))}
       </div>
@@ -92,7 +92,7 @@ function Dashboard() {
               {mine.map((l) => (
                 <div
                   key={l.id}
-                  className="flex flex-wrap items-center gap-4 rounded-2xl border border-border/60 bg-card p-4 card-elevated"
+                  className="flex flex-wrap items-center gap-4 rounded-2xl border border-border/60 bg-card p-4 shadow-sm"
                 >
                   <img
                     src={l.images[0]}
@@ -100,7 +100,7 @@ function Dashboard() {
                     className="h-20 w-28 flex-none rounded-lg object-cover"
                   />
                   <div className="flex-1 min-w-[180px]">
-                    <div className="font-display font-semibold">
+                    <div className="font-semibold">
                       {l.year} {l.brand} {l.model}
                     </div>
                     <div className="text-xs text-muted-foreground">
@@ -112,7 +112,7 @@ function Dashboard() {
                   </div>
                   <div className="text-right">
                     <div className="text-xs text-muted-foreground">Asking</div>
-                    <div className="font-display text-lg font-bold">
+                    <div className="text-lg font-bold">
                       {formatPrice(l.expectedPrice)}
                     </div>
                   </div>
@@ -162,7 +162,7 @@ function Dashboard() {
                 return (
                   <div
                     key={b.id}
-                    className="flex flex-wrap items-center gap-4 rounded-2xl border border-border/60 bg-card p-4 card-elevated"
+                    className="flex flex-wrap items-center gap-4 rounded-2xl border border-border/60 bg-card p-4 shadow-sm"
                   >
                     {l && (
                       <img
@@ -172,7 +172,7 @@ function Dashboard() {
                       />
                     )}
                     <div className="flex-1 min-w-[180px]">
-                      <div className="font-display font-semibold">
+                      <div className="font-semibold">
                         {l ? `${l.year} ${l.brand} ${l.model}` : "Listing"}
                       </div>
                       <div className="text-xs text-muted-foreground">
@@ -187,7 +187,7 @@ function Dashboard() {
                       <div className="text-xs text-muted-foreground">
                         {b.type === "reserve" ? "Reserve fee" : "Down payment"}
                       </div>
-                      <div className="font-display text-lg font-bold">
+                      <div className="text-lg font-bold">
                         {formatPrice(
                           b.type === "reserve" ? (b.reserveFee ?? 0) : (b.downPayment ?? 0),
                         )}
@@ -240,10 +240,10 @@ function Dashboard() {
               {myTickets.map((t) => (
                 <div
                   key={t.id}
-                  className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border/60 bg-card p-4 card-elevated"
+                  className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border/60 bg-card p-4 shadow-sm"
                 >
                   <div>
-                    <div className="font-display font-semibold">{t.subject}</div>
+                    <div className="font-semibold">{t.subject}</div>
                     <div className="text-xs text-muted-foreground">
                       {t.category} · {new Date(t.createdAt).toLocaleDateString()}
                     </div>
@@ -264,7 +264,7 @@ function Dashboard() {
 function SignedOut() {
   return (
     <div className="container mx-auto px-4 py-20 text-center">
-      <h1 className="font-display text-3xl font-bold">Sign in to access your dashboard</h1>
+      <h1 className="text-3xl font-bold tracking-tight">Sign in to access your dashboard</h1>
       <p className="mt-2 text-muted-foreground">Track your listings, offers and support tickets.</p>
       <div className="mt-6 flex justify-center gap-3">
         <Button asChild>
@@ -302,10 +302,10 @@ function OfferRow({
   const meta = OFFER_STATE_META[state];
 
   return (
-    <div className="rounded-2xl border border-border/60 bg-card p-4 card-elevated">
+    <div className="rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <div className="font-display font-semibold">
+          <div className="font-semibold">
             {l ? `${l.brand} ${l.model}` : "Listing"}
           </div>
           <div className="text-xs text-muted-foreground">
@@ -315,7 +315,7 @@ function OfferRow({
         <div className="flex items-center gap-3 text-right">
           <div>
             <div className="text-xs text-muted-foreground">Offer</div>
-            <div className="font-display text-xl font-bold">{formatPrice(offer.amount)}</div>
+            <div className="text-xl font-bold">{formatPrice(offer.amount)}</div>
           </div>
           {asking > 0 && (
             <div>

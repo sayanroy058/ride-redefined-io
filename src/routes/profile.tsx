@@ -33,7 +33,7 @@ function Profile() {
   if (!user) {
     return (
       <div className="container mx-auto px-4 py-20 text-center">
-        <h1 className="font-display text-2xl font-bold">Please sign in</h1>
+        <h1 className="text-2xl font-bold tracking-tight">Please sign in</h1>
         <Button asChild className="mt-4">
           <Link to="/login">Sign in</Link>
         </Button>
@@ -47,7 +47,7 @@ function Profile() {
     <div className="container mx-auto max-w-4xl px-4 py-12">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="font-display text-3xl font-bold">Your profile</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Your profile</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Keep your details current — they’re used across listings and bookings.
           </p>
@@ -60,14 +60,14 @@ function Profile() {
       </div>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_320px]">
-        <div className="rounded-2xl border border-border/60 bg-card p-6 card-elevated">
+        <div className="rounded-2xl border border-border/60 bg-card p-6 shadow-sm">
           <div className="flex items-center gap-4">
             <div className="grid h-16 w-16 place-items-center rounded-full bg-gradient-to-br from-primary to-accent text-2xl font-bold text-primary-foreground">
               {user.name.slice(0, 1).toUpperCase()}
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <div className="font-display text-lg font-semibold">{user.name}</div>
+                <div className="text-lg font-semibold">{user.name}</div>
                 <Badge variant="outline" className="capitalize">
                   <ShieldCheck className="mr-1 h-3 w-3" />
                   {ROLE_LABEL[user.role] ?? user.role}
@@ -141,10 +141,10 @@ function Profile() {
         </div>
 
         <aside className="space-y-4">
-          <div className="rounded-2xl border border-border/60 bg-card p-5 card-elevated">
+          <div className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm">
             <div className="flex items-center gap-2">
               <History className="h-4 w-4 text-primary" />
-              <h3 className="font-display text-sm font-semibold">Recent activity</h3>
+              <h3 className="text-sm font-semibold">Recent activity</h3>
             </div>
             <Separator className="my-3" />
             {recent.length === 0 ? (
@@ -174,7 +174,7 @@ function Profile() {
 
       {recent.length > 0 && (
         <section className="mt-10">
-          <h2 className="mb-5 font-display text-xl font-semibold">Recently viewed</h2>
+          <h2 className="mb-5 text-xl font-semibold">Recently viewed</h2>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {recent.map((l) => (
               <CarCard key={l.id} listing={l} />

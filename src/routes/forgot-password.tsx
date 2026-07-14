@@ -13,7 +13,7 @@ function Forgot() {
   const [sent, setSent] = useState(false);
   return (
     <AuthShell>
-      <h1 className="font-display text-2xl font-bold">Reset password</h1>
+      <h1 className="text-2xl font-bold tracking-tight">Reset password</h1>
       <p className="mt-1 text-sm text-muted-foreground">We'll email you a reset link.</p>
       {sent ? (
         <div className="mt-6 rounded-xl border border-success/30 bg-success/5 p-4 text-sm">

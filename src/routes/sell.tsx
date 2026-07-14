@@ -80,7 +80,7 @@ function Sell() {
   if (!user)
     return (
       <div className="container mx-auto px-4 py-20 text-center">
-        <h1 className="font-display text-3xl font-bold">Sign in to sell your car</h1>
+        <h1 className="text-3xl font-bold tracking-tight">Sign in to sell your car</h1>
         <p className="mt-2 text-muted-foreground">Create an account to submit your vehicle.</p>
         <div className="mt-6 flex justify-center gap-3">
           <Button asChild>
@@ -158,7 +158,7 @@ function Sell() {
   return (
     <div className="container mx-auto max-w-4xl px-4 py-12">
       <div className="mb-6">
-        <h1 className="font-display text-3xl font-bold">Sell your car</h1>
+        <h1 className="text-3xl font-bold tracking-tight">Sell your car</h1>
         <p className="mt-1 text-sm text-muted-foreground">
           Step {step + 1} of {STEPS.length} · {STEPS[step]}
         </p>
@@ -175,7 +175,7 @@ function Sell() {
         </div>
       </div>
 
-      <div className="rounded-2xl border border-border/60 bg-card p-6 card-elevated md:p-8">
+      <div className="rounded-2xl border border-border/60 bg-card p-6 shadow-sm md:p-8">
         {step === 0 && (
           <div className="grid gap-4 md:grid-cols-2">
             <Field label="Brand *">
@@ -525,7 +525,7 @@ function UploadCard({
         <Icon className="h-5 w-5 text-primary" />
       </div>
       <div className="flex-1">
-        <div className="font-display text-sm font-semibold">{title}</div>
+        <div className="text-sm font-semibold">{title}</div>
         <div className="text-xs text-muted-foreground">{desc}</div>
       </div>
       <div className="text-xs font-semibold text-success">{count} attached</div>

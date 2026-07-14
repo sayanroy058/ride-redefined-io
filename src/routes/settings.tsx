@@ -32,7 +32,7 @@ function SettingsPage() {
 
   return (
     <div className="container mx-auto max-w-3xl px-4 py-12">
-      <h1 className="font-display text-3xl font-bold">Settings</h1>
+      <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
       <p className="mt-1 text-sm text-muted-foreground">
         Manage appearance, notifications, and your account.
       </p>
@@ -185,11 +185,11 @@ function Section({
 }) {
   return (
     <section
-      className={`mt-6 rounded-2xl border bg-card p-6 card-elevated ${danger ? "border-destructive/30" : "border-border/60"}`}
+      className={`mt-6 rounded-2xl border bg-card p-6 shadow-sm ${danger ? "border-destructive/30" : "border-border/60"}`}
     >
       <div className="mb-4 flex items-center gap-2">
         <Icon className={`h-4 w-4 ${danger ? "text-destructive" : "text-primary"}`} />
-        <h2 className="font-display text-lg font-semibold">{title}</h2>
+        <h2 className="text-lg font-semibold">{title}</h2>
       </div>
       {children}
     </section>

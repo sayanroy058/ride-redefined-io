@@ -37,7 +37,7 @@ export function EmiCalculator({ price, compact = false }: { price: number; compa
       <div className="flex flex-wrap items-end justify-between gap-2">
         <div>
           <div className="text-xs uppercase tracking-wider text-muted-foreground">Monthly EMI</div>
-          <div className="font-display text-3xl font-bold gradient-text">
+          <div className="text-3xl font-bold tracking-tight gradient-text">
             {formatPrice(monthly)}
           </div>
         </div>

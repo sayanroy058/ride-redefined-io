@@ -152,7 +152,7 @@ function BuyPage() {
     <div className="container mx-auto px-4 py-10">
       <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
         <div>
-          <h1 className="font-display text-3xl font-bold">Buy a car</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Buy a car</h1>
           <p className="text-sm text-muted-foreground">
             {filtered.length} inspected, refurbished cars ready to drive
           </p>
@@ -211,7 +211,7 @@ function BuyPage() {
 
       <div className="grid gap-8 lg:grid-cols-[280px_1fr]">
         <aside className="hidden lg:block">
-          <div className="sticky top-20 rounded-2xl border border-border/60 bg-card p-5 card-elevated">
+          <div className="sticky top-20 rounded-2xl border border-border/60 bg-card p-5 shadow-sm">
             <div className="mb-4 flex items-center justify-between">
               <h3 className="flex items-center gap-2 text-sm font-semibold">
                 <Filter className="h-4 w-4" />

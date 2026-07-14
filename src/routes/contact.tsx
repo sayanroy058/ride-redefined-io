@@ -40,7 +40,7 @@ function ContactPage() {
   return (
     <div className="container mx-auto px-4 py-12">
       <div className="mx-auto max-w-2xl text-center">
-        <h1 className="font-display text-4xl font-bold">Get in touch</h1>
+        <h1 className="text-3xl font-bold tracking-tight">Get in touch</h1>
         <p className="mt-3 text-muted-foreground">
           Questions about a car, financing, or selling? We’re here to help — reach out any time.
         </p>
@@ -54,7 +54,7 @@ function ContactPage() {
         ].map((c) => (
           <div
             key={c.t}
-            className="rounded-2xl border border-border/60 bg-card p-5 text-center card-elevated"
+            className="rounded-2xl border border-border/60 bg-card p-5 text-center shadow-sm"
           >
             <div className="mx-auto grid h-11 w-11 place-items-center rounded-xl bg-primary/10 text-primary">
               <c.i className="h-5 w-5" />
@@ -68,7 +68,7 @@ function ContactPage() {
 
       <div className="mx-auto mt-10 grid max-w-5xl gap-6 lg:grid-cols-2">
         {/* Form */}
-        <div className="rounded-2xl border border-border/60 bg-card p-6 card-elevated">
+        <div className="rounded-2xl border border-border/60 bg-card p-6 shadow-sm">
           <h2 className="font-display text-xl font-semibold">Send a message</h2>
           <form onSubmit={submit} className="mt-4 grid gap-4">
             <div className="grid gap-4 sm:grid-cols-2">
@@ -115,7 +115,7 @@ function ContactPage() {
 
         {/* Offices + map placeholder */}
         <div className="space-y-4">
-          <div className="overflow-hidden rounded-2xl border border-border/60 bg-card card-elevated">
+          <div className="overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm">
             <div className="grid aspect-video place-items-center bg-muted text-muted-foreground">
               <div className="text-center">
                 <MapPin className="mx-auto h-8 w-8" />
@@ -123,7 +123,7 @@ function ContactPage() {
               </div>
             </div>
           </div>
-          <div className="rounded-2xl border border-border/60 bg-card p-5 card-elevated">
+          <div className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm">
             <h3 className="font-display text-base font-semibold">Our offices</h3>
             <ul className="mt-3 space-y-3 text-sm">
               {OFFICES.map((o) => (

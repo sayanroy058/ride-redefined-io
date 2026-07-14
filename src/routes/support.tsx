@@ -45,7 +45,7 @@ function Support() {
   return (
     <div className="container mx-auto px-4 py-12">
       <div className="mx-auto max-w-3xl text-center">
-        <h1 className="font-display text-4xl font-bold">How can we help?</h1>
+        <h1 className="text-3xl font-bold tracking-tight">How can we help?</h1>
         <p className="mt-3 text-muted-foreground">
           From financing to inspections, our team responds within 24 hours.
         </p>
@@ -59,7 +59,7 @@ function Support() {
         ].map((c) => (
           <div
             key={c.t}
-            className="rounded-2xl border border-border/60 bg-card p-5 text-center card-elevated"
+            className="rounded-2xl border border-border/60 bg-card p-5 text-center shadow-sm"
           >
             <div className="mx-auto grid h-11 w-11 place-items-center rounded-xl bg-primary/10 text-primary">
               <c.i className="h-5 w-5" />
@@ -71,7 +71,7 @@ function Support() {
         ))}
       </div>
 
-      <div className="mx-auto mt-10 max-w-3xl rounded-2xl border border-border/60 bg-card p-6 card-elevated md:p-8">
+      <div className="mx-auto mt-10 max-w-3xl rounded-2xl border border-border/60 bg-card p-6 shadow-sm md:p-8">
         <div className="mb-6 flex items-center gap-2">
           <LifeBuoy className="h-5 w-5 text-primary" />
           <h2 className="font-display text-xl font-semibold">Open a support ticket</h2>

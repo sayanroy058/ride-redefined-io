@@ -18,7 +18,7 @@ export const Route = createFileRoute("/buy/$id/defects")({
   component: DefectsReport,
   notFoundComponent: () => (
     <div className="container mx-auto px-4 py-20 text-center">
-      <h1 className="font-display text-3xl font-bold">Report not found</h1>
+      <h1 className="text-3xl font-bold tracking-tight">Report not found</h1>
       <Button asChild className="mt-4">
         <Link to="/buy">Back to inventory</Link>
       </Button>
@@ -141,7 +141,7 @@ function DefectsReport() {
           <Badge variant="secondary" className="mb-2">
             Full transparency
           </Badge>
-          <h1 className="font-display text-3xl font-bold">Defects Report</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Defects Report</h1>
           <p className="text-muted-foreground">
             {listing.year} {listing.brand} {listing.model} · {listing.variant}
           </p>
@@ -194,7 +194,7 @@ function DefectsReport() {
                 <div className="flex-1">
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <div>
-                      <div className="font-display text-base font-semibold">{d.area}</div>
+                      <div className="text-base font-semibold">{d.area}</div>
                       <div className="text-xs text-muted-foreground">{d.category}</div>
                     </div>
                     <Badge variant="outline" className={meta.text}>
@@ -262,7 +262,7 @@ function SummaryCard({
   return (
     <div className={`rounded-2xl border p-5 ${cls}`}>
       <div className="text-xs uppercase tracking-wider opacity-80">{label} issues</div>
-      <div className="mt-1 font-display text-3xl font-bold">{value}</div>
+      <div className="mt-1 text-3xl font-bold tracking-tight">{value}</div>
     </div>
   );
 }

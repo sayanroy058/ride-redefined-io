@@ -29,7 +29,7 @@ function Login() {
 
   return (
     <AuthShell>
-      <h1 className="font-display text-2xl font-bold">Welcome back</h1>
+      <h1 className="text-2xl font-bold tracking-tight">Welcome back</h1>
       <p className="mt-1 text-sm text-muted-foreground">Sign in to continue to DriveHub.</p>
       <form onSubmit={submit} className="mt-6 grid gap-4">
         <div>
@@ -83,7 +83,7 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
             <Car className="h-3.5 w-3.5" />
             DriveHub
           </div>
-          <h2 className="mt-6 font-display text-4xl font-bold leading-tight">
+          <h2 className="mt-6 text-4xl font-bold tracking-tight leading-tight">
             Drive the next <span className="gradient-text">chapter</span>.
           </h2>
           <p className="mt-4 max-w-md text-white/70">
@@ -91,7 +91,7 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
             EMI.
           </p>
         </div>
-        <div className="mx-auto w-full max-w-md rounded-2xl border border-border/60 bg-background/95 p-8 card-elevated">
+        <div className="mx-auto w-full max-w-md rounded-2xl border border-border/60 bg-card shadow-lg p-8">
           {children}
         </div>
       </div>

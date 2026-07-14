@@ -94,7 +94,7 @@ function AgentDashboard() {
         {stats.map((s) => (
           <div
             key={s.label}
-            className="rounded-2xl border border-border/60 bg-card p-5 card-elevated"
+            className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm"
           >
             <div className="flex items-center justify-between">
               <span className="text-[10px] uppercase tracking-wider text-muted-foreground">

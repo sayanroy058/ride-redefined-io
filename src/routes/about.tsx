@@ -8,10 +8,10 @@ export const Route = createFileRoute("/about")({
 function About() {
   return (
     <div>
-      <section className="relative overflow-hidden" style={{ background: "var(--gradient-hero)" }}>
+      <section className="relative overflow-hidden bg-[var(--gradient-hero)]">
         <div className="absolute inset-0 grid-bg opacity-30" />
         <div className="container relative mx-auto px-4 py-20 text-white">
-          <h1 className="max-w-2xl font-display text-4xl font-bold md:text-5xl">
+          <h1 className="max-w-2xl text-4xl font-bold tracking-tight md:text-5xl">
             A used car marketplace built on <span className="gradient-text">trust</span>.
           </h1>
           <p className="mt-4 max-w-2xl text-white/70">
@@ -22,7 +22,7 @@ function About() {
       </section>
 
       <section className="container mx-auto px-4 py-16">
-        <h2 className="font-display text-2xl font-bold">How it works</h2>
+        <h2 className="text-2xl font-bold tracking-tight">How it works</h2>
         <div className="mt-8 grid gap-4 md:grid-cols-5">
           {[
             { i: ScanLine, t: "1. Submit", d: "Tell us about your car." },
@@ -33,10 +33,10 @@ function About() {
           ].map((s) => (
             <div
               key={s.t}
-              className="rounded-2xl border border-border/60 bg-card p-5 card-elevated"
+              className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm"
             >
               <s.i className="h-6 w-6 text-primary" />
-              <h3 className="mt-3 font-display text-base font-semibold">{s.t}</h3>
+              <h3 className="mt-3 text-base font-semibold">{s.t}</h3>
               <p className="mt-1 text-sm text-muted-foreground">{s.d}</p>
             </div>
           ))}
@@ -46,7 +46,7 @@ function About() {
       <section className="container mx-auto px-4 py-16">
         <div className="grid gap-10 md:grid-cols-3">
           <div className="md:col-span-2">
-            <h2 className="font-display text-2xl font-bold">Our mission</h2>
+            <h2 className="text-2xl font-bold tracking-tight">Our mission</h2>
             <p className="mt-4 leading-relaxed text-muted-foreground">
               We started DriveHub because buying a used car shouldn't feel like a gamble. Every car
               on our platform passes a rigorous 200-point inspection, gets refurbished by certified
@@ -66,9 +66,9 @@ function About() {
             ].map(([n, l]) => (
               <div
                 key={l}
-                className="rounded-2xl border border-border/60 bg-card p-5 card-elevated"
+                className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm"
               >
-                <div className="font-display text-3xl font-bold gradient-text">{n}</div>
+                <div className="text-3xl font-bold gradient-text">{n}</div>
                 <div className="mt-1 text-sm text-muted-foreground">{l}</div>
               </div>
             ))}

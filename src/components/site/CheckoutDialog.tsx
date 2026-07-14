@@ -97,7 +97,7 @@ export function CheckoutDialog({
           <div className="rounded-xl border border-border/60 bg-secondary/40 p-4">
             <div className="flex items-center justify-between text-sm">
               <span className="text-muted-foreground">Drive-away price</span>
-              <span className="font-display text-xl font-bold">{formatPrice(price)}</span>
+              <span className="text-xl font-bold tracking-tight">{formatPrice(price)}</span>
             </div>
             <Separator className="my-3" />
             <div className="grid grid-cols-2 gap-y-2 text-sm">
@@ -158,7 +158,7 @@ export function CheckoutDialog({
           <div className="rounded-xl border border-primary/30 bg-primary/5 p-4 text-sm">
             <div className="flex items-center justify-between">
               <span className="text-muted-foreground">Due now</span>
-              <span className="font-display text-2xl font-bold gradient-text">
+              <span className="text-2xl font-bold tracking-tight gradient-text">
                 {formatPrice(dueNow)}
               </span>
             </div>
