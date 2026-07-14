@@ -17,10 +17,10 @@ import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as DashboardRouteImport } from './routes/dashboard'
-import { Route as BuyRouteImport } from './routes/buy'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as BuyIndexRouteImport } from './routes/buy.index'
 import { Route as AgentIndexRouteImport } from './routes/agent.index'
 import { Route as BuyIdRouteImport } from './routes/buy.$id'
 import { Route as AgentSellRouteImport } from './routes/agent.sell'
@@ -67,11 +67,6 @@ const DashboardRoute = DashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
-const BuyRoute = BuyRouteImport.update({
-  id: '/buy',
-  path: '/buy',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AdminRoute = AdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -87,15 +82,20 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BuyIndexRoute = BuyIndexRouteImport.update({
+  id: '/buy/',
+  path: '/buy/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AgentIndexRoute = AgentIndexRouteImport.update({
   id: '/agent/',
   path: '/agent/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BuyIdRoute = BuyIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => BuyRoute,
+  id: '/buy/$id',
+  path: '/buy/$id',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AgentSellRoute = AgentSellRouteImport.update({
   id: '/agent/sell',
@@ -117,7 +117,6 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
-  '/buy': typeof BuyRouteWithChildren
   '/dashboard': typeof DashboardRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
@@ -129,6 +128,7 @@ export interface FileRoutesByFullPath {
   '/agent/sell': typeof AgentSellRoute
   '/buy/$id': typeof BuyIdRouteWithChildren
   '/agent/': typeof AgentIndexRoute
+  '/buy/': typeof BuyIndexRoute
   '/buy/$id/defects': typeof BuyIdDefectsRoute
   '/buy/$id/inspection': typeof BuyIdInspectionRoute
 }
@@ -136,7 +136,6 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
-  '/buy': typeof BuyRouteWithChildren
   '/dashboard': typeof DashboardRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
@@ -148,6 +147,7 @@ export interface FileRoutesByTo {
   '/agent/sell': typeof AgentSellRoute
   '/buy/$id': typeof BuyIdRouteWithChildren
   '/agent': typeof AgentIndexRoute
+  '/buy': typeof BuyIndexRoute
   '/buy/$id/defects': typeof BuyIdDefectsRoute
   '/buy/$id/inspection': typeof BuyIdInspectionRoute
 }
@@ -156,7 +156,6 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
-  '/buy': typeof BuyRouteWithChildren
   '/dashboard': typeof DashboardRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
@@ -168,6 +167,7 @@ export interface FileRoutesById {
   '/agent/sell': typeof AgentSellRoute
   '/buy/$id': typeof BuyIdRouteWithChildren
   '/agent/': typeof AgentIndexRoute
+  '/buy/': typeof BuyIndexRoute
   '/buy/$id/defects': typeof BuyIdDefectsRoute
   '/buy/$id/inspection': typeof BuyIdInspectionRoute
 }
@@ -177,7 +177,6 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/admin'
-    | '/buy'
     | '/dashboard'
     | '/forgot-password'
     | '/login'
@@ -189,6 +188,7 @@ export interface FileRouteTypes {
     | '/agent/sell'
     | '/buy/$id'
     | '/agent/'
+    | '/buy/'
     | '/buy/$id/defects'
     | '/buy/$id/inspection'
   fileRoutesByTo: FileRoutesByTo
@@ -196,7 +196,6 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/admin'
-    | '/buy'
     | '/dashboard'
     | '/forgot-password'
     | '/login'
@@ -208,6 +207,7 @@ export interface FileRouteTypes {
     | '/agent/sell'
     | '/buy/$id'
     | '/agent'
+    | '/buy'
     | '/buy/$id/defects'
     | '/buy/$id/inspection'
   id:
@@ -215,7 +215,6 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/admin'
-    | '/buy'
     | '/dashboard'
     | '/forgot-password'
     | '/login'
@@ -227,6 +226,7 @@ export interface FileRouteTypes {
     | '/agent/sell'
     | '/buy/$id'
     | '/agent/'
+    | '/buy/'
     | '/buy/$id/defects'
     | '/buy/$id/inspection'
   fileRoutesById: FileRoutesById
@@ -235,7 +235,6 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   AdminRoute: typeof AdminRoute
-  BuyRoute: typeof BuyRouteWithChildren
   DashboardRoute: typeof DashboardRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   LoginRoute: typeof LoginRoute
@@ -245,7 +244,9 @@ export interface RootRouteChildren {
   SupportRoute: typeof SupportRoute
   VerifyOtpRoute: typeof VerifyOtpRoute
   AgentSellRoute: typeof AgentSellRoute
+  BuyIdRoute: typeof BuyIdRouteWithChildren
   AgentIndexRoute: typeof AgentIndexRoute
+  BuyIndexRoute: typeof BuyIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -306,13 +307,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/buy': {
-      id: '/buy'
-      path: '/buy'
-      fullPath: '/buy'
-      preLoaderRoute: typeof BuyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/admin': {
       id: '/admin'
       path: '/admin'
@@ -334,6 +328,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/buy/': {
+      id: '/buy/'
+      path: '/buy'
+      fullPath: '/buy/'
+      preLoaderRoute: typeof BuyIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/agent/': {
       id: '/agent/'
       path: '/agent'
@@ -343,10 +344,10 @@ declare module '@tanstack/react-router' {
     }
     '/buy/$id': {
       id: '/buy/$id'
-      path: '/$id'
+      path: '/buy/$id'
       fullPath: '/buy/$id'
       preLoaderRoute: typeof BuyIdRouteImport
-      parentRoute: typeof BuyRoute
+      parentRoute: typeof rootRouteImport
     }
     '/agent/sell': {
       id: '/agent/sell'
@@ -384,21 +385,10 @@ const BuyIdRouteChildren: BuyIdRouteChildren = {
 
 const BuyIdRouteWithChildren = BuyIdRoute._addFileChildren(BuyIdRouteChildren)
 
-interface BuyRouteChildren {
-  BuyIdRoute: typeof BuyIdRouteWithChildren
-}
-
-const BuyRouteChildren: BuyRouteChildren = {
-  BuyIdRoute: BuyIdRouteWithChildren,
-}
-
-const BuyRouteWithChildren = BuyRoute._addFileChildren(BuyRouteChildren)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   AdminRoute: AdminRoute,
-  BuyRoute: BuyRouteWithChildren,
   DashboardRoute: DashboardRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
   LoginRoute: LoginRoute,
@@ -408,7 +398,9 @@ const rootRouteChildren: RootRouteChildren = {
   SupportRoute: SupportRoute,
   VerifyOtpRoute: VerifyOtpRoute,
   AgentSellRoute: AgentSellRoute,
+  BuyIdRoute: BuyIdRouteWithChildren,
   AgentIndexRoute: AgentIndexRoute,
+  BuyIndexRoute: BuyIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

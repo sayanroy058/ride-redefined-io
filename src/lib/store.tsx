@@ -45,7 +45,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [wishlist, setWishlist] = useState<string[]>([]);
   const [recentlyViewed, setRecentlyViewed] = useState<string[]>([]);
   const [compare, setCompare] = useState<string[]>([]);
-  const [theme, setThemeState] = useState<"light" | "dark">("dark");
+  const [theme, setThemeState] = useState<"light" | "dark">("light");
 
   useEffect(() => {
     const p = loadPersisted();
@@ -57,7 +57,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setWishlist(p.wishlist ?? []);
       setRecentlyViewed(p.recentlyViewed ?? []);
       setCompare(p.compare ?? []);
-      setThemeState(p.theme ?? "dark");
+      setThemeState(p.theme ?? "light");
     } else {
       setListings(generateMockListings());
       setTickets(SEED_TICKETS);
