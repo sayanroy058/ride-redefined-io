@@ -7,7 +7,6 @@ import { CarCard, formatPrice, StatusBadge } from "@/components/site/CarCard";
 import { EmptyState } from "@/components/site/States";
 
 export const Route = createFileRoute("/dashboard")({
-  head: () => ({ meta: [{ title: "Seller dashboard — DriveHub" }] }),
   component: Dashboard,
 });
 

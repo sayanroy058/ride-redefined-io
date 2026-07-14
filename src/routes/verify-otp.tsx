@@ -6,7 +6,6 @@ import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp
 import { AuthShell } from "./login";
 
 export const Route = createFileRoute("/verify-otp")({
-  head: () => ({ meta: [{ title: "Verify OTP — DriveHub" }] }),
   component: OTP,
 });
 function OTP() {

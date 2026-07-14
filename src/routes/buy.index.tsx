@@ -13,12 +13,6 @@ import { BODY_TYPES, BRANDS, FUEL_TYPES, OWNERSHIP, STATES, TRANSMISSIONS } from
 import { useApp } from "@/lib/store";
 
 export const Route = createFileRoute("/buy/")({
-  head: () => ({
-    meta: [
-      { title: "Buy Used Cars — DriveHub Inventory" },
-      { name: "description", content: "Browse certified pre-owned cars. Filter by brand, fuel, transmission, price, and more." },
-    ],
-  }),
   component: BuyPage,
 });
 

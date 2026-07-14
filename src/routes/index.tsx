@@ -10,12 +10,6 @@ import { CarCard } from "@/components/site/CarCard";
 import { BRANDS, BODY_TYPES } from "@/lib/mock-data";
 
 export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: "DriveHub — Premium Used Cars, Inspected & Refurbished" },
-      { name: "description", content: "Buy and sell certified pre-owned cars. 200-point inspection, refurbished by experts, financing in minutes." },
-    ],
-  }),
   component: Landing,
 });
 

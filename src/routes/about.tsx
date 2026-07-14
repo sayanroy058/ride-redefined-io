@@ -2,12 +2,6 @@ import { createFileRoute } from "@tanstack/react-router";
 import { BadgeCheck, ScanLine, ShieldCheck, Truck, Wrench } from "lucide-react";
 
 export const Route = createFileRoute("/about")({
-  head: () => ({
-    meta: [
-      { title: "About DriveHub — How we work" },
-      { name: "description", content: "Inspection, refurbishment, transparent pricing — the DriveHub way." },
-    ],
-  }),
   component: About,
 });
 

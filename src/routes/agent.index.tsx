@@ -8,7 +8,6 @@ import { formatPrice, StatusBadge } from "@/components/site/CarCard";
 import { EmptyState } from "@/components/site/States";
 
 export const Route = createFileRoute("/agent/")({
-  head: () => ({ meta: [{ title: "Agent console — DriveHub" }] }),
   component: AgentDashboard,
 });
 

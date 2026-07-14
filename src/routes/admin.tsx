@@ -16,7 +16,6 @@ import { formatPrice, StatusBadge } from "@/components/site/CarCard";
 import type { Listing, TicketStatus } from "@/lib/types";
 
 export const Route = createFileRoute("/admin")({
-  head: () => ({ meta: [{ title: "Admin — DriveHub" }] }),
   component: Admin,
 });
 

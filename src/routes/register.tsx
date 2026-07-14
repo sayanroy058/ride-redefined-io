@@ -8,7 +8,6 @@ import { useApp } from "@/lib/store";
 import { AuthShell } from "./login";
 
 export const Route = createFileRoute("/register")({
-  head: () => ({ meta: [{ title: "Create an account — DriveHub" }] }),
   component: Register,
 });
 

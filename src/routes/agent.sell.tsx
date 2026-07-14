@@ -13,7 +13,6 @@ import { BRANDS, BODY_TYPES, FUEL_TYPES, OWNERSHIP, STATES, TRANSMISSIONS } from
 import type { Listing } from "@/lib/types";
 
 export const Route = createFileRoute("/agent/sell")({
-  head: () => ({ meta: [{ title: "Onboard a car — Agent — DriveHub" }] }),
   component: AgentSell,
 });
 

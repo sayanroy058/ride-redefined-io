@@ -8,7 +8,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { useApp } from "@/lib/store";
 
 export const Route = createFileRoute("/profile")({
-  head: () => ({ meta: [{ title: "Profile — DriveHub" }] }),
   component: Profile,
 });
 

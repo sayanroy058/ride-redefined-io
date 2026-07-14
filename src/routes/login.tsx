@@ -8,7 +8,6 @@ import { Label } from "@/components/ui/label";
 import { useApp } from "@/lib/store";
 
 export const Route = createFileRoute("/login")({
-  head: () => ({ meta: [{ title: "Login — DriveHub" }] }),
   component: Login,
 });
 

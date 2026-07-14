@@ -10,7 +10,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useApp } from "@/lib/store";
 
 export const Route = createFileRoute("/support")({
-  head: () => ({ meta: [{ title: "Support — DriveHub" }, { name: "description", content: "Get help with inspections, financing, and your purchase." }] }),
   component: Support,
 });
 
