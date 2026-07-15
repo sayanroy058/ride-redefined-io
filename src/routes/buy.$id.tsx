@@ -36,11 +36,26 @@ import { CarCard, formatPrice } from "@/components/site/CarCard";
 import { EmiCalculator } from "@/components/site/EmiCalculator";
 import { CheckoutDialog } from "@/components/site/CheckoutDialog";
 import { OfferForm } from "@/components/site/OfferForm";
+import { DetailSkeleton } from "@/components/site/Skeletons";
+import { Seo } from "@/components/site/Seo";
 import { emiEstimate } from "@/lib/mock-data";
+import { getListing, getSimilar } from "@/lib/api";
+import { qk } from "@/lib/queries";
 import type { BookingType } from "@/lib/types";
 
 export const Route = createFileRoute("/buy/$id")({
   component: VehicleDetail,
+  pendingComponent: () => <DetailSkeleton />,
+  loader: async ({ context, params }) => {
+    await context.queryClient.ensureQueryData({
+      queryKey: qk.listing(params.id),
+      queryFn: () => getListing(params.id),
+    });
+    await context.queryClient.ensureQueryData({
+      queryKey: qk.similar(params.id),
+      queryFn: () => getSimilar(params.id),
+    });
+  },
   notFoundComponent: () => (
     <div className="container mx-auto px-4 py-20 text-center">
       <h1 className="text-3xl font-bold tracking-tight">Car not found</h1>
@@ -162,6 +177,13 @@ function VehicleDetail() {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      <Seo
+        title={`${listing.year} ${listing.brand} ${listing.model} ${listing.variant} — DriveHub`}
+        description={`${listing.year} ${listing.brand} ${listing.model}, ${listing.kmDriven.toLocaleString()} km, ${listing.fuelType}, ${listing.transmission}. Inspected & refurbished. ${formatPrice(price)}.`}
+        canonical={`/buy/${listing.id}`}
+        ogTitle={`${listing.year} ${listing.brand} ${listing.model} — ${formatPrice(price)}`}
+        ogDescription={`${listing.kmDriven.toLocaleString()} km · ${listing.fuelType} · ${listing.registrationCity}`}
+      />
       <Link
         to="/buy"
         className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"

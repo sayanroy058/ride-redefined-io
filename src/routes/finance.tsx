@@ -11,6 +11,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { EmiCalculator } from "@/components/site/EmiCalculator";
+import { Seo } from "@/components/site/Seo";
 
 export const Route = createFileRoute("/finance")({
   component: FinancePage,
@@ -30,6 +31,11 @@ function FinancePage() {
 
   return (
     <div>
+      <Seo
+        title="Finance & EMI — DriveHub"
+        description="Calculate your EMI and compare car loan partners. Financing in minutes."
+        canonical="/finance"
+      />
       <section className="relative overflow-hidden" style={{ background: "var(--gradient-hero)" }}>
         <div className="absolute inset-0 grid-bg opacity-30" />
         <div className="container relative mx-auto px-4 py-20 text-white">
@@ -102,10 +108,7 @@ function FinancePage() {
               d: "PAN, Aadhaar, last 3 payslips / 2-yr ITR, bank statements.",
             },
           ].map((x) => (
-            <div
-              key={x.t}
-              className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm"
-            >
+            <div key={x.t} className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm">
               <div className="grid h-11 w-11 place-items-center rounded-xl bg-primary/10 text-primary">
                 <x.i className="h-5 w-5" />
               </div>

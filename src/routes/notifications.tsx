@@ -4,11 +4,36 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useApp } from "@/lib/store";
 import { EmptyState } from "@/components/site/States";
+import { TableSkeleton } from "@/components/site/Skeletons";
+import { Seo } from "@/components/site/Seo";
+import { getBookings, getOffers, getTickets } from "@/lib/api";
+import { qk } from "@/lib/queries";
 import { formatPrice } from "@/components/site/CarCard";
 import type { Offer, Ticket, Booking } from "@/lib/types";
 
 export const Route = createFileRoute("/notifications")({
   component: NotificationsPage,
+  pendingComponent: () => (
+    <div className="container mx-auto max-w-3xl px-4 py-10">
+      <TableSkeleton rows={4} />
+    </div>
+  ),
+  loader: async ({ context }) => {
+    await Promise.all([
+      context.queryClient.ensureQueryData({
+        queryKey: qk.offers(),
+        queryFn: () => getOffers(),
+      }),
+      context.queryClient.ensureQueryData({
+        queryKey: qk.bookings(),
+        queryFn: () => getBookings(),
+      }),
+      context.queryClient.ensureQueryData({
+        queryKey: qk.tickets(),
+        queryFn: () => getTickets(),
+      }),
+    ]);
+  },
 });
 
 type Item = {
@@ -96,6 +121,11 @@ function NotificationsPage() {
 
   return (
     <div className="container mx-auto max-w-3xl px-4 py-10">
+      <Seo
+        title="Notifications — DriveHub"
+        description="Offers, bookings, and ticket updates."
+        canonical="/notifications"
+      />
       <div className="mb-6 flex items-center gap-2">
         <Bell className="h-5 w-5 text-primary" />
         <h1 className="text-3xl font-bold tracking-tight">Notifications</h1>

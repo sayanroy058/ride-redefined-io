@@ -1,12 +1,22 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Clock, Mail, MapPin, MessageCircle, Phone, Send } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { useApp } from "@/lib/store";
+import { Seo } from "@/components/site/Seo";
+import { contactSchema, type ContactValues } from "@/lib/validations";
 
 export const Route = createFileRoute("/contact")({
   component: ContactPage,
@@ -20,25 +30,33 @@ const OFFICES = [
 
 function ContactPage() {
   const { user } = useApp();
-  const [form, setForm] = useState({
-    name: user?.name ?? "",
-    email: user?.email ?? "",
-    subject: "",
-    message: "",
+  const form = useForm<ContactValues>({
+    resolver: zodResolver(contactSchema),
+    defaultValues: {
+      name: user?.name ?? "",
+      email: user?.email ?? "",
+      subject: "",
+      message: "",
+    },
   });
 
-  function submit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!form.name || !form.email || !form.message) {
-      toast.error("Please fill all fields");
-      return;
-    }
+  function submit(_values: ContactValues) {
     toast.success("Message sent! We'll reply within 24 hours.");
-    setForm({ ...form, subject: "", message: "" });
+    form.reset({
+      name: form.getValues("name"),
+      email: form.getValues("email"),
+      subject: "",
+      message: "",
+    });
   }
 
   return (
     <div className="container mx-auto px-4 py-12">
+      <Seo
+        title="Contact DriveHub"
+        description="Questions about a car, financing, or selling? Reach out to our team any time."
+        canonical="/contact"
+      />
       <div className="mx-auto max-w-2xl text-center">
         <h1 className="text-3xl font-bold tracking-tight">Get in touch</h1>
         <p className="mt-3 text-muted-foreground">
@@ -70,47 +88,67 @@ function ContactPage() {
         {/* Form */}
         <div className="rounded-2xl border border-border/60 bg-card p-6 shadow-sm">
           <h2 className="font-display text-xl font-semibold">Send a message</h2>
-          <form onSubmit={submit} className="mt-4 grid gap-4">
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div>
-                <Label className="mb-1.5 inline-block">Name</Label>
-                <Input
-                  value={form.name}
-                  onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-                  required
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(submit)} className="mt-4 grid gap-4">
+              <div className="grid gap-4 sm:grid-cols-2">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Your name" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input type="email" placeholder="you@example.com" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
               </div>
-              <div>
-                <Label className="mb-1.5 inline-block">Email</Label>
-                <Input
-                  type="email"
-                  value={form.email}
-                  onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
-                  required
-                />
-              </div>
-            </div>
-            <div>
-              <Label className="mb-1.5 inline-block">Subject</Label>
-              <Input
-                value={form.subject}
-                onChange={(e) => setForm((f) => ({ ...f, subject: e.target.value }))}
-                placeholder="How can we help?"
+              <FormField
+                control={form.control}
+                name="subject"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Subject</FormLabel>
+                    <FormControl>
+                      <Input placeholder="How can we help?" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
-            <div>
-              <Label className="mb-1.5 inline-block">Message</Label>
-              <Textarea
-                rows={5}
-                value={form.message}
-                onChange={(e) => setForm((f) => ({ ...f, message: e.target.value }))}
-                required
+              <FormField
+                control={form.control}
+                name="message"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Message</FormLabel>
+                    <FormControl>
+                      <Textarea rows={5} placeholder="Tell us more..." {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
-            <Button type="submit" size="lg">
-              <Send className="mr-1 h-4 w-4" /> Send message
-            </Button>
-          </form>
+              <Button type="submit" size="lg">
+                <Send className="mr-1 h-4 w-4" /> Send message
+              </Button>
+            </form>
+          </Form>
         </div>
 
         {/* Offices + map placeholder */}

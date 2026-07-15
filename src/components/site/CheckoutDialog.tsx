@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "@tanstack/react-router";
 import { BadgeCheck, CalendarClock, Car, CreditCard, MapPin, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Dialog,
   DialogContent,
@@ -13,9 +13,18 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { useApp } from "@/lib/store";
 import { formatPrice, formatPriceShort } from "@/components/site/CarCard";
 import { emiFor } from "@/components/site/EmiCalculator";
+import { checkoutSchema, type CheckoutValues } from "@/lib/validations";
 import type { BookingType, Listing } from "@/lib/types";
 
 const RESERVE_FEE = 7999;
@@ -34,38 +43,45 @@ export function CheckoutDialog({
   const { user, addBooking } = useApp();
   const nav = useNavigate();
   const price = listing.pricing?.finalPrice ?? listing.expectedPrice;
-  const [tenure, setTenure] = useState(5);
-  const [downPct, setDownPct] = useState(20);
-  const [name, setName] = useState(user?.name ?? "");
-  const [email, setEmail] = useState(user?.email ?? "");
-  const [phone, setPhone] = useState(user?.phone ?? "");
-  const [city, setCity] = useState(listing.registrationCity);
+  const form = useForm<CheckoutValues>({
+    resolver: zodResolver(checkoutSchema),
+    defaultValues: {
+      name: user?.name ?? "",
+      phone: user?.phone ?? "",
+      email: user?.email ?? "",
+      city: listing.registrationCity,
+      tenure: 5,
+      downPct: 20,
+    },
+  });
+
+  const tenure = form.watch("tenure");
+  const downPct = form.watch("downPct");
+  const name = form.watch("name");
+  const phone = form.watch("phone");
+  const email = form.watch("email");
+  const city = form.watch("city");
 
   const downPayment = Math.round((price * downPct) / 100);
   const monthly = emiFor(price, downPayment, tenure, 9.5);
   const dueNow = type === "reserve" ? RESERVE_FEE : downPayment;
 
-  function confirm(e: React.FormEvent) {
-    e.preventDefault();
+  function confirm(values: CheckoutValues) {
     if (!user) {
       toast.error("Sign in to continue");
-      return;
-    }
-    if (!name || !phone) {
-      toast.error("Please fill your name and phone");
       return;
     }
     addBooking({
       listingId: listing.id,
       userId: user.id,
-      buyerName: name,
-      buyerEmail: email,
-      buyerPhone: phone,
+      buyerName: values.name,
+      buyerEmail: values.email,
+      buyerPhone: values.phone,
       type,
       amount: price,
       reserveFee: type === "reserve" ? RESERVE_FEE : undefined,
-      tenure,
-      downPayment,
+      tenure: values.tenure,
+      downPayment: Math.round((price * values.downPct) / 100),
     });
     toast.success(
       type === "reserve"
@@ -93,112 +109,157 @@ export function CheckoutDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={confirm} className="space-y-5">
-          <div className="rounded-xl border border-border/60 bg-secondary/40 p-4">
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">Drive-away price</span>
-              <span className="text-xl font-bold tracking-tight">{formatPrice(price)}</span>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(confirm)} className="space-y-5">
+            <div className="rounded-xl border border-border/60 bg-secondary/40 p-4">
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-muted-foreground">Drive-away price</span>
+                <span className="text-xl font-bold tracking-tight">{formatPrice(price)}</span>
+              </div>
+              <Separator className="my-3" />
+              <div className="grid grid-cols-2 gap-y-2 text-sm">
+                <span className="text-muted-foreground">Down payment ({downPct}%)</span>
+                <span className="text-right font-medium">{formatPriceShort(downPayment)}</span>
+                <span className="text-muted-foreground">Tenure</span>
+                <span className="text-right font-medium">{tenure} yrs</span>
+                <span className="text-muted-foreground">EMI estimate</span>
+                <span className="text-right font-medium">{formatPriceShort(monthly)}/mo</span>
+              </div>
             </div>
-            <Separator className="my-3" />
-            <div className="grid grid-cols-2 gap-y-2 text-sm">
-              <span className="text-muted-foreground">Down payment ({downPct}%)</span>
-              <span className="text-right font-medium">{formatPriceShort(downPayment)}</span>
-              <span className="text-muted-foreground">Tenure</span>
-              <span className="text-right font-medium">{tenure} yrs</span>
-              <span className="text-muted-foreground">EMI estimate</span>
-              <span className="text-right font-medium">{formatPriceShort(monthly)}/mo</span>
-            </div>
-          </div>
 
-          <div className="grid grid-cols-2 gap-2">
-            <SliderRow
-              label="Down payment"
-              value={`${downPct}%`}
-              min={0}
-              max={60}
-              step={5}
-              v={downPct}
-              set={setDownPct}
-            />
-            <SliderRow
-              label="Tenure"
-              value={`${tenure}y`}
-              min={1}
-              max={7}
-              step={1}
-              v={tenure}
-              set={setTenure}
-            />
-          </div>
-
-          <div className="grid gap-3 sm:grid-cols-2">
-            <div>
-              <Label className="mb-1.5 inline-block">Full name</Label>
-              <Input value={name} onChange={(e) => setName(e.target.value)} required />
-            </div>
-            <div>
-              <Label className="mb-1.5 inline-block">Phone</Label>
-              <Input
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="+91 ..."
-                required
+            <div className="grid grid-cols-2 gap-2">
+              <FormField
+                control={form.control}
+                name="downPct"
+                render={({ field }) => (
+                  <SliderRow
+                    label="Down payment"
+                    value={`${field.value}%`}
+                    min={0}
+                    max={60}
+                    step={5}
+                    v={field.value}
+                    set={field.onChange}
+                  />
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="tenure"
+                render={({ field }) => (
+                  <SliderRow
+                    label="Tenure"
+                    value={`${field.value}y`}
+                    min={1}
+                    max={7}
+                    step={1}
+                    v={field.value}
+                    set={field.onChange}
+                  />
+                )}
               />
             </div>
-            <div>
-              <Label className="mb-1.5 inline-block">Email</Label>
-              <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-            </div>
-            <div>
-              <Label className="mb-1.5 inline-block">Delivery city</Label>
-              <Input value={city} onChange={(e) => setCity(e.target.value)} />
-            </div>
-          </div>
 
-          <div className="rounded-xl border border-primary/30 bg-primary/5 p-4 text-sm">
-            <div className="flex items-center justify-between">
-              <span className="text-muted-foreground">Due now</span>
-              <span className="text-2xl font-bold tracking-tight gradient-text">
-                {formatPrice(dueNow)}
+            <div className="grid gap-3 sm:grid-cols-2">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="mb-1.5 inline-block">Full name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Your name" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="phone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="mb-1.5 inline-block">Phone</FormLabel>
+                    <FormControl>
+                      <Input placeholder="+91 ..." {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="mb-1.5 inline-block">Email</FormLabel>
+                    <FormControl>
+                      <Input type="email" placeholder="you@example.com" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="city"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="mb-1.5 inline-block">Delivery city</FormLabel>
+                    <FormControl>
+                      <Input placeholder="City" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div className="rounded-xl border border-primary/30 bg-primary/5 p-4 text-sm">
+              <div className="flex items-center justify-between">
+                <span className="text-muted-foreground">Due now</span>
+                <span className="text-2xl font-bold tracking-tight gradient-text">
+                  {formatPrice(dueNow)}
+                </span>
+              </div>
+              <p className="mt-1 text-xs text-muted-foreground">
+                {type === "reserve"
+                  ? "Refundable reservation fee. Holds the car for 48 hours while we arrange inspection & paperwork."
+                  : "Down payment due today. Balance via EMI or full payment on delivery."}
+              </p>
+            </div>
+
+            <div className="grid gap-2 text-xs text-muted-foreground">
+              <span className="inline-flex items-center gap-2">
+                <ShieldCheck className="h-3.5 w-3.5 text-success" />
+                7-day money-back guarantee
+              </span>
+              <span className="inline-flex items-center gap-2">
+                <Car className="h-3.5 w-3.5 text-success" />
+                Free home delivery
+              </span>
+              <span className="inline-flex items-center gap-2">
+                <BadgeCheck className="h-3.5 w-3.5 text-success" />
+                RC transfer handled
+              </span>
+              <span className="inline-flex items-center gap-2">
+                <MapPin className="h-3.5 w-3.5 text-success" />
+                Pick up in {listing.registrationCity}
               </span>
             </div>
-            <p className="mt-1 text-xs text-muted-foreground">
+
+            <Button type="submit" size="lg" className="w-full" disabled={!user}>
               {type === "reserve"
-                ? "Refundable reservation fee. Holds the car for 48 hours while we arrange inspection & paperwork."
-                : "Down payment due today. Balance via EMI or full payment on delivery."}
-            </p>
-          </div>
-
-          <div className="grid gap-2 text-xs text-muted-foreground">
-            <span className="inline-flex items-center gap-2">
-              <ShieldCheck className="h-3.5 w-3.5 text-success" />
-              7-day money-back guarantee
-            </span>
-            <span className="inline-flex items-center gap-2">
-              <Car className="h-3.5 w-3.5 text-success" />
-              Free home delivery
-            </span>
-            <span className="inline-flex items-center gap-2">
-              <BadgeCheck className="h-3.5 w-3.5 text-success" />
-              RC transfer handled
-            </span>
-            <span className="inline-flex items-center gap-2">
-              <MapPin className="h-3.5 w-3.5 text-success" />
-              Pick up in {listing.registrationCity}
-            </span>
-          </div>
-
-          <Button type="submit" size="lg" className="w-full" disabled={!user}>
-            {type === "reserve"
-              ? `Reserve for ${formatPriceShort(RESERVE_FEE)}`
-              : `Confirm & pay ${formatPriceShort(dueNow)}`}
-          </Button>
-          {!user && (
-            <p className="text-center text-xs text-muted-foreground">
-              Sign in to complete this step.
-            </p>
-          )}
-        </form>
+                ? `Reserve for ${formatPriceShort(RESERVE_FEE)}`
+                : `Confirm & pay ${formatPriceShort(dueNow)}`}
+            </Button>
+            {!user && (
+              <p className="text-center text-xs text-muted-foreground">
+                Sign in to complete this step.
+              </p>
+            )}
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );

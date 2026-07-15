@@ -58,6 +58,7 @@ function CheckoutPage() {
 
   function confirm(e: React.FormEvent) {
     e.preventDefault();
+    if (!listing) return;
     if (!user) {
       toast.error("Sign in to continue");
       nav({ to: "/login" });

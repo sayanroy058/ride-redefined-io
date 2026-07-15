@@ -92,7 +92,7 @@ export interface Offer {
   createdAt: number;
 }
 
-export type BookingType = "reserve" | "purchase";
+export type BookingType = "reserve" | "purchase" | "test_drive";
 export type BookingStatus = "pending" | "confirmed" | "cancelled" | "completed";
 
 export interface Booking {
@@ -108,5 +108,46 @@ export interface Booking {
   tenure?: number;
   downPayment?: number;
   status: BookingStatus;
+  createdAt: number;
+  scheduledDate?: string;
+  city?: string;
+}
+
+export interface Review {
+  id: string;
+  listingId: string;
+  userId: string;
+  name: string;
+  rating: number;
+  title: string;
+  body: string;
+  createdAt: number;
+}
+
+export interface Message {
+  id: string;
+  senderId: string;
+  senderName: string;
+  text: string;
+  createdAt: number;
+  mine: boolean;
+}
+
+export interface Conversation {
+  id: string;
+  listingId: string;
+  buyerId: string;
+  sellerId: string;
+  sellerName: string;
+  listingTitle: string;
+  messages: Message[];
+  createdAt: number;
+  lastReadAt?: Record<string, number>;
+}
+
+export interface SavedSearch {
+  id: string;
+  name: string;
+  filters: Record<string, unknown>;
   createdAt: number;
 }

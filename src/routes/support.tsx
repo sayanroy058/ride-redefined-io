@@ -1,11 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { LifeBuoy, Mail, MessageCircle, Phone } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -13,7 +13,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { useApp } from "@/lib/store";
+import { Seo } from "@/components/site/Seo";
+import { supportSchema, type SupportValues } from "@/lib/validations";
 
 export const Route = createFileRoute("/support")({
   component: Support,
@@ -23,27 +33,30 @@ const CATEGORIES = ["General Inquiry", "Financing", "Inspection", "Purchase", "C
 
 function Support() {
   const { addTicket, user } = useApp();
-  const [form, setForm] = useState({
-    name: user?.name ?? "",
-    email: user?.email ?? "",
-    subject: "",
-    category: CATEGORIES[0],
-    message: "",
+  const form = useForm<SupportValues>({
+    resolver: zodResolver(supportSchema),
+    defaultValues: {
+      name: user?.name ?? "",
+      email: user?.email ?? "",
+      subject: "",
+      category: CATEGORIES[0],
+      message: "",
+    },
   });
 
-  function submit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!form.name || !form.email || !form.subject || !form.message) {
-      toast.error("Please fill in all fields");
-      return;
-    }
-    addTicket({ ...form, userId: user?.id });
+  function submit(values: SupportValues) {
+    addTicket({ ...values, userId: user?.id });
     toast.success("Ticket submitted! Our team will respond within 24 hours.");
-    setForm({ ...form, subject: "", message: "" });
+    form.reset({ ...values, subject: "", message: "" });
   }
 
   return (
     <div className="container mx-auto px-4 py-12">
+      <Seo
+        title="Support — DriveHub"
+        description="Get help with financing, inspections, purchases, and more. Our team responds within 24 hours."
+        canonical="/support"
+      />
       <div className="mx-auto max-w-3xl text-center">
         <h1 className="text-3xl font-bold tracking-tight">How can we help?</h1>
         <p className="mt-3 text-muted-foreground">
@@ -76,65 +89,91 @@ function Support() {
           <LifeBuoy className="h-5 w-5 text-primary" />
           <h2 className="font-display text-xl font-semibold">Open a support ticket</h2>
         </div>
-        <form onSubmit={submit} className="grid gap-4 md:grid-cols-2">
-          <div>
-            <Label>Your name</Label>
-            <Input
-              value={form.name}
-              onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-              required
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(submit)} className="grid gap-4 md:grid-cols-2">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Your name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Your name" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
-          <div>
-            <Label>Email</Label>
-            <Input
-              type="email"
-              value={form.email}
-              onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
-              required
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input type="email" placeholder="you@example.com" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
-          <div>
-            <Label>Category</Label>
-            <Select
-              value={form.category}
-              onValueChange={(v) => setForm((f) => ({ ...f, category: v }))}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {CATEGORIES.map((c) => (
-                  <SelectItem key={c} value={c}>
-                    {c}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <div>
-            <Label>Subject</Label>
-            <Input
-              value={form.subject}
-              onChange={(e) => setForm((f) => ({ ...f, subject: e.target.value }))}
-              required
+            <FormField
+              control={form.control}
+              name="category"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Category</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {CATEGORIES.map((c) => (
+                        <SelectItem key={c} value={c}>
+                          {c}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
-          <div className="md:col-span-2">
-            <Label>Message</Label>
-            <Textarea
-              rows={5}
-              value={form.message}
-              onChange={(e) => setForm((f) => ({ ...f, message: e.target.value }))}
-              required
+            <FormField
+              control={form.control}
+              name="subject"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Subject</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Brief subject" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
-          <div className="md:col-span-2">
-            <Button type="submit" size="lg">
-              Submit ticket
-            </Button>
-          </div>
-        </form>
+            <FormField
+              control={form.control}
+              name="message"
+              render={({ field }) => (
+                <FormItem className="md:col-span-2">
+                  <FormLabel>Message</FormLabel>
+                  <FormControl>
+                    <Textarea rows={5} placeholder="Describe your issue..." {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div className="md:col-span-2">
+              <Button type="submit" size="lg" disabled={form.formState.isSubmitting}>
+                Submit ticket
+              </Button>
+            </div>
+          </form>
+        </Form>
       </div>
     </div>
   );

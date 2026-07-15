@@ -9,10 +9,35 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useApp } from "@/lib/store";
 import { CarCard, formatPrice, StatusBadge } from "@/components/site/CarCard";
 import { EmptyState } from "@/components/site/States";
+import { TableSkeleton } from "@/components/site/Skeletons";
+import { Seo } from "@/components/site/Seo";
+import { getBookings, getOffers, getTickets, counterOffer, updateOffer } from "@/lib/api";
+import { qk } from "@/lib/queries";
 import type { OfferState } from "@/lib/types";
 
 export const Route = createFileRoute("/dashboard")({
   component: Dashboard,
+  pendingComponent: () => (
+    <div className="container mx-auto px-4 py-10">
+      <TableSkeleton rows={4} />
+    </div>
+  ),
+  loader: async ({ context }) => {
+    await Promise.all([
+      context.queryClient.ensureQueryData({
+        queryKey: qk.offers(),
+        queryFn: () => getOffers(),
+      }),
+      context.queryClient.ensureQueryData({
+        queryKey: qk.bookings(),
+        queryFn: () => getBookings(),
+      }),
+      context.queryClient.ensureQueryData({
+        queryKey: qk.tickets(),
+        queryFn: () => getTickets(),
+      }),
+    ]);
+  },
 });
 
 function Dashboard() {
@@ -34,6 +59,11 @@ function Dashboard() {
 
   return (
     <div className="container mx-auto px-4 py-10">
+      <Seo
+        title="Dashboard — DriveHub"
+        description="Track your listings, offers, and bookings."
+        canonical="/dashboard"
+      />
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Hi {user.name} 👋</h1>
@@ -51,10 +81,7 @@ function Dashboard() {
 
       <div className="mt-6 grid gap-4 md:grid-cols-4">
         {stats.map((s) => (
-          <div
-            key={s.label}
-            className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm"
-          >
+          <div key={s.label} className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm">
             <div className="flex items-center justify-between">
               <div className="text-xs uppercase tracking-wider text-muted-foreground">
                 {s.label}
@@ -112,9 +139,7 @@ function Dashboard() {
                   </div>
                   <div className="text-right">
                     <div className="text-xs text-muted-foreground">Asking</div>
-                    <div className="text-lg font-bold">
-                      {formatPrice(l.expectedPrice)}
-                    </div>
+                    <div className="text-lg font-bold">{formatPrice(l.expectedPrice)}</div>
                   </div>
                   <Button asChild size="sm" variant="outline">
                     <Link to="/buy/$id" params={{ id: l.id }}>
@@ -305,9 +330,7 @@ function OfferRow({
     <div className="rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <div className="font-semibold">
-            {l ? `${l.brand} ${l.model}` : "Listing"}
-          </div>
+          <div className="font-semibold">{l ? `${l.brand} ${l.model}` : "Listing"}</div>
           <div className="text-xs text-muted-foreground">
             {offer.buyerName} · {new Date(offer.createdAt).toLocaleDateString()}
           </div>

@@ -1,10 +1,11 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft, ArrowRight, Briefcase, Check } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
@@ -14,8 +15,18 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Progress } from "@/components/ui/progress";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Seo } from "@/components/site/Seo";
 import { useApp } from "@/lib/store";
 import { BRANDS, BODY_TYPES, FUEL_TYPES, OWNERSHIP, STATES, TRANSMISSIONS } from "@/lib/mock-data";
+import { sellSchema, type SellValues } from "@/lib/validations";
 import type { Listing } from "@/lib/types";
 
 export const Route = createFileRoute("/agent/sell")({
@@ -30,6 +41,42 @@ const STEPS = [
   "Pricing & submit",
 ] as const;
 
+const STEP_FIELDS: string[][] = [
+  ["sellerName", "sellerEmail", "sellerPhone", "preferredContactTime", "address"],
+  [
+    "brand",
+    "model",
+    "variant",
+    "bodyType",
+    "year",
+    "registrationYear",
+    "registrationState",
+    "registrationCity",
+  ],
+  [
+    "fuelType",
+    "transmission",
+    "kmDriven",
+    "ownership",
+    "vin",
+    "keys",
+    "insuranceStatus",
+    "roadTaxStatus",
+  ],
+  [
+    "exteriorCondition",
+    "interiorCondition",
+    "engineCondition",
+    "tireCondition",
+    "batteryCondition",
+    "serviceHistory",
+    "accidentHistory",
+    "defects",
+    "modifications",
+  ],
+  ["expectedPrice", "description"],
+];
+
 const CAR_IMAGES = [
   "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=1200&q=80",
   "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1200&q=80",
@@ -40,47 +87,53 @@ function AgentSell() {
   const { user, addListing } = useApp();
   const nav = useNavigate();
   const [step, setStep] = useState(0);
-  const [f, setF] = useState({
-    // seller (walk-in)
-    sellerName: "",
-    sellerEmail: "",
-    sellerPhone: "",
-    address: "",
-    preferredContactTime: "Afternoon (12-5)",
-    // vehicle
-    brand: "",
-    model: "",
-    variant: "",
-    bodyType: "Sedan",
-    year: 2022,
-    registrationYear: 2022,
-    fuelType: "Petrol",
-    transmission: "Automatic",
-    kmDriven: 25000,
-    ownership: "1st Owner",
-    registrationState: "Maharashtra",
-    registrationCity: "Mumbai",
-    vin: "",
-    insuranceStatus: "Active",
-    roadTaxStatus: "Paid",
-    serviceHistory: "Complete dealer history",
-    accidentHistory: "No accidents",
-    keys: 2,
-    exteriorCondition: "Excellent",
-    interiorCondition: "Excellent",
-    engineCondition: "Excellent",
-    tireCondition: "Good (70%+)",
-    batteryCondition: "Good",
-    defects: "",
-    modifications: "None",
-    description: "",
-    expectedPrice: 1500000,
-    agentNotes: "",
+  const [agentNotes, setAgentNotes] = useState("");
+  const form = useForm<SellValues>({
+    resolver: zodResolver(sellSchema),
+    defaultValues: {
+      sellerName: "",
+      sellerEmail: "",
+      sellerPhone: "",
+      address: "",
+      preferredContactTime: "Afternoon (12-5)",
+      brand: "",
+      model: "",
+      variant: "",
+      bodyType: "Sedan",
+      year: 2022,
+      registrationYear: 2022,
+      fuelType: "Petrol",
+      transmission: "Automatic",
+      kmDriven: 25000,
+      ownership: "1st Owner",
+      registrationState: "Maharashtra",
+      registrationCity: "Mumbai",
+      vin: "",
+      insuranceStatus: "Active",
+      roadTaxStatus: "Paid",
+      serviceHistory: "Complete dealer history",
+      accidentHistory: "No accidents",
+      keys: 2,
+      exteriorCondition: "Excellent",
+      interiorCondition: "Excellent",
+      engineCondition: "Excellent",
+      tireCondition: "Good (70%+)",
+      batteryCondition: "Good",
+      defects: "",
+      modifications: "None",
+      description: "",
+      expectedPrice: 1500000,
+    },
   });
 
   if (!user || user.role !== "agent") {
     return (
       <div className="container mx-auto px-4 py-20 text-center">
+        <Seo
+          title="Agent onboarding — DriveHub"
+          description="Onboard a car for a walk-in seller."
+          canonical="/agent/sell"
+        />
         <h1 className="font-display text-3xl font-bold">Agent access required</h1>
         <p className="mt-2 text-muted-foreground">
           Only agents can onboard cars from this workflow.
@@ -94,53 +147,54 @@ function AgentSell() {
     );
   }
 
-  function next() {
+  async function next() {
+    const fields = STEP_FIELDS[step];
+    if (fields.length) {
+      const ok = await form.trigger(fields as (keyof SellValues)[]);
+      if (!ok) return;
+    }
     if (step < STEPS.length - 1) setStep((s) => s + 1);
   }
   function prev() {
     if (step > 0) setStep((s) => s - 1);
   }
 
-  function submit() {
-    if (!f.brand || !f.model || !f.sellerName || !f.sellerPhone) {
-      toast.error("Please fill required fields (seller & vehicle basics)");
-      return;
-    }
+  function submit(values: SellValues) {
     const listing: Listing = {
       id: "L-" + Date.now(),
       sellerId: user!.id,
-      sellerName: f.sellerName,
-      sellerEmail: f.sellerEmail,
-      sellerPhone: f.sellerPhone,
-      brand: f.brand,
-      model: f.model,
-      variant: f.variant,
-      year: f.year,
-      registrationYear: f.registrationYear,
-      fuelType: f.fuelType,
-      transmission: f.transmission,
-      kmDriven: f.kmDriven,
-      ownership: f.ownership,
-      registrationState: f.registrationState,
-      registrationCity: f.registrationCity,
-      vin: f.vin,
-      insuranceStatus: f.insuranceStatus,
-      roadTaxStatus: f.roadTaxStatus,
-      serviceHistory: f.serviceHistory,
-      accidentHistory: f.accidentHistory,
-      keys: f.keys,
-      exteriorCondition: f.exteriorCondition,
-      interiorCondition: f.interiorCondition,
-      engineCondition: f.engineCondition,
-      tireCondition: f.tireCondition,
-      batteryCondition: f.batteryCondition,
-      defects: f.defects,
-      modifications: f.modifications,
-      description: `[Agent: ${user!.name}] ${f.description}\n\nAgent notes: ${f.agentNotes}`,
-      expectedPrice: f.expectedPrice,
-      address: f.address,
-      preferredContactTime: f.preferredContactTime,
-      bodyType: f.bodyType,
+      sellerName: values.sellerName,
+      sellerEmail: values.sellerEmail,
+      sellerPhone: values.sellerPhone,
+      brand: values.brand,
+      model: values.model,
+      variant: values.variant ?? "",
+      year: values.year,
+      registrationYear: values.registrationYear,
+      fuelType: values.fuelType,
+      transmission: values.transmission,
+      kmDriven: values.kmDriven,
+      ownership: values.ownership,
+      registrationState: values.registrationState,
+      registrationCity: values.registrationCity,
+      vin: values.vin ?? "",
+      insuranceStatus: values.insuranceStatus,
+      roadTaxStatus: values.roadTaxStatus,
+      serviceHistory: values.serviceHistory,
+      accidentHistory: values.accidentHistory,
+      keys: values.keys,
+      exteriorCondition: values.exteriorCondition,
+      interiorCondition: values.interiorCondition,
+      engineCondition: values.engineCondition,
+      tireCondition: values.tireCondition,
+      batteryCondition: values.batteryCondition,
+      defects: values.defects ?? "",
+      modifications: values.modifications ?? "None",
+      description: `[Agent: ${user!.name}] ${values.description ?? ""}\n\nAgent notes: ${agentNotes}`,
+      expectedPrice: values.expectedPrice,
+      address: values.address ?? "",
+      preferredContactTime: values.preferredContactTime,
+      bodyType: values.bodyType,
       images: CAR_IMAGES,
       status: "pending_review",
       createdAt: Date.now(),
@@ -151,9 +205,15 @@ function AgentSell() {
   }
 
   const progress = ((step + 1) / STEPS.length) * 100;
+  const v = form.watch();
 
   return (
     <div className="container mx-auto max-w-4xl px-4 py-12">
+      <Seo
+        title="Agent onboarding — DriveHub"
+        description="Onboard a car for a walk-in seller."
+        canonical="/agent/sell"
+      />
       <div className="mb-6 flex items-center gap-2">
         <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
           <Briefcase className="h-3.5 w-3.5" />
@@ -174,384 +234,281 @@ function AgentSell() {
       </div>
       <Progress value={progress} className="mt-2" />
 
-      <div className="mt-6 rounded-2xl border border-border/60 bg-card p-6 shadow-sm">
-        {step === 0 && (
-          <div className="grid gap-4 md:grid-cols-2">
-            <Field label="Seller name *">
-              <Input
-                value={f.sellerName}
-                onChange={(e) => setF({ ...f, sellerName: e.target.value })}
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(submit)}
+          className="mt-6 rounded-2xl border border-border/60 bg-card p-6 shadow-sm"
+        >
+          {step === 0 && (
+            <div className="grid gap-4 md:grid-cols-2">
+              <TextField name="sellerName" label="Seller name *" />
+              <TextField name="sellerPhone" label="Seller phone *" placeholder="+91 ..." />
+              <TextField name="sellerEmail" label="Seller email" type="email" />
+              <SelectField
+                name="preferredContactTime"
+                label="Preferred contact time"
+                options={["Morning (9-12)", "Afternoon (12-5)", "Evening (5-8)"]}
               />
-            </Field>
-            <Field label="Seller phone *">
-              <Input
-                value={f.sellerPhone}
-                onChange={(e) => setF({ ...f, sellerPhone: e.target.value })}
-                placeholder="+91 ..."
-              />
-            </Field>
-            <Field label="Seller email">
-              <Input
-                type="email"
-                value={f.sellerEmail}
-                onChange={(e) => setF({ ...f, sellerEmail: e.target.value })}
-              />
-            </Field>
-            <Field label="Preferred contact time">
-              <Select
-                value={f.preferredContactTime}
-                onValueChange={(v) => setF({ ...f, preferredContactTime: v })}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {["Morning (9-12)", "Afternoon (12-5)", "Evening (5-8)"].map((t) => (
-                    <SelectItem key={t} value={t}>
-                      {t}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </Field>
-            <Field label="Pickup address" className="md:col-span-2">
-              <Textarea
-                rows={2}
-                value={f.address}
-                onChange={(e) => setF({ ...f, address: e.target.value })}
-              />
-            </Field>
-          </div>
-        )}
+              <div className="md:col-span-2">
+                <TextareaField name="address" label="Pickup address" rows={2} />
+              </div>
+            </div>
+          )}
 
-        {step === 1 && (
-          <div className="grid gap-4 md:grid-cols-2">
-            <Field label="Brand *">
-              <Select value={f.brand} onValueChange={(v) => setF({ ...f, brand: v })}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select brand" />
-                </SelectTrigger>
-                <SelectContent>
-                  {BRANDS.map((b) => (
-                    <SelectItem key={b} value={b}>
-                      {b}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </Field>
-            <Field label="Model *">
-              <Input value={f.model} onChange={(e) => setF({ ...f, model: e.target.value })} />
-            </Field>
-            <Field label="Variant">
-              <Input
-                value={f.variant}
-                onChange={(e) => setF({ ...f, variant: e.target.value })}
-                placeholder="e.g. ZXi AT"
+          {step === 1 && (
+            <div className="grid gap-4 md:grid-cols-2">
+              <SelectField
+                name="brand"
+                label="Brand *"
+                options={BRANDS}
+                placeholder="Select brand"
               />
-            </Field>
-            <Field label="Body type">
-              <Select value={f.bodyType} onValueChange={(v) => setF({ ...f, bodyType: v })}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {BODY_TYPES.map((b) => (
-                    <SelectItem key={b} value={b}>
-                      {b}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </Field>
-            <Field label="Mfg. year">
-              <Input
-                type="number"
-                value={f.year}
-                onChange={(e) => setF({ ...f, year: +e.target.value })}
-              />
-            </Field>
-            <Field label="Registration year">
-              <Input
-                type="number"
-                value={f.registrationYear}
-                onChange={(e) => setF({ ...f, registrationYear: +e.target.value })}
-              />
-            </Field>
-            <Field label="Registration state">
-              <Select
-                value={f.registrationState}
-                onValueChange={(v) => setF({ ...f, registrationState: v })}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {STATES.map((s) => (
-                    <SelectItem key={s} value={s}>
-                      {s}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </Field>
-            <Field label="Registration city">
-              <Input
-                value={f.registrationCity}
-                onChange={(e) => setF({ ...f, registrationCity: e.target.value })}
-              />
-            </Field>
-          </div>
-        )}
+              <TextField name="model" label="Model *" />
+              <TextField name="variant" label="Variant" placeholder="e.g. ZXi AT" />
+              <SelectField name="bodyType" label="Body type" options={BODY_TYPES} />
+              <NumberField name="year" label="Mfg. year" />
+              <NumberField name="registrationYear" label="Registration year" />
+              <SelectField name="registrationState" label="Registration state" options={STATES} />
+              <TextField name="registrationCity" label="Registration city" />
+            </div>
+          )}
 
-        {step === 2 && (
-          <div className="grid gap-4 md:grid-cols-2">
-            <Field label="Fuel type">
-              <Select value={f.fuelType} onValueChange={(v) => setF({ ...f, fuelType: v })}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {FUEL_TYPES.map((x) => (
-                    <SelectItem key={x} value={x}>
-                      {x}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </Field>
-            <Field label="Transmission">
-              <Select value={f.transmission} onValueChange={(v) => setF({ ...f, transmission: v })}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {TRANSMISSIONS.map((x) => (
-                    <SelectItem key={x} value={x}>
-                      {x}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </Field>
-            <Field label="KM driven">
-              <Input
-                type="number"
-                value={f.kmDriven}
-                onChange={(e) => setF({ ...f, kmDriven: +e.target.value })}
+          {step === 2 && (
+            <div className="grid gap-4 md:grid-cols-2">
+              <SelectField name="fuelType" label="Fuel type" options={FUEL_TYPES} />
+              <SelectField name="transmission" label="Transmission" options={TRANSMISSIONS} />
+              <NumberField name="kmDriven" label="KM driven" />
+              <SelectField name="ownership" label="Ownership" options={OWNERSHIP} />
+              <TextField name="vin" label="VIN / Chassis" />
+              <NumberField name="keys" label="Number of keys" />
+              <SelectField
+                name="insuranceStatus"
+                label="Insurance"
+                options={["Active", "Expired", "Third-party only"]}
               />
-            </Field>
-            <Field label="Ownership">
-              <Select value={f.ownership} onValueChange={(v) => setF({ ...f, ownership: v })}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {OWNERSHIP.map((x) => (
-                    <SelectItem key={x} value={x}>
-                      {x}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </Field>
-            <Field label="VIN / Chassis">
-              <Input value={f.vin} onChange={(e) => setF({ ...f, vin: e.target.value })} />
-            </Field>
-            <Field label="Number of keys">
-              <Input
-                type="number"
-                value={f.keys}
-                onChange={(e) => setF({ ...f, keys: +e.target.value })}
+              <SelectField
+                name="roadTaxStatus"
+                label="Road tax"
+                options={["Paid", "Pending", "Lifetime"]}
               />
-            </Field>
-            <Field label="Insurance">
-              <Select
-                value={f.insuranceStatus}
-                onValueChange={(v) => setF({ ...f, insuranceStatus: v })}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {["Active", "Expired", "Third-party only"].map((x) => (
-                    <SelectItem key={x} value={x}>
-                      {x}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </Field>
-            <Field label="Road tax">
-              <Select
-                value={f.roadTaxStatus}
-                onValueChange={(v) => setF({ ...f, roadTaxStatus: v })}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {["Paid", "Pending", "Lifetime"].map((x) => (
-                    <SelectItem key={x} value={x}>
-                      {x}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </Field>
-          </div>
-        )}
+            </div>
+          )}
 
-        {step === 3 && (
-          <div className="grid gap-4 md:grid-cols-2">
-            <Field label="Exterior">
-              <Input
-                value={f.exteriorCondition}
-                onChange={(e) => setF({ ...f, exteriorCondition: e.target.value })}
-              />
-            </Field>
-            <Field label="Interior">
-              <Input
-                value={f.interiorCondition}
-                onChange={(e) => setF({ ...f, interiorCondition: e.target.value })}
-              />
-            </Field>
-            <Field label="Engine">
-              <Input
-                value={f.engineCondition}
-                onChange={(e) => setF({ ...f, engineCondition: e.target.value })}
-              />
-            </Field>
-            <Field label="Tires">
-              <Input
-                value={f.tireCondition}
-                onChange={(e) => setF({ ...f, tireCondition: e.target.value })}
-              />
-            </Field>
-            <Field label="Battery">
-              <Input
-                value={f.batteryCondition}
-                onChange={(e) => setF({ ...f, batteryCondition: e.target.value })}
-              />
-            </Field>
-            <Field label="Service history">
-              <Input
-                value={f.serviceHistory}
-                onChange={(e) => setF({ ...f, serviceHistory: e.target.value })}
-              />
-            </Field>
-            <Field label="Accident history" className="md:col-span-2">
-              <Input
-                value={f.accidentHistory}
-                onChange={(e) => setF({ ...f, accidentHistory: e.target.value })}
-              />
-            </Field>
-            <Field label="Known defects (be transparent)" className="md:col-span-2">
-              <Textarea
+          {step === 3 && (
+            <div className="grid gap-4 md:grid-cols-2">
+              <TextField name="exteriorCondition" label="Exterior" />
+              <TextField name="interiorCondition" label="Interior" />
+              <TextField name="engineCondition" label="Engine" />
+              <TextField name="tireCondition" label="Tires" />
+              <TextField name="batteryCondition" label="Battery" />
+              <TextField name="serviceHistory" label="Service history" />
+              <div className="md:col-span-2">
+                <TextField name="accidentHistory" label="Accident history" />
+              </div>
+              <div className="md:col-span-2">
+                <TextareaField
+                  name="defects"
+                  label="Known defects (be transparent)"
+                  rows={3}
+                  placeholder="Minor dent on rear bumper, AC compressor to be inspected..."
+                />
+              </div>
+              <div className="md:col-span-2">
+                <TextField name="modifications" label="Modifications" />
+              </div>
+            </div>
+          )}
+
+          {step === 4 && (
+            <div className="grid gap-4">
+              <NumberField name="expectedPrice" label="Seller's expected price (₹)" />
+              <TextareaField
+                name="description"
+                label="Description for buyers"
                 rows={3}
-                value={f.defects}
-                onChange={(e) => setF({ ...f, defects: e.target.value })}
-                placeholder="Minor dent on rear bumper, AC compressor to be inspected..."
-              />
-            </Field>
-            <Field label="Modifications" className="md:col-span-2">
-              <Input
-                value={f.modifications}
-                onChange={(e) => setF({ ...f, modifications: e.target.value })}
-              />
-            </Field>
-          </div>
-        )}
-
-        {step === 4 && (
-          <div className="grid gap-4">
-            <Field label="Seller's expected price (₹)">
-              <Input
-                type="number"
-                value={f.expectedPrice}
-                onChange={(e) => setF({ ...f, expectedPrice: +e.target.value })}
-              />
-            </Field>
-            <Field label="Description for buyers">
-              <Textarea
-                rows={3}
-                value={f.description}
-                onChange={(e) => setF({ ...f, description: e.target.value })}
                 placeholder="Well-maintained single-owner car with full service history..."
               />
-            </Field>
-            <Field label="Internal agent notes (not visible to buyers)">
-              <Textarea
-                rows={3}
-                value={f.agentNotes}
-                onChange={(e) => setF({ ...f, agentNotes: e.target.value })}
-                placeholder="Seller is negotiable up to 5%. Pickup Saturday. Suggest refurb budget ₹40k."
-              />
-            </Field>
-            <div className="rounded-xl border border-border/60 bg-secondary/40 p-4 text-sm">
-              <div className="mb-2 font-display font-semibold">Review summary</div>
-              <ul className="grid grid-cols-2 gap-y-1 text-xs text-muted-foreground">
-                <li>
-                  Seller: <b className="text-foreground">{f.sellerName || "—"}</b>
-                </li>
-                <li>
-                  Phone: <b className="text-foreground">{f.sellerPhone || "—"}</b>
-                </li>
-                <li>
-                  Car:{" "}
-                  <b className="text-foreground">
-                    {f.year} {f.brand} {f.model}
-                  </b>
-                </li>
-                <li>
-                  KM: <b className="text-foreground">{f.kmDriven.toLocaleString()}</b>
-                </li>
-                <li>
-                  Ask: <b className="text-foreground">₹{f.expectedPrice.toLocaleString("en-IN")}</b>
-                </li>
-                <li>
-                  Location: <b className="text-foreground">{f.registrationCity}</b>
-                </li>
-              </ul>
+              <div>
+                <FormLabel className="mb-1.5 block text-xs font-medium text-muted-foreground">
+                  Internal agent notes (not visible to buyers)
+                </FormLabel>
+                <Textarea
+                  rows={3}
+                  value={agentNotes}
+                  onChange={(e) => setAgentNotes(e.target.value)}
+                  placeholder="Seller is negotiable up to 5%. Pickup Saturday. Suggest refurb budget ₹40k."
+                />
+              </div>
+              <div className="rounded-xl border border-border/60 bg-secondary/40 p-4 text-sm">
+                <div className="mb-2 font-display font-semibold">Review summary</div>
+                <ul className="grid grid-cols-2 gap-y-1 text-xs text-muted-foreground">
+                  <li>
+                    Seller: <b className="text-foreground">{v.sellerName || "—"}</b>
+                  </li>
+                  <li>
+                    Phone: <b className="text-foreground">{v.sellerPhone || "—"}</b>
+                  </li>
+                  <li>
+                    Car:{" "}
+                    <b className="text-foreground">
+                      {v.year} {v.brand} {v.model}
+                    </b>
+                  </li>
+                  <li>
+                    KM: <b className="text-foreground">{v.kmDriven.toLocaleString()}</b>
+                  </li>
+                  <li>
+                    Ask:{" "}
+                    <b className="text-foreground">₹{v.expectedPrice.toLocaleString("en-IN")}</b>
+                  </li>
+                  <li>
+                    Location: <b className="text-foreground">{v.registrationCity}</b>
+                  </li>
+                </ul>
+              </div>
             </div>
-          </div>
-        )}
-
-        <div className="mt-6 flex items-center justify-between">
-          <Button variant="outline" onClick={prev} disabled={step === 0}>
-            <ArrowLeft className="mr-1 h-4 w-4" />
-            Back
-          </Button>
-          {step < STEPS.length - 1 ? (
-            <Button onClick={next}>
-              Next
-              <ArrowRight className="ml-1 h-4 w-4" />
-            </Button>
-          ) : (
-            <Button onClick={submit}>
-              <Check className="mr-1 h-4 w-4" />
-              Submit for inspection
-            </Button>
           )}
-        </div>
-      </div>
+
+          <div className="mt-6 flex items-center justify-between">
+            <Button type="button" variant="outline" onClick={prev} disabled={step === 0}>
+              <ArrowLeft className="mr-1 h-4 w-4" />
+              Back
+            </Button>
+            {step < STEPS.length - 1 ? (
+              <Button type="button" onClick={next}>
+                Next
+                <ArrowRight className="ml-1 h-4 w-4" />
+              </Button>
+            ) : (
+              <Button type="submit">
+                <Check className="mr-1 h-4 w-4" />
+                Submit for inspection
+              </Button>
+            )}
+          </div>
+        </form>
+      </Form>
     </div>
   );
 }
 
-function Field({
+function TextField({
+  name,
   label,
-  children,
-  className,
+  placeholder,
+  type = "text",
 }: {
+  name: keyof SellValues;
   label: string;
-  children: React.ReactNode;
-  className?: string;
+  placeholder?: string;
+  type?: string;
 }) {
   return (
-    <div className={className}>
-      <Label className="mb-1.5 block text-xs font-medium text-muted-foreground">{label}</Label>
-      {children}
-    </div>
+    <FormField
+      name={name}
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel className="mb-1.5 block text-xs font-medium text-muted-foreground">
+            {label}
+          </FormLabel>
+          <FormControl>
+            <Input type={type} placeholder={placeholder} {...field} />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  );
+}
+
+function NumberField({ name, label }: { name: keyof SellValues; label: string }) {
+  return (
+    <FormField
+      name={name}
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel className="mb-1.5 block text-xs font-medium text-muted-foreground">
+            {label}
+          </FormLabel>
+          <FormControl>
+            <Input
+              type="number"
+              value={field.value}
+              onChange={(e) => field.onChange(+e.target.value)}
+            />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  );
+}
+
+function TextareaField({
+  name,
+  label,
+  rows = 3,
+  placeholder,
+}: {
+  name: keyof SellValues;
+  label: string;
+  rows?: number;
+  placeholder?: string;
+}) {
+  return (
+    <FormField
+      name={name}
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel className="mb-1.5 block text-xs font-medium text-muted-foreground">
+            {label}
+          </FormLabel>
+          <FormControl>
+            <Textarea rows={rows} placeholder={placeholder} {...field} />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  );
+}
+
+function SelectField({
+  name,
+  label,
+  options,
+  placeholder,
+}: {
+  name: keyof SellValues;
+  label: string;
+  options: string[];
+  placeholder?: string;
+}) {
+  return (
+    <FormField
+      name={name}
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel className="mb-1.5 block text-xs font-medium text-muted-foreground">
+            {label}
+          </FormLabel>
+          <Select onValueChange={field.onChange} value={field.value} defaultValue={field.value}>
+            <FormControl>
+              <SelectTrigger>
+                <SelectValue placeholder={placeholder} />
+              </SelectTrigger>
+            </FormControl>
+            <SelectContent>
+              {options.map((o) => (
+                <SelectItem key={o} value={o}>
+                  {o}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
   );
 }

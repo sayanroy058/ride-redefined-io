@@ -54,10 +54,31 @@ import { Separator } from "@/components/ui/separator";
 import { useApp } from "@/lib/store";
 import { calculateFinalPrice } from "@/lib/mock-data";
 import { formatPrice, StatusBadge } from "@/components/site/CarCard";
+import { TableSkeleton } from "@/components/site/Skeletons";
+import { Seo } from "@/components/site/Seo";
+import { getListings, getTickets } from "@/lib/api";
+import { qk } from "@/lib/queries";
 import type { Listing, TicketStatus } from "@/lib/types";
 
 export const Route = createFileRoute("/admin")({
   component: Admin,
+  pendingComponent: () => (
+    <div className="container mx-auto px-4 py-8">
+      <TableSkeleton rows={6} />
+    </div>
+  ),
+  loader: async ({ context }) => {
+    await Promise.all([
+      context.queryClient.ensureQueryData({
+        queryKey: qk.listings,
+        queryFn: () => getListings(),
+      }),
+      context.queryClient.ensureQueryData({
+        queryKey: qk.tickets(),
+        queryFn: () => getTickets(),
+      }),
+    ]);
+  },
 });
 
 function Admin() {
@@ -136,6 +157,11 @@ function Admin() {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      <Seo
+        title="Admin console — DriveHub"
+        description="Operations dashboard for listings, approvals, and tickets."
+        canonical="/admin"
+      />
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
@@ -152,10 +178,7 @@ function Admin() {
 
       <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-6">
         {stats.map((s) => (
-          <div
-            key={s.label}
-            className="rounded-2xl border border-border/60 bg-card p-4 shadow-sm"
-          >
+          <div key={s.label} className="rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
             <div className="flex items-center justify-between">
               <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
                 {s.label}

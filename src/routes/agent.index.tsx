@@ -23,9 +23,24 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useApp } from "@/lib/store";
 import { formatPrice, StatusBadge } from "@/components/site/CarCard";
 import { EmptyState } from "@/components/site/States";
+import { TableSkeleton } from "@/components/site/Skeletons";
+import { Seo } from "@/components/site/Seo";
+import { getListings } from "@/lib/api";
+import { qk } from "@/lib/queries";
 
 export const Route = createFileRoute("/agent/")({
   component: AgentDashboard,
+  pendingComponent: () => (
+    <div className="container mx-auto px-4 py-8">
+      <TableSkeleton rows={6} />
+    </div>
+  ),
+  loader: async ({ context }) => {
+    await context.queryClient.ensureQueryData({
+      queryKey: qk.listings,
+      queryFn: () => getListings(),
+    });
+  },
 });
 
 function AgentDashboard() {
@@ -71,6 +86,11 @@ function AgentDashboard() {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      <Seo
+        title="Agent console — DriveHub"
+        description="Onboard cars and track your agent pipeline."
+        canonical="/agent"
+      />
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
@@ -92,10 +112,7 @@ function AgentDashboard() {
 
       <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {stats.map((s) => (
-          <div
-            key={s.label}
-            className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm"
-          >
+          <div key={s.label} className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm">
             <div className="flex items-center justify-between">
               <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
                 {s.label}

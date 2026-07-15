@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { BadgeCheck, ScanLine, ShieldCheck, Truck, Wrench } from "lucide-react";
+import { Seo } from "@/components/site/Seo";
 
 export const Route = createFileRoute("/about")({
   component: About,
@@ -8,6 +9,11 @@ export const Route = createFileRoute("/about")({
 function About() {
   return (
     <div>
+      <Seo
+        title="About DriveHub — Trusted Used Car Marketplace"
+        description="DriveHub inspects every car on 200+ points, refurbishes in-house, and prices transparently."
+        canonical="/about"
+      />
       <section className="relative overflow-hidden" style={{ background: "var(--gradient-hero)" }}>
         <div className="absolute inset-0 grid-bg opacity-30" />
         <div className="container relative mx-auto px-4 py-20 text-white">
@@ -31,10 +37,7 @@ function About() {
             { i: BadgeCheck, t: "4. List", d: "Transparent pricing on our marketplace." },
             { i: Truck, t: "5. Deliver", d: "Doorstep delivery, 7-day returns." },
           ].map((s) => (
-            <div
-              key={s.t}
-              className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm"
-            >
+            <div key={s.t} className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm">
               <s.i className="h-6 w-6 text-primary" />
               <h3 className="mt-3 text-base font-semibold">{s.t}</h3>
               <p className="mt-1 text-sm text-muted-foreground">{s.d}</p>
@@ -64,10 +67,7 @@ function About() {
               ["98%", "Customer satisfaction"],
               ["48h", "Average sale time"],
             ].map(([n, l]) => (
-              <div
-                key={l}
-                className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm"
-              >
+              <div key={l} className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm">
                 <div className="text-3xl font-bold gradient-text">{n}</div>
                 <div className="mt-1 text-sm text-muted-foreground">{l}</div>
               </div>

@@ -31,6 +31,7 @@ import {
 } from "@/components/ui/accordion";
 import { useApp } from "@/lib/store";
 import { CarCard } from "@/components/site/CarCard";
+import { Seo } from "@/components/site/Seo";
 import { BRANDS, BODY_TYPES } from "@/lib/mock-data";
 
 export const Route = createFileRoute("/")({
@@ -59,6 +60,11 @@ function Landing() {
 
   return (
     <div className="pb-8">
+      <Seo
+        title="DriveHub — Premium Used Cars, Inspected & Refurbished"
+        description="Buy and sell certified pre-owned cars. 200-point inspection, refurbished by experts, financing in minutes."
+        canonical="/"
+      />
       {/* Hero */}
       <section className="relative overflow-hidden" style={{ background: "var(--gradient-hero)" }}>
         <div className="absolute inset-0 grid-bg opacity-40" />
@@ -90,7 +96,9 @@ function Landing() {
                   </SelectTrigger>
                   <SelectContent>
                     {BRANDS.slice(0, 8).map((b) => (
-                      <SelectItem key={b} value={b}>{b}</SelectItem>
+                      <SelectItem key={b} value={b}>
+                        {b}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -100,7 +108,9 @@ function Landing() {
                   </SelectTrigger>
                   <SelectContent>
                     {BODY_TYPES.map((b) => (
-                      <SelectItem key={b} value={b}>{b}</SelectItem>
+                      <SelectItem key={b} value={b}>
+                        {b}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -181,7 +191,9 @@ function Landing() {
                       : "₹39,90,000"}
                   </span>
                   <Button asChild size="sm" variant="ghost">
-                    <Link to="/buy">View <ArrowRight className="h-3 w-3" /></Link>
+                    <Link to="/buy">
+                      View <ArrowRight className="h-3 w-3" />
+                    </Link>
                   </Button>
                 </div>
               </div>
@@ -231,10 +243,26 @@ function Landing() {
             </p>
             <div className="mt-8 space-y-5">
               {[
-                { i: ShieldCheck, t: "200-point inspection", d: "Master technicians verify safety, performance, and cosmetic quality." },
-                { i: Wrench, t: "Refurbished in-house", d: "Each vehicle is detailed, repaired, and photographed to showroom standards." },
-                { i: Banknote, t: "Instant financing", d: "Pre-approved EMI options arrive in minutes, not after endless callbacks." },
-                { i: BadgeCheck, t: "7-day returns", d: "If the car isn't right, return it within seven days with full transparency." },
+                {
+                  i: ShieldCheck,
+                  t: "200-point inspection",
+                  d: "Master technicians verify safety, performance, and cosmetic quality.",
+                },
+                {
+                  i: Wrench,
+                  t: "Refurbished in-house",
+                  d: "Each vehicle is detailed, repaired, and photographed to showroom standards.",
+                },
+                {
+                  i: Banknote,
+                  t: "Instant financing",
+                  d: "Pre-approved EMI options arrive in minutes, not after endless callbacks.",
+                },
+                {
+                  i: BadgeCheck,
+                  t: "7-day returns",
+                  d: "If the car isn't right, return it within seven days with full transparency.",
+                },
               ].map((x) => (
                 <div key={x.t} className="flex gap-4">
                   <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary">
@@ -273,7 +301,10 @@ function Landing() {
 
       {/* Sell CTA */}
       <section className="container mx-auto px-4 py-16">
-        <div className="relative overflow-hidden rounded-3xl px-8 py-12 text-white md:px-12 md:py-16" style={{ background: "var(--gradient-hero)" }}>
+        <div
+          className="relative overflow-hidden rounded-3xl px-8 py-12 text-white md:px-12 md:py-16"
+          style={{ background: "var(--gradient-hero)" }}
+        >
           <div
             className="absolute -right-20 -top-20 h-72 w-72 rounded-full blur-3xl"
             style={{ background: "var(--gradient-glow)" }}
@@ -284,12 +315,10 @@ function Landing() {
                 <Sparkles className="h-3.5 w-3.5 text-accent" />
                 Sell with confidence
               </div>
-              <h2 className="mt-5 text-4xl font-bold tracking-tight">
-                Sell your car in 48 hours.
-              </h2>
+              <h2 className="mt-5 text-4xl font-bold tracking-tight">Sell your car in 48 hours.</h2>
               <p className="mt-4 max-w-md text-base leading-7 text-white/70">
-                Schedule a home inspection, receive a verified offer, and finish paperwork
-                digitally — no chasing buyers or negotiating in parking lots.
+                Schedule a home inspection, receive a verified offer, and finish paperwork digitally
+                — no chasing buyers or negotiating in parking lots.
               </p>
               <div className="mt-6 flex flex-wrap gap-3">
                 <Button asChild size="lg" variant="secondary">
@@ -341,9 +370,24 @@ function Landing() {
             </p>
             <div className="mt-6 grid gap-4">
               {[
-                { n: "Priya R.", role: "Sold a hatchback", t: "Sold my old hatchback in 36 hours. The inspection came to me, payment hit my account the same day.", r: 5 },
-                { n: "Marcus B.", role: "Bought a Polestar 2", t: "The refurbishment was honestly better than the demo car at the dealer.", r: 5 },
-                { n: "Lina K.", role: "Financed in minutes", t: "Financing was approved while I was still browsing. Picked up the keys two days later.", r: 5 },
+                {
+                  n: "Priya R.",
+                  role: "Sold a hatchback",
+                  t: "Sold my old hatchback in 36 hours. The inspection came to me, payment hit my account the same day.",
+                  r: 5,
+                },
+                {
+                  n: "Marcus B.",
+                  role: "Bought a Polestar 2",
+                  t: "The refurbishment was honestly better than the demo car at the dealer.",
+                  r: 5,
+                },
+                {
+                  n: "Lina K.",
+                  role: "Financed in minutes",
+                  t: "Financing was approved while I was still browsing. Picked up the keys two days later.",
+                  r: 5,
+                },
               ].map((x) => (
                 <div
                   key={x.n}
@@ -380,12 +424,28 @@ function Landing() {
               </p>
               <Accordion type="single" collapsible className="mt-4">
                 {[
-                  { q: "How is the price calculated?", a: "We start from your expected price, add refurbishment, inspection, transport, documentation, commission, and a small margin. Every listing shows transparent pricing." },
-                  { q: "Do you offer financing?", a: "Yes. Pre-approved EMI options are available in under five minutes, with rates starting at 7.9% APR for qualified buyers." },
-                  { q: "What's covered by the 7-day return?", a: "Any reason. Return the car within 7 days or 300 miles for a full refund, excluding documented minor wear charges." },
-                  { q: "How do you inspect cars?", a: "Every vehicle passes through a 200-point inspection performed by certified master technicians before it appears on DriveHub." },
+                  {
+                    q: "How is the price calculated?",
+                    a: "We start from your expected price, add refurbishment, inspection, transport, documentation, commission, and a small margin. Every listing shows transparent pricing.",
+                  },
+                  {
+                    q: "Do you offer financing?",
+                    a: "Yes. Pre-approved EMI options are available in under five minutes, with rates starting at 7.9% APR for qualified buyers.",
+                  },
+                  {
+                    q: "What's covered by the 7-day return?",
+                    a: "Any reason. Return the car within 7 days or 300 miles for a full refund, excluding documented minor wear charges.",
+                  },
+                  {
+                    q: "How do you inspect cars?",
+                    a: "Every vehicle passes through a 200-point inspection performed by certified master technicians before it appears on DriveHub.",
+                  },
                 ].map((x, i) => (
-                  <AccordionItem key={i} value={`q-${i}`} className="border-b border-border/60 last:border-0">
+                  <AccordionItem
+                    key={i}
+                    value={`q-${i}`}
+                    className="border-b border-border/60 last:border-0"
+                  >
                     <AccordionTrigger className="text-left text-base font-medium hover:no-underline">
                       {x.q}
                     </AccordionTrigger>
@@ -398,7 +458,9 @@ function Landing() {
               <div className="mt-6 flex items-center justify-between rounded-2xl bg-secondary/60 p-4">
                 <div>
                   <div className="text-sm font-semibold">Still have questions?</div>
-                  <div className="text-xs text-muted-foreground">Our team replies within an hour.</div>
+                  <div className="text-xs text-muted-foreground">
+                    Our team replies within an hour.
+                  </div>
                 </div>
                 <Button asChild size="sm" variant="secondary">
                   <Link to="/support">

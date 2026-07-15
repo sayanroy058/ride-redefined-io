@@ -15,11 +15,26 @@ import {
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import { CarCard, formatPrice } from "@/components/site/CarCard";
 import { EmptyState } from "@/components/site/States";
+import { ListingGridSkeleton } from "@/components/site/Skeletons";
+import { Seo } from "@/components/site/Seo";
 import { BODY_TYPES, BRANDS, FUEL_TYPES, OWNERSHIP, STATES, TRANSMISSIONS } from "@/lib/mock-data";
 import { useApp } from "@/lib/store";
+import { getListings } from "@/lib/api";
+import { qk } from "@/lib/queries";
 
 export const Route = createFileRoute("/buy/")({
   component: BuyPage,
+  pendingComponent: () => (
+    <div className="container mx-auto px-4 py-10">
+      <ListingGridSkeleton />
+    </div>
+  ),
+  loader: async ({ context }) => {
+    await context.queryClient.ensureQueryData({
+      queryKey: qk.listings,
+      queryFn: () => getListings(),
+    });
+  },
   validateSearch: () =>
     ({
       brand: "",
@@ -150,6 +165,11 @@ function BuyPage() {
 
   return (
     <div className="container mx-auto px-4 py-10">
+      <Seo
+        title="Buy a car — DriveHub"
+        description="Browse inspected, refurbished pre-owned cars. Filter by brand, body, fuel, price, year and kilometers."
+        canonical="/buy"
+      />
       <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Buy a car</h1>
