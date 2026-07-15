@@ -14,6 +14,7 @@ import {
   PlayCircle,
   Scale,
   Settings2,
+  Share2,
   ShieldCheck,
   Star,
   Wrench,
@@ -38,6 +39,7 @@ import { CheckoutDialog } from "@/components/site/CheckoutDialog";
 import { OfferForm } from "@/components/site/OfferForm";
 import { DetailSkeleton } from "@/components/site/Skeletons";
 import { Seo } from "@/components/site/Seo";
+import { Lightbox } from "@/components/site/Lightbox";
 import { emiEstimate } from "@/lib/mock-data";
 import { getListing, getSimilar } from "@/lib/api";
 import { qk } from "@/lib/queries";

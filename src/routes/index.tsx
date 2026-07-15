@@ -51,8 +51,8 @@ function Landing() {
     nav({
       to: "/buy",
       search: {
-        brand: heroBrand || undefined,
-        body: heroBody || undefined,
+        brand: heroBrand ? [heroBrand] : undefined,
+        body: heroBody ? [heroBody] : undefined,
         budget: heroBudget || undefined,
       },
     });
