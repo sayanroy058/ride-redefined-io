@@ -201,8 +201,14 @@ function Dashboard() {
                         {l ? `${l.year} ${l.brand} ${l.model}` : "Listing"}
                       </div>
                       <div className="text-xs text-muted-foreground">
-                        {b.type === "reserve" ? "Reservation" : "Purchase"} ·{" "}
-                        {new Date(b.createdAt).toLocaleDateString()}
+                        {b.type === "reserve"
+                          ? "Reservation"
+                          : b.type === "test_drive"
+                            ? "Test drive"
+                            : "Purchase"}
+                        {b.type === "test_drive" && b.scheduledDate
+                          ? ` · ${new Date(b.scheduledDate).toLocaleDateString()}`
+                          : ` · ${new Date(b.createdAt).toLocaleDateString()}`}
                       </div>
                       <Badge variant="outline" className="mt-2 capitalize">
                         {b.status}
@@ -210,12 +216,18 @@ function Dashboard() {
                     </div>
                     <div className="text-right">
                       <div className="text-xs text-muted-foreground">
-                        {b.type === "reserve" ? "Reserve fee" : "Down payment"}
+                        {b.type === "reserve"
+                          ? "Reserve fee"
+                          : b.type === "test_drive"
+                            ? "Test drive"
+                            : "Down payment"}
                       </div>
                       <div className="text-lg font-bold">
-                        {formatPrice(
-                          b.type === "reserve" ? (b.reserveFee ?? 0) : (b.downPayment ?? 0),
-                        )}
+                        {b.type === "test_drive"
+                          ? "Free"
+                          : formatPrice(
+                              b.type === "reserve" ? (b.reserveFee ?? 0) : (b.downPayment ?? 0),
+                            )}
                       </div>
                     </div>
                     {l && (

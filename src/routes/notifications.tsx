@@ -47,7 +47,7 @@ type Item = {
 };
 
 function NotificationsPage() {
-  const { user, listings, offers, tickets, bookings } = useApp();
+  const { user, listings, offers, tickets, bookings, savedSearches } = useApp();
 
   const myListings = listings.filter((l) => l.sellerId === user?.id);
   const myListingIds = new Set(myListings.map((l) => l.id));
@@ -107,8 +107,10 @@ function NotificationsPage() {
       items.push({
         id: "booking-" + b.id,
         kind: "booking",
-        title: `${b.type === "reserve" ? "Reservation" : "Purchase"} confirmed: ${l ? `${l.brand} ${l.model}` : "a car"}`,
-        body: `${formatPrice(b.type === "reserve" ? (b.reserveFee ?? 0) : (b.downPayment ?? 0))} ${b.type === "reserve" ? "reserve fee" : "down payment"} paid`,
+        title: `${b.type === "reserve" ? "Reservation" : b.type === "test_drive" ? "Test drive" : "Purchase"} confirmed: ${l ? `${l.brand} ${l.model}` : "a car"}`,
+        body: b.type === "test_drive"
+          ? `${b.city ?? ""} · ${b.scheduledDate ? new Date(b.scheduledDate).toLocaleDateString() : ""}`.trim()
+          : `${formatPrice(b.type === "reserve" ? (b.reserveFee ?? 0) : (b.downPayment ?? 0))} ${b.type === "reserve" ? "reserve fee" : "down payment"} paid`,
         time: b.createdAt,
         href: l ? { to: "/buy/$id", params: { id: l.id } } : { to: "/dashboard" },
         badge: b.status,
@@ -126,9 +128,18 @@ function NotificationsPage() {
         description="Offers, bookings, and ticket updates."
         canonical="/notifications"
       />
-      <div className="mb-6 flex items-center gap-2">
-        <Bell className="h-5 w-5 text-primary" />
-        <h1 className="text-3xl font-bold tracking-tight">Notifications</h1>
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-2">
+        <div className="flex items-center gap-2">
+          <Bell className="h-5 w-5 text-primary" />
+          <h1 className="text-3xl font-bold tracking-tight">Notifications</h1>
+        </div>
+        {savedSearches.length > 0 && (
+          <Button asChild size="sm" variant="outline">
+            <Link to="/saved-searches">
+              Saved searches ({savedSearches.length})
+            </Link>
+          </Button>
+        )}
       </div>
 
       {items.length === 0 ? (

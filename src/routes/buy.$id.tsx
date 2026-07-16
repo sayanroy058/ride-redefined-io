@@ -1,4 +1,4 @@
-import { createFileRoute, Link, notFound, useParams } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound, useParams, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import {
   ArrowLeft,
@@ -32,17 +32,21 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { toast } from "sonner";
 import { useApp } from "@/lib/store";
 import { CarCard, formatPrice } from "@/components/site/CarCard";
 import { EmiCalculator } from "@/components/site/EmiCalculator";
 import { CheckoutDialog } from "@/components/site/CheckoutDialog";
 import { OfferForm } from "@/components/site/OfferForm";
+import { TestDriveDialog } from "@/components/site/TestDriveDialog";
+import { Reviews } from "@/components/site/Reviews";
 import { DetailSkeleton } from "@/components/site/Skeletons";
 import { Seo } from "@/components/site/Seo";
 import { Lightbox } from "@/components/site/Lightbox";
 import { emiEstimate } from "@/lib/mock-data";
 import { getListing, getSimilar } from "@/lib/api";
 import { qk } from "@/lib/queries";
+import { startConversation } from "@/lib/api";
 import type { BookingType } from "@/lib/types";
 
 export const Route = createFileRoute("/buy/$id")({
@@ -73,17 +77,55 @@ export const Route = createFileRoute("/buy/$id")({
 
 function VehicleDetail() {
   const { id } = useParams({ from: "/buy/$id" });
-  const { listings, markViewed, toggleWishlist, wishlist, compare, toggleCompare } = useApp();
+  const { listings, user, markViewed, toggleWishlist, wishlist, compare, toggleCompare } = useApp();
+  const nav = useNavigate();
+
   const listing = listings.find((l) => l.id === id);
   const [active, setActive] = useState(0);
   const [checkout, setCheckout] = useState<BookingType | null>(null);
   const [video, setVideo] = useState(false);
+  const [lightbox, setLightbox] = useState(false);
+  const [testDrive, setTestDrive] = useState(false);
 
   useEffect(() => {
     if (listing) markViewed(listing.id);
   }, [listing?.id]);
 
   if (!listing) throw notFound();
+
+  function share() {
+    const url = window.location.href;
+    if (navigator.share) {
+      navigator
+        .share({ title: `${listing!.year} ${listing!.brand} ${listing!.model}`, url })
+        .catch(() => {});
+    } else {
+      navigator.clipboard
+        .writeText(url)
+        .then(() => toast.success("Link copied to clipboard!"))
+        .catch(() => toast.error("Couldn't copy link"));
+    }
+  }
+
+  async function startChat() {
+    if (!user) {
+      toast.error("Sign in to start a chat");
+      nav({ to: "/login" });
+      return;
+    }
+    try {
+      const conv = await startConversation({
+        listingId: listing!.id,
+        buyerId: user.id,
+        sellerId: listing!.sellerId,
+        sellerName: listing!.sellerName,
+        listingTitle: `${listing!.year} ${listing!.brand} ${listing!.model}`,
+      });
+      nav({ to: "/chat/$id", params: { id: conv.id } });
+    } catch {
+      toast.error("Couldn't start conversation");
+    }
+  }
 
   const price = listing.pricing?.finalPrice ?? listing.expectedPrice;
   const emi = emiEstimate(price);
@@ -201,14 +243,25 @@ function VehicleDetail() {
               <img
                 src={listing.images[active]}
                 alt={`${listing.brand} ${listing.model}`}
-                className="h-full w-full object-cover"
+                className="h-full w-full cursor-zoom-in object-cover"
+                onClick={() => setLightbox(true)}
               />
-              <button
-                className="absolute right-4 top-4 grid h-10 w-10 place-items-center rounded-full bg-background"
-                onClick={() => toggleWishlist(listing.id)}
-              >
-                <Heart className={`h-4 w-4 ${fav ? "fill-destructive text-destructive" : ""}`} />
-              </button>
+              <div className="absolute right-4 top-4 flex gap-2">
+                <button
+                  className="grid h-10 w-10 place-items-center rounded-full bg-background"
+                  onClick={() => share()}
+                  aria-label="Share listing"
+                >
+                  <Share2 className="h-4 w-4" />
+                </button>
+                <button
+                  className="grid h-10 w-10 place-items-center rounded-full bg-background"
+                  onClick={() => toggleWishlist(listing.id)}
+                  aria-label="Wishlist"
+                >
+                  <Heart className={`h-4 w-4 ${fav ? "fill-destructive text-destructive" : ""}`} />
+                </button>
+              </div>
               <button
                 onClick={() => setVideo(true)}
                 className="absolute bottom-4 left-4 inline-flex items-center gap-2 rounded-full bg-background px-4 py-2 text-sm font-medium transition hover:bg-background/90"
@@ -277,7 +330,7 @@ function VehicleDetail() {
                 <TabsTrigger value="defects">Defects</TabsTrigger>
                 <TabsTrigger value="service">Service</TabsTrigger>
                 <TabsTrigger value="pricing">Pricing</TabsTrigger>
-                <TabsTrigger value="emi">EMI</TabsTrigger>
+                <TabsTrigger value="reviews">Reviews</TabsTrigger>
               </TabsList>
 
               <TabsContent value="overview" className="space-y-4 pt-4">
@@ -395,10 +448,16 @@ function VehicleDetail() {
               </TabsContent>
 
               <TabsContent value="inspection" className="pt-4 space-y-4">
-                <div className="flex justify-end">
+                <div className="flex flex-wrap justify-end gap-2">
                   <Button asChild size="sm" variant="outline">
                     <Link to="/buy/$id/inspection" params={{ id: listing.id }}>
                       View full inspection report →
+                    </Link>
+                  </Button>
+                  <Button asChild size="sm" variant="outline">
+                    <Link to="/buy/$id/report" params={{ id: listing.id }}>
+                      <FileText className="mr-1 h-4 w-4" />
+                      History report
                     </Link>
                   </Button>
                 </div>
@@ -552,6 +611,10 @@ function VehicleDetail() {
                   <EmiCalculator price={price} />
                 </div>
               </TabsContent>
+
+              <TabsContent value="reviews" className="pt-4">
+                <Reviews listing={listing} />
+              </TabsContent>
             </Tabs>
           </div>
         </div>
@@ -581,6 +644,15 @@ function VehicleDetail() {
               </Button>
               <Button
                 size="lg"
+                variant="secondary"
+                className="w-full"
+                onClick={() => setTestDrive(true)}
+              >
+                <Calendar className="mr-2 h-4 w-4" />
+                Book a test drive
+              </Button>
+              <Button
+                size="lg"
                 variant={inCompare ? "secondary" : "ghost"}
                 className="w-full"
                 onClick={() => toggleCompare(listing.id)}
@@ -588,11 +660,14 @@ function VehicleDetail() {
                 <Scale className="mr-2 h-4 w-4" />
                 {inCompare ? "In compare list" : "Add to compare"}
               </Button>
-              <Button asChild size="lg" variant="ghost" className="w-full">
-                <Link to="/support">
-                  <MessageCircle className="mr-2 h-4 w-4" />
-                  Talk to advisor
-                </Link>
+              <Button
+                size="lg"
+                variant="ghost"
+                className="w-full"
+                onClick={startChat}
+              >
+                <MessageCircle className="mr-2 h-4 w-4" />
+                Chat with seller
               </Button>
             </div>
             <Separator className="my-4" />
@@ -633,6 +708,12 @@ function VehicleDetail() {
         />
       )}
 
+      <TestDriveDialog
+        listing={listing}
+        open={testDrive}
+        onOpenChange={setTestDrive}
+      />
+
       <Dialog open={video} onOpenChange={setVideo}>
         <DialogContent className="sm:max-w-2xl">
           <DialogHeader>
@@ -655,6 +736,15 @@ function VehicleDetail() {
           </div>
         </DialogContent>
       </Dialog>
+
+      <Lightbox
+        images={listing.images}
+        open={lightbox}
+        onOpenChange={setLightbox}
+        index={active}
+        onIndexChange={setActive}
+        alt={`${listing.year} ${listing.brand} ${listing.model}`}
+      />
 
       {/* Similar */}
       {similar.length > 0 && (

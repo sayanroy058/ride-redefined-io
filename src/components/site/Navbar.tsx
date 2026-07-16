@@ -6,6 +6,7 @@ import {
   Heart,
   LogOut,
   Menu,
+  MessageCircle,
   Moon,
   Scale,
   Settings,
@@ -37,9 +38,19 @@ const NAV = [
 ] as const;
 
 export function Navbar() {
-  const { user, logout, theme, setTheme, wishlist, loginAsAdmin, loginAsAgent } = useApp();
+  const { user, logout, theme, setTheme, wishlist, conversations, loginAsAdmin, loginAsAgent } =
+    useApp();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [open, setOpen] = useState(false);
+
+  const unreadChat = user
+    ? conversations
+        .filter((c) => c.buyerId === user.id || c.sellerId === user.id)
+        .reduce((sum, c) => {
+          const lastRead = c.lastReadAt?.[user.id] ?? 0;
+          return sum + c.messages.filter((m) => !m.mine && m.createdAt > lastRead).length;
+        }, 0)
+    : 0;
 
   return (
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur-xl">
@@ -118,6 +129,24 @@ export function Navbar() {
                 <Bell className="h-4 w-4" />
               </Link>
             </Button>
+            {user && (
+              <Button
+                asChild
+                variant="ghost"
+                size="icon"
+                aria-label="Messages"
+                className="relative h-9 w-9"
+              >
+                <Link to="/chat">
+                  <MessageCircle className="h-4 w-4" />
+                  {unreadChat > 0 && (
+                    <Badge className="absolute -right-1 -top-1 h-5 min-w-5 rounded-full border-2 border-background bg-primary px-1 text-[10px] text-primary-foreground">
+                      {unreadChat}
+                    </Badge>
+                  )}
+                </Link>
+              </Button>
+            )}
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>

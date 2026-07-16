@@ -1,8 +1,9 @@
 import { Link } from "@tanstack/react-router";
-import { Fuel, GaugeCircle, Heart, MapPin, Settings2, Scale } from "lucide-react";
+import { Fuel, GaugeCircle, Heart, MapPin, Settings2, Scale, Star } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useApp } from "@/lib/store";
+import { LazyImage } from "@/components/site/LazyImage";
 import type { Listing } from "@/lib/types";
 
 export function formatPrice(p: number) {
@@ -43,10 +44,11 @@ export function StatusBadge({ status }: { status: Listing["status"] }) {
 }
 
 export function CarCard({ listing }: { listing: Listing }) {
-  const { wishlist, toggleWishlist, compare, toggleCompare } = useApp();
+  const { wishlist, toggleWishlist, compare, toggleCompare, reviews } = useApp();
   const fav = wishlist.includes(listing.id);
   const cmp = compare.includes(listing.id);
   const price = listing.pricing?.finalPrice ?? listing.expectedPrice;
+  const listingReviews = reviews.filter((r) => r.listingId === listing.id);
 
   return (
     <div className="group overflow-hidden rounded-2xl border border-border/60 bg-card transition-all duration-300 hover:shadow-lg hover:border-primary/30">
@@ -55,11 +57,11 @@ export function CarCard({ listing }: { listing: Listing }) {
         params={{ id: listing.id }}
         className="relative block aspect-[16/10] overflow-hidden bg-muted"
       >
-        <img
+        <LazyImage
           src={listing.images[0]}
           alt={`${listing.brand} ${listing.model}`}
-          loading="lazy"
-          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+          className="h-full w-full"
+          imgClassName="transition-transform duration-500 group-hover:scale-105"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-70" />
         {listing.featured && (
@@ -89,10 +91,16 @@ export function CarCard({ listing }: { listing: Listing }) {
             <Scale className="h-4 w-4" />
           </button>
         </div>
-        <div className="absolute bottom-3 left-3">
+        <div className="absolute bottom-3 left-3 flex items-center gap-2">
           <div className="rounded-full bg-black/40 px-2.5 py-1 text-[11px] font-medium text-white backdrop-blur">
             {listing.registrationCity}
           </div>
+          {listingReviews.length > 0 && (
+            <div className="rounded-full bg-black/40 px-2.5 py-1 text-[11px] font-medium text-white backdrop-blur">
+              <Star className="mr-0.5 inline h-3 w-3 fill-warning text-warning" />
+              {(listingReviews.reduce((s, r) => s + r.rating, 0) / listingReviews.length).toFixed(1)}
+            </div>
+          )}
         </div>
       </Link>
       <div className="space-y-4 p-4">

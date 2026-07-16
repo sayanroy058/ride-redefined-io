@@ -15,6 +15,7 @@ import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SupportRouteImport } from './routes/support'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as SellRouteImport } from './routes/sell'
+import { Route as SavedSearchesRouteImport } from './routes/saved-searches'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as PrivacyRouteImport } from './routes/privacy'
@@ -28,11 +29,14 @@ import { Route as CompareRouteImport } from './routes/compare'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ChatIndexRouteImport } from './routes/chat.index'
 import { Route as BuyIndexRouteImport } from './routes/buy.index'
 import { Route as AgentIndexRouteImport } from './routes/agent.index'
 import { Route as CheckoutIdRouteImport } from './routes/checkout.$id'
+import { Route as ChatIdRouteImport } from './routes/chat.$id'
 import { Route as BuyIdRouteImport } from './routes/buy.$id'
 import { Route as AgentSellRouteImport } from './routes/agent.sell'
+import { Route as BuyIdReportRouteImport } from './routes/buy.$id.report'
 import { Route as BuyIdInspectionRouteImport } from './routes/buy.$id.inspection'
 import { Route as BuyIdDefectsRouteImport } from './routes/buy.$id.defects'
 
@@ -64,6 +68,11 @@ const SettingsRoute = SettingsRouteImport.update({
 const SellRoute = SellRouteImport.update({
   id: '/sell',
   path: '/sell',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SavedSearchesRoute = SavedSearchesRouteImport.update({
+  id: '/saved-searches',
+  path: '/saved-searches',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RegisterRoute = RegisterRouteImport.update({
@@ -131,6 +140,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ChatIndexRoute = ChatIndexRouteImport.update({
+  id: '/chat/',
+  path: '/chat/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BuyIndexRoute = BuyIndexRouteImport.update({
   id: '/buy/',
   path: '/buy/',
@@ -146,6 +160,11 @@ const CheckoutIdRoute = CheckoutIdRouteImport.update({
   path: '/checkout/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ChatIdRoute = ChatIdRouteImport.update({
+  id: '/chat/$id',
+  path: '/chat/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BuyIdRoute = BuyIdRouteImport.update({
   id: '/buy/$id',
   path: '/buy/$id',
@@ -155,6 +174,11 @@ const AgentSellRoute = AgentSellRouteImport.update({
   id: '/agent/sell',
   path: '/agent/sell',
   getParentRoute: () => rootRouteImport,
+} as any)
+const BuyIdReportRoute = BuyIdReportRouteImport.update({
+  id: '/report',
+  path: '/report',
+  getParentRoute: () => BuyIdRoute,
 } as any)
 const BuyIdInspectionRoute = BuyIdInspectionRouteImport.update({
   id: '/inspection',
@@ -181,6 +205,7 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
   '/register': typeof RegisterRoute
+  '/saved-searches': typeof SavedSearchesRoute
   '/sell': typeof SellRoute
   '/settings': typeof SettingsRoute
   '/support': typeof SupportRoute
@@ -189,11 +214,14 @@ export interface FileRoutesByFullPath {
   '/wishlist': typeof WishlistRoute
   '/agent/sell': typeof AgentSellRoute
   '/buy/$id': typeof BuyIdRouteWithChildren
+  '/chat/$id': typeof ChatIdRoute
   '/checkout/$id': typeof CheckoutIdRoute
   '/agent/': typeof AgentIndexRoute
   '/buy/': typeof BuyIndexRoute
+  '/chat/': typeof ChatIndexRoute
   '/buy/$id/defects': typeof BuyIdDefectsRoute
   '/buy/$id/inspection': typeof BuyIdInspectionRoute
+  '/buy/$id/report': typeof BuyIdReportRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -209,6 +237,7 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
   '/register': typeof RegisterRoute
+  '/saved-searches': typeof SavedSearchesRoute
   '/sell': typeof SellRoute
   '/settings': typeof SettingsRoute
   '/support': typeof SupportRoute
@@ -217,11 +246,14 @@ export interface FileRoutesByTo {
   '/wishlist': typeof WishlistRoute
   '/agent/sell': typeof AgentSellRoute
   '/buy/$id': typeof BuyIdRouteWithChildren
+  '/chat/$id': typeof ChatIdRoute
   '/checkout/$id': typeof CheckoutIdRoute
   '/agent': typeof AgentIndexRoute
   '/buy': typeof BuyIndexRoute
+  '/chat': typeof ChatIndexRoute
   '/buy/$id/defects': typeof BuyIdDefectsRoute
   '/buy/$id/inspection': typeof BuyIdInspectionRoute
+  '/buy/$id/report': typeof BuyIdReportRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -238,6 +270,7 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
   '/register': typeof RegisterRoute
+  '/saved-searches': typeof SavedSearchesRoute
   '/sell': typeof SellRoute
   '/settings': typeof SettingsRoute
   '/support': typeof SupportRoute
@@ -246,11 +279,14 @@ export interface FileRoutesById {
   '/wishlist': typeof WishlistRoute
   '/agent/sell': typeof AgentSellRoute
   '/buy/$id': typeof BuyIdRouteWithChildren
+  '/chat/$id': typeof ChatIdRoute
   '/checkout/$id': typeof CheckoutIdRoute
   '/agent/': typeof AgentIndexRoute
   '/buy/': typeof BuyIndexRoute
+  '/chat/': typeof ChatIndexRoute
   '/buy/$id/defects': typeof BuyIdDefectsRoute
   '/buy/$id/inspection': typeof BuyIdInspectionRoute
+  '/buy/$id/report': typeof BuyIdReportRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -268,6 +304,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/profile'
     | '/register'
+    | '/saved-searches'
     | '/sell'
     | '/settings'
     | '/support'
@@ -276,11 +313,14 @@ export interface FileRouteTypes {
     | '/wishlist'
     | '/agent/sell'
     | '/buy/$id'
+    | '/chat/$id'
     | '/checkout/$id'
     | '/agent/'
     | '/buy/'
+    | '/chat/'
     | '/buy/$id/defects'
     | '/buy/$id/inspection'
+    | '/buy/$id/report'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -296,6 +336,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/profile'
     | '/register'
+    | '/saved-searches'
     | '/sell'
     | '/settings'
     | '/support'
@@ -304,11 +345,14 @@ export interface FileRouteTypes {
     | '/wishlist'
     | '/agent/sell'
     | '/buy/$id'
+    | '/chat/$id'
     | '/checkout/$id'
     | '/agent'
     | '/buy'
+    | '/chat'
     | '/buy/$id/defects'
     | '/buy/$id/inspection'
+    | '/buy/$id/report'
   id:
     | '__root__'
     | '/'
@@ -324,6 +368,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/profile'
     | '/register'
+    | '/saved-searches'
     | '/sell'
     | '/settings'
     | '/support'
@@ -332,11 +377,14 @@ export interface FileRouteTypes {
     | '/wishlist'
     | '/agent/sell'
     | '/buy/$id'
+    | '/chat/$id'
     | '/checkout/$id'
     | '/agent/'
     | '/buy/'
+    | '/chat/'
     | '/buy/$id/defects'
     | '/buy/$id/inspection'
+    | '/buy/$id/report'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -353,6 +401,7 @@ export interface RootRouteChildren {
   PrivacyRoute: typeof PrivacyRoute
   ProfileRoute: typeof ProfileRoute
   RegisterRoute: typeof RegisterRoute
+  SavedSearchesRoute: typeof SavedSearchesRoute
   SellRoute: typeof SellRoute
   SettingsRoute: typeof SettingsRoute
   SupportRoute: typeof SupportRoute
@@ -361,9 +410,11 @@ export interface RootRouteChildren {
   WishlistRoute: typeof WishlistRoute
   AgentSellRoute: typeof AgentSellRoute
   BuyIdRoute: typeof BuyIdRouteWithChildren
+  ChatIdRoute: typeof ChatIdRoute
   CheckoutIdRoute: typeof CheckoutIdRoute
   AgentIndexRoute: typeof AgentIndexRoute
   BuyIndexRoute: typeof BuyIndexRoute
+  ChatIndexRoute: typeof ChatIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -408,6 +459,13 @@ declare module '@tanstack/react-router' {
       path: '/sell'
       fullPath: '/sell'
       preLoaderRoute: typeof SellRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/saved-searches': {
+      id: '/saved-searches'
+      path: '/saved-searches'
+      fullPath: '/saved-searches'
+      preLoaderRoute: typeof SavedSearchesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/register': {
@@ -501,6 +559,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/chat/': {
+      id: '/chat/'
+      path: '/chat'
+      fullPath: '/chat/'
+      preLoaderRoute: typeof ChatIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/buy/': {
       id: '/buy/'
       path: '/buy'
@@ -522,6 +587,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CheckoutIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/chat/$id': {
+      id: '/chat/$id'
+      path: '/chat/$id'
+      fullPath: '/chat/$id'
+      preLoaderRoute: typeof ChatIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/buy/$id': {
       id: '/buy/$id'
       path: '/buy/$id'
@@ -535,6 +607,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/agent/sell'
       preLoaderRoute: typeof AgentSellRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/buy/$id/report': {
+      id: '/buy/$id/report'
+      path: '/report'
+      fullPath: '/buy/$id/report'
+      preLoaderRoute: typeof BuyIdReportRouteImport
+      parentRoute: typeof BuyIdRoute
     }
     '/buy/$id/inspection': {
       id: '/buy/$id/inspection'
@@ -556,11 +635,13 @@ declare module '@tanstack/react-router' {
 interface BuyIdRouteChildren {
   BuyIdDefectsRoute: typeof BuyIdDefectsRoute
   BuyIdInspectionRoute: typeof BuyIdInspectionRoute
+  BuyIdReportRoute: typeof BuyIdReportRoute
 }
 
 const BuyIdRouteChildren: BuyIdRouteChildren = {
   BuyIdDefectsRoute: BuyIdDefectsRoute,
   BuyIdInspectionRoute: BuyIdInspectionRoute,
+  BuyIdReportRoute: BuyIdReportRoute,
 }
 
 const BuyIdRouteWithChildren = BuyIdRoute._addFileChildren(BuyIdRouteChildren)
@@ -579,6 +660,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyRoute: PrivacyRoute,
   ProfileRoute: ProfileRoute,
   RegisterRoute: RegisterRoute,
+  SavedSearchesRoute: SavedSearchesRoute,
   SellRoute: SellRoute,
   SettingsRoute: SettingsRoute,
   SupportRoute: SupportRoute,
@@ -587,9 +669,11 @@ const rootRouteChildren: RootRouteChildren = {
   WishlistRoute: WishlistRoute,
   AgentSellRoute: AgentSellRoute,
   BuyIdRoute: BuyIdRouteWithChildren,
+  ChatIdRoute: ChatIdRoute,
   CheckoutIdRoute: CheckoutIdRoute,
   AgentIndexRoute: AgentIndexRoute,
   BuyIndexRoute: BuyIndexRoute,
+  ChatIndexRoute: ChatIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

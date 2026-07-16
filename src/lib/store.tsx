@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-import { generateMockListings, SEED_OFFERS, SEED_TICKETS } from "./mock-data";
+import { generateMockListings, generateSeedReviews, SEED_OFFERS, SEED_TICKETS } from "./mock-data";
 import type {
   Booking,
   Conversation,
@@ -146,6 +146,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setListings(generateMockListings());
       setTickets(SEED_TICKETS);
       setOffers(SEED_OFFERS);
+      setReviews(generateSeedReviews(generateMockListings()));
     }
     setReady(true);
     _resolveReady();

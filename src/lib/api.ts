@@ -1,5 +1,5 @@
 import { getMutators, getStore, storeReady } from "./store";
-import type { Booking, Listing, Offer, Review, Ticket } from "./types";
+import type { Booking, Conversation, Listing, Message, Offer, Review, Ticket } from "./types";
 
 const FAIL_RATE = 0.03;
 const MIN_DELAY = 200;
@@ -201,4 +201,69 @@ export async function createTicket(
   await maybeFail();
   getMutators().addTicket(t);
   return { ...t, id: "t-" + Date.now(), status: "open", createdAt: Date.now() };
+}
+
+export async function getConversations(userId: string): Promise<Conversation[]> {
+  await ready();
+  await delay();
+  await maybeFail();
+  const { conversations } = getStore();
+  return conversations.filter((c) => c.buyerId === userId || c.sellerId === userId);
+}
+
+export async function getConversation(id: string): Promise<Conversation | null> {
+  await ready();
+  await delay();
+  await maybeFail();
+  return getStore().conversations.find((c) => c.id === id) ?? null;
+}
+
+export async function startConversation(args: {
+  listingId: string;
+  buyerId: string;
+  sellerId: string;
+  sellerName: string;
+  listingTitle: string;
+}): Promise<Conversation> {
+  await ready();
+  await delay();
+  await maybeFail();
+  const existing = getStore().conversations.find(
+    (c) => c.listingId === args.listingId && c.buyerId === args.buyerId,
+  );
+  if (existing) return existing;
+  return getMutators().addConversation({ ...args });
+}
+
+const CANNED_REPLIES = [
+  "Thanks for your interest! The car is still available.",
+  "Yes, it has a full service history and is inspection-certified.",
+  "Sure, we can arrange a test drive at your convenience.",
+  "The price is slightly negotiable. Feel free to make an offer.",
+  "Let me check and get back to you shortly.",
+];
+
+export async function sendMessage(
+  conversationId: string,
+  m: Omit<Message, "id" | "createdAt">,
+  sellerId: string,
+): Promise<void> {
+  await ready();
+  await delay();
+  await maybeFail();
+  getMutators().appendMessage(conversationId, m);
+  if (!m.mine) return;
+  await delay();
+  const reply = CANNED_REPLIES[Math.floor(Math.random() * CANNED_REPLIES.length)];
+  getMutators().appendMessage(conversationId, {
+    senderId: sellerId,
+    senderName: "Seller",
+    text: reply,
+    mine: false,
+  });
+}
+
+export async function markConversationRead(id: string, userId: string): Promise<void> {
+  await ready();
+  getMutators().markConversationRead(id, userId);
 }

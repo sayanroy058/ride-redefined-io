@@ -1,4 +1,4 @@
-import type { Listing, Offer, Ticket } from "./types";
+import type { Listing, Offer, Review, Ticket } from "./types";
 
 export const BRANDS = [
   "Tesla",
@@ -367,6 +367,49 @@ export function emiEstimate(price: number, years = 5, rate = 0.095) {
   const n = years * 12;
   const r = rate / 12;
   return Math.round((price * r) / (1 - Math.pow(1 + r, -n)));
+}
+
+const REVIEW_AUTHORS = [
+  "Aditya R.",
+  "Megha S.",
+  "Karthik V.",
+  "Neha G.",
+  "Rahul D.",
+  "Pooja M.",
+];
+const REVIEW_TITLES = [
+  "Excellent condition, as described",
+  "Smooth buying experience",
+  "Great value for money",
+  "Worth every rupee",
+  "Highly recommend DriveHub",
+];
+const REVIEW_BODIES = [
+  "The 200-point inspection was spot on. Car felt brand new. Paperwork was seamless.",
+  "Test drive was easy to book and the advisor was transparent about every detail.",
+  "Pricing was fair and the financing options were clearly explained. No hidden charges.",
+  "Refurbishment quality is top-notch. Couldn't find a single issue during delivery.",
+  "From browsing to delivery, the whole process took 4 days. Very impressed.",
+];
+
+export function generateSeedReviews(listings: Listing[]): Review[] {
+  const reviews: Review[] = [];
+  listings.slice(0, 8).forEach((l, idx) => {
+    const count = (idx % 3) + 1;
+    for (let i = 0; i < count; i++) {
+      reviews.push({
+        id: `sr-${l.id}-${i}`,
+        listingId: l.id,
+        userId: `seed-reviewer-${idx}-${i}`,
+        name: REVIEW_AUTHORS[(idx + i) % REVIEW_AUTHORS.length],
+        rating: 4 + ((idx + i) % 2),
+        title: REVIEW_TITLES[(idx + i) % REVIEW_TITLES.length],
+        body: REVIEW_BODIES[(idx + i) % REVIEW_BODIES.length],
+        createdAt: Date.now() - (i + 1) * 86400000 * (idx + 1),
+      });
+    }
+  });
+  return reviews;
 }
 
 export function calculateFinalPrice(p: {
