@@ -108,9 +108,10 @@ function NotificationsPage() {
         id: "booking-" + b.id,
         kind: "booking",
         title: `${b.type === "reserve" ? "Reservation" : b.type === "test_drive" ? "Test drive" : "Purchase"} confirmed: ${l ? `${l.brand} ${l.model}` : "a car"}`,
-        body: b.type === "test_drive"
-          ? `${b.city ?? ""} · ${b.scheduledDate ? new Date(b.scheduledDate).toLocaleDateString() : ""}`.trim()
-          : `${formatPrice(b.type === "reserve" ? (b.reserveFee ?? 0) : (b.downPayment ?? 0))} ${b.type === "reserve" ? "reserve fee" : "down payment"} paid`,
+        body:
+          b.type === "test_drive"
+            ? `${b.city ?? ""} · ${b.scheduledDate ? new Date(b.scheduledDate).toLocaleDateString() : ""}`.trim()
+            : `${formatPrice(b.type === "reserve" ? (b.reserveFee ?? 0) : (b.downPayment ?? 0))} ${b.type === "reserve" ? "reserve fee" : "down payment"} paid`,
         time: b.createdAt,
         href: l ? { to: "/buy/$id", params: { id: l.id } } : { to: "/dashboard" },
         badge: b.status,
@@ -135,9 +136,7 @@ function NotificationsPage() {
         </div>
         {savedSearches.length > 0 && (
           <Button asChild size="sm" variant="outline">
-            <Link to="/saved-searches">
-              Saved searches ({savedSearches.length})
-            </Link>
+            <Link to="/saved-searches">Saved searches ({savedSearches.length})</Link>
           </Button>
         )}
       </div>

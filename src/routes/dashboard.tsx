@@ -11,6 +11,7 @@ import { CarCard, formatPrice, StatusBadge } from "@/components/site/CarCard";
 import { EmptyState } from "@/components/site/States";
 import { TableSkeleton } from "@/components/site/Skeletons";
 import { Seo } from "@/components/site/Seo";
+import { ListingAnalytics } from "@/components/site/ListingAnalytics";
 import { getBookings, getOffers, getTickets, counterOffer, updateOffer } from "@/lib/api";
 import { qk } from "@/lib/queries";
 import type { OfferState } from "@/lib/types";
@@ -42,13 +43,15 @@ export const Route = createFileRoute("/dashboard")({
 
 function Dashboard() {
   const { user, listings, wishlist, offers, tickets, bookings, updateOffer } = useApp();
-
   if (!user) return <SignedOut />;
 
   const mine = listings.filter((l) => l.sellerId === user.id);
   const wished = listings.filter((l) => wishlist.includes(l.id));
   const myTickets = tickets.filter((t) => t.email === user.email || t.userId === user.id);
   const myBookings = bookings.filter((b) => b.userId === user.id);
+  const myListingIds = new Set(mine.map((l) => l.id));
+  const incomingOffers = offers.filter((o) => myListingIds.has(o.listingId));
+  const myOffers = offers.filter((o) => o.buyerId === user.id);
 
   const stats = [
     { i: Car, label: "Submitted", value: mine.length },
@@ -96,7 +99,9 @@ function Dashboard() {
       <Tabs defaultValue="listings" className="mt-8">
         <TabsList>
           <TabsTrigger value="listings">My listings</TabsTrigger>
-          <TabsTrigger value="offers">Offers ({offers.length})</TabsTrigger>
+          <TabsTrigger value="offers">
+            Offers ({incomingOffers.length + myOffers.length})
+          </TabsTrigger>
           <TabsTrigger value="bookings">Bookings ({myBookings.length})</TabsTrigger>
           <TabsTrigger value="wishlist">Wishlist</TabsTrigger>
           <TabsTrigger value="tickets">Support</TabsTrigger>
@@ -117,55 +122,56 @@ function Dashboard() {
           ) : (
             <div className="space-y-3">
               {mine.map((l) => (
-                <div
-                  key={l.id}
-                  className="flex flex-wrap items-center gap-4 rounded-2xl border border-border/60 bg-card p-4 shadow-sm"
-                >
-                  <img
-                    src={l.images[0]}
-                    alt=""
-                    className="h-20 w-28 flex-none rounded-lg object-cover"
-                  />
-                  <div className="flex-1 min-w-[180px]">
-                    <div className="font-semibold">
-                      {l.year} {l.brand} {l.model}
-                    </div>
-                    <div className="text-xs text-muted-foreground">
-                      {l.variant} · {l.kmDriven.toLocaleString()} km
-                    </div>
-                    <div className="mt-2">
-                      <StatusBadge status={l.status} />
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-xs text-muted-foreground">Asking</div>
-                    <div className="text-lg font-bold">{formatPrice(l.expectedPrice)}</div>
-                  </div>
-                  <Button asChild size="sm" variant="outline">
-                    <Link to="/buy/$id" params={{ id: l.id }}>
-                      View
-                    </Link>
-                  </Button>
-                </div>
+                <ListingRow key={l.id} listing={l} offers={offers} bookings={bookings} />
               ))}
             </div>
           )}
         </TabsContent>
 
         <TabsContent value="offers" className="mt-6">
-          {offers.length === 0 ? (
-            <EmptyState
-              title="No offers yet"
-              description="Offers buyers make on your listings appear here."
-              icon={<Wallet className="h-6 w-6" />}
-            />
-          ) : (
-            <div className="space-y-3">
-              {offers.map((o) => (
-                <OfferRow key={o.id} offer={o} updateOffer={updateOffer} listings={listings} />
-              ))}
+          <div className="space-y-6">
+            {incomingOffers.length > 0 && (
+              <div>
+                <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+                  Incoming offers on your listings
+                </h3>
+                <div className="space-y-3">
+                  {incomingOffers.map((o) => (
+                    <OfferRow key={o.id} offer={o} updateOffer={updateOffer} listings={listings} />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div>
+              <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+                Offers you've made
+              </h3>
+              {myOffers.length === 0 ? (
+                <EmptyState
+                  title="No offers made yet"
+                  description="Make an offer on a car to start negotiating."
+                  icon={<Wallet className="h-6 w-6" />}
+                  action={
+                    <Button asChild>
+                      <Link to="/buy">Browse cars</Link>
+                    </Button>
+                  }
+                />
+              ) : (
+                <div className="space-y-3">
+                  {myOffers.map((o) => (
+                    <BuyerOfferRow
+                      key={o.id}
+                      offer={o}
+                      updateOffer={updateOffer}
+                      listings={listings}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
-          )}
+          </div>
         </TabsContent>
 
         <TabsContent value="bookings" className="mt-6">
@@ -315,6 +321,55 @@ function SignedOut() {
   );
 }
 
+function ListingRow({
+  listing,
+  offers,
+  bookings,
+}: {
+  listing: import("@/lib/types").Listing;
+  offers: import("@/lib/types").Offer[];
+  bookings: import("@/lib/types").Booking[];
+}) {
+  const [showAnalytics, setShowAnalytics] = useState(false);
+  return (
+    <div className="rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
+      <div className="flex flex-wrap items-center gap-4">
+        <img
+          src={listing.images[0]}
+          alt=""
+          className="h-20 w-28 flex-none rounded-lg object-cover"
+        />
+        <div className="flex-1 min-w-[180px]">
+          <div className="font-semibold">
+            {listing.year} {listing.brand} {listing.model}
+          </div>
+          <div className="text-xs text-muted-foreground">
+            {listing.variant} · {listing.kmDriven.toLocaleString()} km
+          </div>
+          <div className="mt-2">
+            <StatusBadge status={listing.status} />
+          </div>
+        </div>
+        <div className="text-right">
+          <div className="text-xs text-muted-foreground">Asking</div>
+          <div className="text-lg font-bold">{formatPrice(listing.expectedPrice)}</div>
+        </div>
+        <div className="flex flex-col gap-2">
+          <Button asChild size="sm" variant="outline">
+            <Link to="/buy/$id" params={{ id: listing.id }}>
+              View
+            </Link>
+          </Button>
+          <Button size="sm" variant="ghost" onClick={() => setShowAnalytics((s) => !s)}>
+            {showAnalytics ? "Hide" : "Analytics"}
+          </Button>
+        </div>
+      </div>
+      {showAnalytics && <ListingAnalytics listing={listing} offers={offers} bookings={bookings} />}
+    </div>
+  );
+}
+
 const OFFER_STATE_META: Record<OfferState, { label: string; cls: string }> = {
   pending: { label: "Pending", cls: "bg-warning/15 text-warning border-warning/40" },
   accepted: { label: "Accepted", cls: "bg-success/15 text-success border-success/40" },
@@ -416,6 +471,108 @@ function OfferRow({
             }}
           >
             Decline
+          </Button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function BuyerOfferRow({
+  offer,
+  updateOffer,
+  listings,
+}: {
+  offer: import("@/lib/types").Offer;
+  updateOffer: (id: string, patch: Partial<import("@/lib/types").Offer>) => void;
+  listings: import("@/lib/types").Listing[];
+}) {
+  const l = listings.find((l) => l.id === offer.listingId);
+  const state = offer.state ?? "pending";
+  const meta = OFFER_STATE_META[state];
+  const [recountering, setRecountering] = useState(false);
+  const [recounter, setRecounter] = useState<number>(
+    Math.round((offer.counterAmount ?? offer.amount) * 0.98),
+  );
+
+  return (
+    <div className="rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <div className="font-semibold">{l ? `${l.brand} ${l.model}` : "Listing"}</div>
+          <div className="text-xs text-muted-foreground">
+            Your offer · {new Date(offer.createdAt).toLocaleDateString()}
+          </div>
+        </div>
+        <div className="flex items-center gap-3 text-right">
+          <div>
+            <div className="text-xs text-muted-foreground">Your offer</div>
+            <div className="text-xl font-bold">{formatPrice(offer.amount)}</div>
+          </div>
+          {offer.counterAmount != null && (
+            <div>
+              <div className="text-xs text-muted-foreground">Seller counter</div>
+              <div className="font-bold text-primary">{formatPrice(offer.counterAmount)}</div>
+            </div>
+          )}
+          <Badge variant="outline" className={`border ${meta.cls}`}>
+            {meta.label}
+          </Badge>
+        </div>
+      </div>
+      <p className="mt-2 text-sm text-muted-foreground">"{offer.message}"</p>
+
+      {state === "countered" && !recountering && (
+        <div className="mt-3 flex flex-wrap gap-2">
+          <Button
+            size="sm"
+            onClick={() => {
+              updateOffer(offer.id, { state: "accepted" });
+              toast.success("Counter accepted — seller notified");
+            }}
+          >
+            Accept counter
+          </Button>
+          <Button size="sm" variant="outline" onClick={() => setRecountering(true)}>
+            Re-counter
+          </Button>
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={() => {
+              updateOffer(offer.id, { state: "declined" });
+              toast.success("Offer withdrawn");
+            }}
+          >
+            Withdraw
+          </Button>
+        </div>
+      )}
+
+      {recountering && (
+        <div className="mt-3 flex flex-wrap items-center gap-2">
+          <Input
+            type="number"
+            value={recounter}
+            onChange={(e) => setRecounter(+e.target.value)}
+            className="w-40"
+          />
+          <Button
+            size="sm"
+            onClick={() => {
+              updateOffer(offer.id, {
+                state: "pending",
+                amount: recounter,
+                counterAmount: undefined,
+              });
+              toast.success(`Re-counter sent: ${formatPrice(recounter)}`);
+              setRecountering(false);
+            }}
+          >
+            Send re-counter
+          </Button>
+          <Button size="sm" variant="ghost" onClick={() => setRecountering(false)}>
+            Cancel
           </Button>
         </div>
       )}

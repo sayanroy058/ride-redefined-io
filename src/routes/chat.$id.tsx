@@ -10,6 +10,9 @@ import { getConversation, markConversationRead, sendMessage } from "@/lib/api";
 
 export const Route = createFileRoute("/chat/$id")({
   component: ChatThread,
+  errorComponent: ({ error }) => (
+    <div className="container mx-auto p-10 text-center text-destructive">{String(error)}</div>
+  ),
   notFoundComponent: () => (
     <div className="container mx-auto px-4 py-20 text-center">
       <h1 className="text-3xl font-bold tracking-tight">Conversation not found</h1>
@@ -59,12 +62,16 @@ function ChatThread() {
     setText("");
     setSending(true);
     try {
-      await sendMessage(conversation.id, {
-        senderId: user.id,
-        senderName: user.name,
-        text: msg,
-        mine: true,
-      }, conversation.sellerId);
+      await sendMessage(
+        conversation.id,
+        {
+          senderId: user.id,
+          senderName: user.name,
+          text: msg,
+          mine: true,
+        },
+        conversation.sellerId,
+      );
     } catch {
       toast.error("Failed to send message");
       setText(msg);
@@ -87,9 +94,7 @@ function ChatThread() {
         <div className="flex items-center justify-between border-b border-border/60 p-4">
           <div>
             <div className="font-semibold">{conversation.listingTitle}</div>
-            <div className="text-xs text-muted-foreground">
-              with {conversation.sellerName}
-            </div>
+            <div className="text-xs text-muted-foreground">with {conversation.sellerName}</div>
           </div>
           {listing && (
             <Button asChild size="sm" variant="outline">
@@ -102,15 +107,10 @@ function ChatThread() {
 
         <div className="flex h-[55vh] flex-col gap-3 overflow-y-auto p-4">
           {conversation.messages.length === 0 ? (
-            <p className="m-auto text-sm text-muted-foreground">
-              No messages yet. Say hello!
-            </p>
+            <p className="m-auto text-sm text-muted-foreground">No messages yet. Say hello!</p>
           ) : (
             conversation.messages.map((m) => (
-              <div
-                key={m.id}
-                className={`flex ${m.mine ? "justify-end" : "justify-start"}`}
-              >
+              <div key={m.id} className={`flex ${m.mine ? "justify-end" : "justify-start"}`}>
                 <div
                   className={`max-w-[75%] rounded-2xl px-3.5 py-2 text-sm ${
                     m.mine
@@ -119,8 +119,13 @@ function ChatThread() {
                   }`}
                 >
                   {m.text}
-                  <div className={`mt-0.5 text-[10px] ${m.mine ? "text-primary-foreground/70" : "text-muted-foreground"}`}>
-                    {new Date(m.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                  <div
+                    className={`mt-0.5 text-[10px] ${m.mine ? "text-primary-foreground/70" : "text-muted-foreground"}`}
+                  >
+                    {new Date(m.createdAt).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
                   </div>
                 </div>
               </div>

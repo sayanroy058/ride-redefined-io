@@ -121,22 +121,38 @@ export function Reviews({ listing }: { listing: Listing }) {
       </div>
 
       {open && (
-        <form onSubmit={submit} className="mt-4 space-y-3 rounded-xl border border-border/60 bg-secondary/30 p-4">
+        <form
+          onSubmit={submit}
+          className="mt-4 space-y-3 rounded-xl border border-border/60 bg-secondary/30 p-4"
+        >
           <div>
             <Label className="mb-1.5 inline-block">Your rating</Label>
             <StarRating value={rating} onChange={setRating} size="h-6 w-6" />
           </div>
           <div>
             <Label className="mb-1.5 inline-block">Title</Label>
-            <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Summarize your experience" />
+            <Input
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="Summarize your experience"
+            />
           </div>
           <div>
             <Label className="mb-1.5 inline-block">Review</Label>
-            <Textarea rows={3} value={body} onChange={(e) => setBody(e.target.value)} placeholder="Share details about the car and your buying experience..." />
+            <Textarea
+              rows={3}
+              value={body}
+              onChange={(e) => setBody(e.target.value)}
+              placeholder="Share details about the car and your buying experience..."
+            />
           </div>
           <div className="flex gap-2">
-            <Button type="submit" size="sm">Submit review</Button>
-            <Button type="button" size="sm" variant="ghost" onClick={() => setOpen(false)}>Cancel</Button>
+            <Button type="submit" size="sm">
+              Submit review
+            </Button>
+            <Button type="button" size="sm" variant="ghost" onClick={() => setOpen(false)}>
+              Cancel
+            </Button>
           </div>
         </form>
       )}

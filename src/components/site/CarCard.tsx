@@ -75,8 +75,9 @@ export function CarCard({ listing }: { listing: Listing }) {
               e.preventDefault();
               toggleWishlist(listing.id);
             }}
-            className="grid h-9 w-9 place-items-center rounded-full bg-background/90 backdrop-blur transition hover:bg-background"
-            aria-label="Wishlist"
+            className="grid h-9 w-9 place-items-center rounded-full bg-background/90 backdrop-blur transition hover:bg-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            aria-label={fav ? "Remove from wishlist" : "Add to wishlist"}
+            aria-pressed={fav}
           >
             <Heart className={`h-4 w-4 ${fav ? "fill-destructive text-destructive" : ""}`} />
           </button>
@@ -85,8 +86,9 @@ export function CarCard({ listing }: { listing: Listing }) {
               e.preventDefault();
               toggleCompare(listing.id);
             }}
-            className={`grid h-9 w-9 place-items-center rounded-full backdrop-blur transition ${cmp ? "bg-primary text-primary-foreground" : "bg-background/90 hover:bg-background"}`}
-            aria-label="Compare"
+            className={`grid h-9 w-9 place-items-center rounded-full backdrop-blur transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${cmp ? "bg-primary text-primary-foreground" : "bg-background/90 hover:bg-background"}`}
+            aria-label={cmp ? "Remove from compare" : "Add to compare"}
+            aria-pressed={cmp}
           >
             <Scale className="h-4 w-4" />
           </button>
@@ -98,7 +100,9 @@ export function CarCard({ listing }: { listing: Listing }) {
           {listingReviews.length > 0 && (
             <div className="rounded-full bg-black/40 px-2.5 py-1 text-[11px] font-medium text-white backdrop-blur">
               <Star className="mr-0.5 inline h-3 w-3 fill-warning text-warning" />
-              {(listingReviews.reduce((s, r) => s + r.rating, 0) / listingReviews.length).toFixed(1)}
+              {(listingReviews.reduce((s, r) => s + r.rating, 0) / listingReviews.length).toFixed(
+                1,
+              )}
             </div>
           )}
         </div>
@@ -139,9 +143,7 @@ export function CarCard({ listing }: { listing: Listing }) {
           </span>
         </div>
         <div className="flex items-center justify-between border-t border-border/60 pt-3">
-          <span className="text-xs font-medium text-muted-foreground">
-            {listing.ownership}
-          </span>
+          <span className="text-xs font-medium text-muted-foreground">{listing.ownership}</span>
           <Button asChild size="sm" variant="secondary">
             <Link to="/buy/$id" params={{ id: listing.id }}>
               View details

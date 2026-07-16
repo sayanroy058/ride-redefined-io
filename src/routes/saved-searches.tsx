@@ -38,7 +38,11 @@ function SavedSearchesPage() {
 
   return (
     <div className="container mx-auto max-w-2xl px-4 py-10">
-      <Seo title="Saved searches — DriveHub" description="Manage your saved search alerts." canonical="/saved-searches" />
+      <Seo
+        title="Saved searches — DriveHub"
+        description="Manage your saved search alerts."
+        canonical="/saved-searches"
+      />
       <div className="mb-6">
         <h1 className="text-3xl font-bold tracking-tight">Saved searches</h1>
         <p className="text-sm text-muted-foreground">

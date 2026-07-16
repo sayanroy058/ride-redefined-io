@@ -133,7 +133,11 @@ export function TestDriveDialog({
             </div>
             <div>
               <Label className="mb-1.5 inline-block">Phone</Label>
-              <Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+91 ..." />
+              <Input
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="+91 ..."
+              />
             </div>
           </div>
 

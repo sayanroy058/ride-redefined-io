@@ -82,7 +82,7 @@ export const Route = createFileRoute("/admin")({
 });
 
 function Admin() {
-  const { user, listings, tickets, updateTicket } = useApp();
+  const { user, listings, tickets, offers, bookings, updateTicket } = useApp();
 
   if (!user || user.role !== "admin") {
     return (
@@ -257,9 +257,21 @@ function Admin() {
         </div>
       </div>
 
+      <div className="mt-5 grid gap-5 lg:grid-cols-2">
+        <div className="rounded-2xl border border-border/60 bg-card p-5 card-elevated">
+          <h3 className="mb-3 font-display text-sm font-semibold">Conversion funnel</h3>
+          <ConversionFunnel listings={listings} offers={offers} bookings={bookings} />
+        </div>
+        <div className="rounded-2xl border border-border/60 bg-card p-5 card-elevated">
+          <h3 className="mb-3 font-display text-sm font-semibold">Revenue summary</h3>
+          <RevenueSummary listings={listings} bookings={bookings} />
+        </div>
+      </div>
+
       <Tabs defaultValue="approvals" className="mt-8">
         <TabsList className="flex w-full flex-wrap justify-start">
           <TabsTrigger value="approvals">Approval queue</TabsTrigger>
+          <TabsTrigger value="offers">Offers ({offers.length})</TabsTrigger>
           <TabsTrigger value="inventory">Inventory</TabsTrigger>
           <TabsTrigger value="tickets">Support tickets</TabsTrigger>
           <TabsTrigger value="users">Users</TabsTrigger>
@@ -267,6 +279,10 @@ function Admin() {
 
         <TabsContent value="approvals" className="mt-6">
           <ApprovalQueue />
+        </TabsContent>
+
+        <TabsContent value="offers" className="mt-6">
+          <OffersTable offers={offers} listings={listings} />
         </TabsContent>
 
         <TabsContent value="inventory" className="mt-6">
@@ -670,6 +686,151 @@ function ApprovalRow({ listing }: { listing: Listing }) {
           </DialogContent>
         </Dialog>
       </div>
+    </div>
+  );
+}
+
+function ConversionFunnel({
+  listings,
+  offers,
+  bookings,
+}: {
+  listings: Listing[];
+  offers: import("@/lib/types").Offer[];
+  bookings: import("@/lib/types").Booking[];
+}) {
+  const totalViews = listings.reduce((s, l) => s + (l.views ?? 0), 0);
+  const totalWishlist = Math.round(totalViews * 0.15);
+  const totalOffers = offers.length;
+  const totalBookings = bookings.length;
+  const data = [
+    { stage: "Views", value: totalViews },
+    { stage: "Wishlist", value: totalWishlist },
+    { stage: "Offers", value: totalOffers },
+    { stage: "Bookings", value: totalBookings },
+  ];
+  return (
+    <ResponsiveContainer width="100%" height={200}>
+      <BarChart data={data} layout="vertical">
+        <CartesianGrid strokeDasharray="3 3" stroke="oklch(1 0 0 / 0.06)" />
+        <XAxis type="number" stroke="oklch(0.7 0.02 250)" fontSize={11} />
+        <YAxis
+          dataKey="stage"
+          type="category"
+          stroke="oklch(0.7 0.02 250)"
+          fontSize={11}
+          width={70}
+        />
+        <Tooltip
+          contentStyle={{
+            background: "oklch(0.18 0.03 260)",
+            border: "1px solid oklch(1 0 0 / 0.1)",
+            borderRadius: 8,
+            fontSize: 12,
+          }}
+        />
+        <Bar dataKey="value" fill="oklch(0.6 0.13 185)" radius={[0, 6, 6, 0]} />
+      </BarChart>
+    </ResponsiveContainer>
+  );
+}
+
+function RevenueSummary({
+  listings,
+  bookings,
+}: {
+  listings: Listing[];
+  bookings: import("@/lib/types").Booking[];
+}) {
+  const soldRevenue = listings
+    .filter((l) => l.pricing)
+    .reduce((s, l) => s + l.pricing!.finalPrice * 0.13, 0);
+  const bookingRevenue = bookings
+    .filter((b) => b.type === "purchase")
+    .reduce((s, b) => s + (b.downPayment ?? 0), 0);
+  const reserveRevenue = bookings
+    .filter((b) => b.type === "reserve")
+    .reduce((s, b) => s + (b.reserveFee ?? 0), 0);
+  const rows = [
+    ["Commission from sales", formatPrice(soldRevenue)],
+    ["Purchase down payments", formatPrice(bookingRevenue)],
+    ["Reservation fees", formatPrice(reserveRevenue)],
+  ];
+  return (
+    <div className="space-y-3">
+      {rows.map(([label, value]) => (
+        <div
+          key={label}
+          className="flex items-center justify-between border-b border-border/60 pb-2 text-sm last:border-0"
+        >
+          <span className="text-muted-foreground">{label}</span>
+          <span className="font-display font-bold">{value}</span>
+        </div>
+      ))}
+      <Separator />
+      <div className="flex items-center justify-between pt-1">
+        <span className="font-display text-sm font-semibold">Total revenue</span>
+        <span className="font-display text-2xl font-bold gradient-text">
+          {formatPrice(soldRevenue + bookingRevenue + reserveRevenue)}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function OffersTable({
+  offers,
+  listings,
+}: {
+  offers: import("@/lib/types").Offer[];
+  listings: Listing[];
+}) {
+  if (offers.length === 0) {
+    return (
+      <div className="rounded-2xl border border-border/60 bg-card p-10 text-center text-sm text-muted-foreground">
+        No offers to review.
+      </div>
+    );
+  }
+  return (
+    <div className="overflow-x-auto rounded-2xl border border-border/60 bg-card">
+      <table className="w-full text-sm">
+        <thead className="border-b border-border/60 text-left text-xs uppercase tracking-wider text-muted-foreground">
+          <tr>
+            <th className="p-3">Car</th>
+            <th className="p-3">Buyer</th>
+            <th className="p-3">Offer</th>
+            <th className="p-3">Asking</th>
+            <th className="p-3">State</th>
+            <th className="p-3">Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          {offers.map((o) => {
+            const l = listings.find((l) => l.id === o.listingId);
+            const asking = l ? (l.pricing?.finalPrice ?? l.expectedPrice) : 0;
+            return (
+              <tr key={o.id} className="border-b border-border/40 last:border-0">
+                <td className="p-3">
+                  {l ? `${l.brand} ${l.model}` : "—"}
+                  <div className="text-xs text-muted-foreground">{l?.variant}</div>
+                </td>
+                <td className="p-3">{o.buyerName}</td>
+                <td className="p-3 font-medium">{formatPrice(o.amount)}</td>
+                <td className="p-3 text-muted-foreground">{formatPrice(asking)}</td>
+                <td className="p-3">
+                  <span className="rounded-full bg-secondary px-2.5 py-0.5 text-xs font-medium capitalize">
+                    {o.state ?? "pending"}
+                  </span>
+                </td>
+                <td className="p-3 text-muted-foreground">
+                  {new Date(o.createdAt).toLocaleDateString()}
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
     </div>
   );
 }

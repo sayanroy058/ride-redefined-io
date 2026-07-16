@@ -369,14 +369,7 @@ export function emiEstimate(price: number, years = 5, rate = 0.095) {
   return Math.round((price * r) / (1 - Math.pow(1 + r, -n)));
 }
 
-const REVIEW_AUTHORS = [
-  "Aditya R.",
-  "Megha S.",
-  "Karthik V.",
-  "Neha G.",
-  "Rahul D.",
-  "Pooja M.",
-];
+const REVIEW_AUTHORS = ["Aditya R.", "Megha S.", "Karthik V.", "Neha G.", "Rahul D.", "Pooja M."];
 const REVIEW_TITLES = [
   "Excellent condition, as described",
   "Smooth buying experience",

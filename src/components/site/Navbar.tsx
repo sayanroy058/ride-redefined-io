@@ -72,7 +72,8 @@ export function Navbar() {
                   <Link
                     key={n.to}
                     to={n.to}
-                    className={`rounded-lg px-3.5 py-2 text-sm font-medium transition-colors ${active ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-secondary hover:text-foreground"}`}
+                    aria-current={active ? "page" : undefined}
+                    className={`rounded-lg px-3.5 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${active ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-secondary hover:text-foreground"}`}
                   >
                     {n.label}
                   </Link>
@@ -249,11 +250,7 @@ export function Navbar() {
               </SheetTrigger>
               <SheetContent side="right" className="w-80 overflow-y-auto p-6">
                 <div className="mt-6">
-                  <Link
-                    to="/"
-                    onClick={() => setOpen(false)}
-                    className="flex items-center gap-2.5"
-                  >
+                  <Link to="/" onClick={() => setOpen(false)} className="flex items-center gap-2.5">
                     <span className="grid h-9 w-9 place-items-center rounded-lg bg-primary text-primary-foreground">
                       <Car className="h-5 w-5" />
                     </span>
@@ -410,7 +407,10 @@ export function Navbar() {
 
 export function Footer() {
   return (
-    <footer className="relative mt-24 overflow-hidden text-white" style={{ background: "var(--gradient-hero)" }}>
+    <footer
+      className="relative mt-24 overflow-hidden text-white"
+      style={{ background: "var(--gradient-hero)" }}
+    >
       <div
         className="pointer-events-none absolute -right-24 -top-24 h-80 w-80 rounded-full blur-3xl"
         style={{ background: "var(--gradient-glow)" }}
@@ -432,8 +432,8 @@ export function Footer() {
               The calmest place to buy or sell your next car.
             </h2>
             <p className="mt-3 max-w-md text-sm leading-6 text-white/70">
-              Verified inspections, elegant financing, and a buying journey designed with the
-              same care as the vehicles themselves.
+              Verified inspections, elegant financing, and a buying journey designed with the same
+              care as the vehicles themselves.
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
@@ -458,32 +458,67 @@ export function Footer() {
           <div className="sm:col-span-2 lg:col-span-1">
             <h4 className="text-sm font-semibold text-white">DriveHub</h4>
             <p className="mt-3 max-w-xs text-sm leading-6 text-white/60">
-              Premium pre-owned cars, inspected and refurbished — delivered with total
-              transparency.
+              Premium pre-owned cars, inspected and refurbished — delivered with total transparency.
             </p>
           </div>
           <div>
             <h4 className="text-sm font-semibold text-white">Buy &amp; Sell</h4>
             <ul className="mt-4 space-y-3 text-sm text-white/60">
-              <li><Link to="/buy" className="transition-colors hover:text-white">Browse inventory</Link></li>
-              <li><Link to="/sell" className="transition-colors hover:text-white">Sell your car</Link></li>
-              <li><Link to="/finance" className="transition-colors hover:text-white">Finance &amp; EMI</Link></li>
-              <li><Link to="/compare" className="transition-colors hover:text-white">Compare cars</Link></li>
+              <li>
+                <Link to="/buy" className="transition-colors hover:text-white">
+                  Browse inventory
+                </Link>
+              </li>
+              <li>
+                <Link to="/sell" className="transition-colors hover:text-white">
+                  Sell your car
+                </Link>
+              </li>
+              <li>
+                <Link to="/finance" className="transition-colors hover:text-white">
+                  Finance &amp; EMI
+                </Link>
+              </li>
+              <li>
+                <Link to="/compare" className="transition-colors hover:text-white">
+                  Compare cars
+                </Link>
+              </li>
             </ul>
           </div>
           <div>
             <h4 className="text-sm font-semibold text-white">Company</h4>
             <ul className="mt-4 space-y-3 text-sm text-white/60">
-              <li><Link to="/about" className="transition-colors hover:text-white">About</Link></li>
-              <li><Link to="/support" className="transition-colors hover:text-white">Support</Link></li>
-              <li><Link to="/contact" className="transition-colors hover:text-white">Contact</Link></li>
+              <li>
+                <Link to="/about" className="transition-colors hover:text-white">
+                  About
+                </Link>
+              </li>
+              <li>
+                <Link to="/support" className="transition-colors hover:text-white">
+                  Support
+                </Link>
+              </li>
+              <li>
+                <Link to="/contact" className="transition-colors hover:text-white">
+                  Contact
+                </Link>
+              </li>
             </ul>
           </div>
           <div>
             <h4 className="text-sm font-semibold text-white">Legal</h4>
             <ul className="mt-4 space-y-3 text-sm text-white/60">
-              <li><Link to="/privacy" className="transition-colors hover:text-white">Privacy</Link></li>
-              <li><Link to="/terms" className="transition-colors hover:text-white">Terms</Link></li>
+              <li>
+                <Link to="/privacy" className="transition-colors hover:text-white">
+                  Privacy
+                </Link>
+              </li>
+              <li>
+                <Link to="/terms" className="transition-colors hover:text-white">
+                  Terms
+                </Link>
+              </li>
             </ul>
           </div>
         </div>

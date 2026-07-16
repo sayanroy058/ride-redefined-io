@@ -1,9 +1,18 @@
 import { createFileRoute, Link, notFound, useParams } from "@tanstack/react-router";
-import { ArrowLeft, ShieldCheck, CheckCircle2, Download, Printer } from "lucide-react";
+import {
+  ArrowLeft,
+  CheckCircle2,
+  Clock,
+  Download,
+  Printer,
+  ShieldCheck,
+  Wrench,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
+import { Seo } from "@/components/site/Seo";
 import { useApp } from "@/lib/store";
 
 export const Route = createFileRoute("/buy/$id/inspection")({
@@ -17,6 +26,22 @@ export const Route = createFileRoute("/buy/$id/inspection")({
     </div>
   ),
 });
+
+const INSPECTION_STAGES = [
+  { label: "Vehicle intake & documentation", pct: 100, done: true, inProgress: false },
+  { label: "Mechanical inspection", pct: 100, done: true, inProgress: false },
+  { label: "Electrical & diagnostics", pct: 100, done: true, inProgress: false },
+  { label: "Cosmetic & body inspection", pct: 80, done: false, inProgress: true },
+  { label: "Road test", pct: 0, done: false, inProgress: false },
+  { label: "Final QC & certification", pct: 0, done: false, inProgress: false },
+];
+
+const DEFECT_TRACKER = [
+  { area: "Front bumper scuff", status: "Resolved" as const },
+  { area: "Rear-right alloy kerb mark", status: "Resolved" as const },
+  { area: "Driver seat bolster wear", status: "In progress" as const },
+  { area: "Windshield stone chip", status: "Resolved" as const },
+];
 
 const SECTIONS: {
   title: string;
@@ -104,6 +129,11 @@ function InspectionReport() {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      <Seo
+        title={`Inspection report — ${listing.brand} ${listing.model} — DriveHub`}
+        description="200-point inspection report with detailed checks across all vehicle systems."
+        canonical={`/buy/${listing.id}/inspection`}
+      />
       <Link
         to="/buy/$id"
         params={{ id: listing.id }}
@@ -163,6 +193,68 @@ function InspectionReport() {
             graded by a certified engineer using calibrated tools. Defects flagged here are mirrored
             on the Defects page.
           </p>
+        </div>
+      </div>
+
+      <div className="mt-6 rounded-2xl border border-border/60 bg-card p-5">
+        <h2 className="mb-4 font-display text-sm font-semibold">Inspection stages</h2>
+        <div className="space-y-3">
+          {INSPECTION_STAGES.map((s) => (
+            <div key={s.label} className="flex items-center gap-3">
+              <div
+                className={`grid h-8 w-8 flex-none place-items-center rounded-full ${
+                  s.done
+                    ? "bg-success/15 text-success"
+                    : s.inProgress
+                      ? "bg-primary/15 text-primary"
+                      : "bg-secondary text-muted-foreground"
+                }`}
+              >
+                {s.done ? (
+                  <CheckCircle2 className="h-4 w-4" />
+                ) : s.inProgress ? (
+                  <Wrench className="h-4 w-4" />
+                ) : (
+                  <Clock className="h-4 w-4" />
+                )}
+              </div>
+              <div className="flex-1">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium">{s.label}</span>
+                  <Badge variant="outline" className="text-[10px]">
+                    {s.done ? "Done" : s.inProgress ? "In progress" : "Pending"}
+                  </Badge>
+                </div>
+                <Progress value={s.pct} className="mt-1.5 h-1.5" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="mt-6 rounded-2xl border border-border/60 bg-card p-5">
+        <h2 className="mb-4 font-display text-sm font-semibold">Defect resolution tracker</h2>
+        <div className="space-y-2">
+          {DEFECT_TRACKER.map((d) => (
+            <div
+              key={d.area}
+              className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-border/60 p-3 text-sm"
+            >
+              <span className="font-medium">{d.area}</span>
+              <Badge
+                variant="outline"
+                className={`text-[10px] ${
+                  d.status === "Resolved"
+                    ? "border-success/40 text-success"
+                    : d.status === "In progress"
+                      ? "border-primary/40 text-primary"
+                      : "border-warning/40 text-warning"
+                }`}
+              >
+                {d.status}
+              </Badge>
+            </div>
+          ))}
         </div>
       </div>
 

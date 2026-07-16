@@ -119,10 +119,7 @@ function BuyPage() {
   const filtered = useMemo(() => {
     let r = inventory.filter((l) => {
       const p = l.pricing?.finalPrice ?? l.expectedPrice;
-      if (
-        q &&
-        !`${l.brand} ${l.model} ${l.variant}`.toLowerCase().includes(q.toLowerCase())
-      )
+      if (q && !`${l.brand} ${l.model} ${l.variant}`.toLowerCase().includes(q.toLowerCase()))
         return false;
       if (brand.length && !brand.includes(l.brand)) return false;
       if (body.length && !body.includes(l.bodyType)) return false;
@@ -166,17 +163,42 @@ function BuyPage() {
 
   const filters = (
     <div className="space-y-6">
-      <FilterGroup title="Brand" options={BRANDS} values={brand} onChange={(v) => patch({ brand: v, page: undefined })} />
-      <FilterGroup title="Body type" options={BODY_TYPES} values={body} onChange={(v) => patch({ body: v, page: undefined })} />
-      <FilterGroup title="Fuel" options={FUEL_TYPES} values={fuel} onChange={(v) => patch({ fuel: v, page: undefined })} />
+      <FilterGroup
+        title="Brand"
+        options={BRANDS}
+        values={brand}
+        onChange={(v) => patch({ brand: v, page: undefined })}
+      />
+      <FilterGroup
+        title="Body type"
+        options={BODY_TYPES}
+        values={body}
+        onChange={(v) => patch({ body: v, page: undefined })}
+      />
+      <FilterGroup
+        title="Fuel"
+        options={FUEL_TYPES}
+        values={fuel}
+        onChange={(v) => patch({ fuel: v, page: undefined })}
+      />
       <FilterGroup
         title="Transmission"
         options={TRANSMISSIONS}
         values={trans}
         onChange={(v) => patch({ trans: v, page: undefined })}
       />
-      <FilterGroup title="Ownership" options={OWNERSHIP} values={own} onChange={(v) => patch({ own: v, page: undefined })} />
-      <FilterGroup title="Location" options={STATES} values={state} onChange={(v) => patch({ state: v, page: undefined })} />
+      <FilterGroup
+        title="Ownership"
+        options={OWNERSHIP}
+        values={own}
+        onChange={(v) => patch({ own: v, page: undefined })}
+      />
+      <FilterGroup
+        title="Location"
+        options={STATES}
+        values={state}
+        onChange={(v) => patch({ state: v, page: undefined })}
+      />
 
       <div>
         <div className="mb-2 flex justify-between text-sm font-medium">
@@ -190,7 +212,9 @@ function BuyPage() {
           max={10000000}
           step={50000}
           value={price}
-          onValueChange={(v) => patch({ priceMin: v[0], priceMax: v[1], budget: undefined, page: undefined })}
+          onValueChange={(v) =>
+            patch({ priceMin: v[0], priceMax: v[1], budget: undefined, page: undefined })
+          }
         />
       </div>
       <div>
@@ -250,10 +274,7 @@ function BuyPage() {
               onChange={(e) => patch({ q: e.target.value || undefined, page: undefined })}
             />
           </div>
-          <Select
-            value={sort}
-            onValueChange={(v) => patch({ sort: v, page: undefined })}
-          >
+          <Select value={sort} onValueChange={(v) => patch({ sort: v, page: undefined })}>
             <SelectTrigger className="w-44">
               <SelectValue />
             </SelectTrigger>
@@ -304,13 +325,22 @@ function BuyPage() {
           {q && <Chip label={`"${q}"`} onClear={() => patch({ q: undefined })} />}
           {budget && <Chip label={budget} onClear={() => patch({ budget: undefined })} />}
           {(price[0] !== 0 || price[1] !== 10000000) && (
-            <Chip label={`${formatPrice(price[0])}–${formatPrice(price[1])}`} onClear={() => patch({ priceMin: undefined, priceMax: undefined, budget: undefined })} />
+            <Chip
+              label={`${formatPrice(price[0])}–${formatPrice(price[1])}`}
+              onClear={() => patch({ priceMin: undefined, priceMax: undefined, budget: undefined })}
+            />
           )}
           {(year[0] !== 2015 || year[1] !== 2024) && (
-            <Chip label={`${year[0]}–${year[1]}`} onClear={() => patch({ yearMin: undefined, yearMax: undefined })} />
+            <Chip
+              label={`${year[0]}–${year[1]}`}
+              onClear={() => patch({ yearMin: undefined, yearMax: undefined })}
+            />
           )}
           {(km[0] !== 0 || km[1] !== 150000) && (
-            <Chip label={`${km[0].toLocaleString()}–${km[1].toLocaleString()} km`} onClear={() => patch({ kmMin: undefined, kmMax: undefined })} />
+            <Chip
+              label={`${km[0].toLocaleString()}–${km[1].toLocaleString()} km`}
+              onClear={() => patch({ kmMin: undefined, kmMax: undefined })}
+            />
           )}
           <Button size="sm" variant="ghost" onClick={() => nav({ search: {}, resetScroll: false })}>
             <X className="mr-1 h-3 w-3" /> Clear all
@@ -380,8 +410,8 @@ function BuyPage() {
           {pageCount > 1 && (
             <div className="mt-8 flex flex-col items-center gap-3">
               <p className="text-xs text-muted-foreground">
-                Showing {(safePage - 1) * PAGE_SIZE + 1}–{Math.min(safePage * PAGE_SIZE, filtered.length)} of{" "}
-                {filtered.length}
+                Showing {(safePage - 1) * PAGE_SIZE + 1}–
+                {Math.min(safePage * PAGE_SIZE, filtered.length)} of {filtered.length}
               </p>
               <div className="flex flex-wrap items-center justify-center gap-1">
                 <Button
@@ -434,7 +464,11 @@ function Chip({ label, onClear }: { label: string; onClear: () => void }) {
   return (
     <span className="inline-flex items-center gap-1 rounded-full border border-border/60 bg-secondary/60 px-2.5 py-1 text-xs font-medium">
       {label}
-      <button onClick={onClear} aria-label={`Remove ${label}`} className="text-muted-foreground hover:text-foreground">
+      <button
+        onClick={onClear}
+        aria-label={`Remove ${label}`}
+        className="text-muted-foreground hover:text-foreground"
+      >
         <X className="h-3 w-3" />
       </button>
     </span>

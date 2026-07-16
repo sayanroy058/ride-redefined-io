@@ -6,6 +6,7 @@ import {
   Calendar,
   Car,
   CheckCircle2,
+  FileText,
   Fuel,
   GaugeCircle,
   Heart,
@@ -248,16 +249,17 @@ function VehicleDetail() {
               />
               <div className="absolute right-4 top-4 flex gap-2">
                 <button
-                  className="grid h-10 w-10 place-items-center rounded-full bg-background"
+                  className="grid h-10 w-10 place-items-center rounded-full bg-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                   onClick={() => share()}
                   aria-label="Share listing"
                 >
                   <Share2 className="h-4 w-4" />
                 </button>
                 <button
-                  className="grid h-10 w-10 place-items-center rounded-full bg-background"
+                  className="grid h-10 w-10 place-items-center rounded-full bg-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                   onClick={() => toggleWishlist(listing.id)}
-                  aria-label="Wishlist"
+                  aria-label={fav ? "Remove from wishlist" : "Add to wishlist"}
+                  aria-pressed={fav}
                 >
                   <Heart className={`h-4 w-4 ${fav ? "fill-destructive text-destructive" : ""}`} />
                 </button>
@@ -274,7 +276,9 @@ function VehicleDetail() {
                 <button
                   key={i}
                   onClick={() => setActive(i)}
-                  className={`relative h-16 w-24 flex-none overflow-hidden rounded-lg border-2 transition ${i === active ? "border-primary" : "border-transparent"}`}
+                  aria-label={`View image ${i + 1}`}
+                  aria-pressed={i === active}
+                  className={`relative h-16 w-24 flex-none overflow-hidden rounded-lg border-2 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${i === active ? "border-primary" : "border-transparent"}`}
                 >
                   <img src={src} alt="" className="h-full w-full object-cover" />
                 </button>
@@ -660,12 +664,7 @@ function VehicleDetail() {
                 <Scale className="mr-2 h-4 w-4" />
                 {inCompare ? "In compare list" : "Add to compare"}
               </Button>
-              <Button
-                size="lg"
-                variant="ghost"
-                className="w-full"
-                onClick={startChat}
-              >
+              <Button size="lg" variant="ghost" className="w-full" onClick={startChat}>
                 <MessageCircle className="mr-2 h-4 w-4" />
                 Chat with seller
               </Button>
@@ -708,11 +707,7 @@ function VehicleDetail() {
         />
       )}
 
-      <TestDriveDialog
-        listing={listing}
-        open={testDrive}
-        onOpenChange={setTestDrive}
-      />
+      <TestDriveDialog listing={listing} open={testDrive} onOpenChange={setTestDrive} />
 
       <Dialog open={video} onOpenChange={setVideo}>
         <DialogContent className="sm:max-w-2xl">

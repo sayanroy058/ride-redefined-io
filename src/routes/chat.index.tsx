@@ -32,7 +32,11 @@ function ChatInbox() {
 
   return (
     <div className="container mx-auto max-w-2xl px-4 py-10">
-      <Seo title="Messages — DriveHub" description="Your conversations with sellers." canonical="/chat" />
+      <Seo
+        title="Messages — DriveHub"
+        description="Your conversations with sellers."
+        canonical="/chat"
+      />
       <div className="mb-6">
         <h1 className="text-3xl font-bold tracking-tight">Messages</h1>
         <p className="text-sm text-muted-foreground">
