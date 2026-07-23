@@ -1,65 +1,86 @@
-import { getMutators, getStore, storeReady } from "./store";
-import type { Booking, Conversation, Listing, Message, Offer, Review, Ticket } from "./types";
+import type {
+  Booking,
+  Conversation,
+  Listing,
+  Message,
+  Offer,
+  Review,
+  Ticket,
+  User,
+} from "./types";
+import { getToken } from "./store";
 
-const FAIL_RATE = 0.03;
-const MIN_DELAY = 200;
-const MAX_DELAY = 600;
+// ---------------------------------------------------------------------------
+// Internal helpers
+// ---------------------------------------------------------------------------
 
-let failuresEnabled = true;
-try {
-  failuresEnabled = localStorage.getItem("ucm:mock-failures") !== "off";
-} catch {
-  failuresEnabled = true;
+const BASE = "/api";
+
+function authHeaders(): Record<string, string> {
+  const token = getToken();
+  return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
-export function setMockFailures(enabled: boolean) {
-  failuresEnabled = enabled;
-  try {
-    localStorage.setItem("ucm:mock-failures", enabled ? "on" : "off");
-  } catch {
-    /* ignore */
+async function request<T>(url: string, options?: RequestInit): Promise<T> {
+  const res = await fetch(`${BASE}${url}`, {
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...authHeaders(),
+      ...(options?.headers as Record<string, string> | undefined),
+    },
+  });
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error(body.error ?? `Request failed: ${res.status}`);
   }
+  return res.json();
 }
 
-function delay() {
-  const ms = MIN_DELAY + Math.floor(Math.random() * (MAX_DELAY - MIN_DELAY));
-  return new Promise<void>((r) => setTimeout(r, ms));
+// ---------------------------------------------------------------------------
+// Auth
+// ---------------------------------------------------------------------------
+
+export async function apiLogin(
+  email: string,
+  password: string,
+): Promise<{ user: User; token: string }> {
+  return request<{ user: User; token: string }>("/auth/login", {
+    method: "POST",
+    body: JSON.stringify({ email, password }),
+  });
 }
 
-async function maybeFail() {
-  if (failuresEnabled && Math.random() < FAIL_RATE) {
-    throw new Error("Network error — please try again.");
-  }
+export async function apiRegister(
+  name: string,
+  email: string,
+  password: string,
+): Promise<{ user: User; token: string }> {
+  return request<{ user: User; token: string }>("/auth/register", {
+    method: "POST",
+    body: JSON.stringify({ name, email, password }),
+  });
 }
 
-async function ready() {
-  await storeReady;
-}
+// ---------------------------------------------------------------------------
+// Listings
+// ---------------------------------------------------------------------------
 
 export async function getListings(): Promise<Listing[]> {
-  await ready();
-  await delay();
-  await maybeFail();
-  return getStore().listings;
+  const { listings } = await request<{ listings: Listing[] }>("/listings");
+  return listings;
 }
 
 export async function getListing(id: string): Promise<Listing> {
-  await ready();
-  await delay();
-  await maybeFail();
-  const l = getStore().listings.find((x) => x.id === id);
-  if (!l) throw new Error("Listing not found");
-  return l;
+  const { listing } = await request<{ listing: Listing }>(`/listings/${id}`);
+  return listing;
 }
 
 export async function getSimilar(id: string): Promise<Listing[]> {
-  await ready();
-  await delay();
-  await maybeFail();
-  const { listings } = getStore();
-  const target = listings.find((l) => l.id === id);
-  if (!target) return [];
-  return listings.filter((l) => l.id !== id && l.bodyType === target.bodyType).slice(0, 3);
+  const { listings } = await request<{ listings: Listing[] }>(
+    `/listings/${id}/similar`,
+  );
+  return listings;
 }
 
 export interface SearchFilters {
@@ -79,143 +100,175 @@ export interface SearchFilters {
   sort?: string;
 }
 
-export async function searchListings(filters: SearchFilters): Promise<Listing[]> {
-  await ready();
-  await delay();
-  await maybeFail();
-  const inventory = getStore().listings.filter(
-    (l) => l.status === "listed" || l.status === "approved",
+export async function searchListings(
+  filters: SearchFilters,
+): Promise<Listing[]> {
+  const params = new URLSearchParams();
+  if (filters.q) params.set("q", filters.q);
+  if (filters.brand?.length) params.set("brand", filters.brand.join(","));
+  if (filters.body?.length) params.set("body", filters.body.join(","));
+  if (filters.fuel?.length) params.set("fuel", filters.fuel.join(","));
+  if (filters.trans?.length) params.set("trans", filters.trans.join(","));
+  if (filters.own?.length) params.set("own", filters.own.join(","));
+  if (filters.state?.length) params.set("state", filters.state.join(","));
+  if (filters.priceMin !== undefined)
+    params.set("priceMin", String(filters.priceMin));
+  if (filters.priceMax !== undefined)
+    params.set("priceMax", String(filters.priceMax));
+  if (filters.yearMin !== undefined)
+    params.set("yearMin", String(filters.yearMin));
+  if (filters.yearMax !== undefined)
+    params.set("yearMax", String(filters.yearMax));
+  if (filters.kmMin !== undefined) params.set("kmMin", String(filters.kmMin));
+  if (filters.kmMax !== undefined) params.set("kmMax", String(filters.kmMax));
+  if (filters.sort) params.set("sort", filters.sort);
+
+  const { listings } = await request<{ listings: Listing[] }>(
+    `/listings/search?${params.toString()}`,
   );
-  let r = inventory.filter((l) => {
-    const p = l.pricing?.finalPrice ?? l.expectedPrice;
-    if (
-      filters.q &&
-      !`${l.brand} ${l.model} ${l.variant}`.toLowerCase().includes(filters.q.toLowerCase())
-    )
-      return false;
-    if (filters.brand?.length && !filters.brand.includes(l.brand)) return false;
-    if (filters.body?.length && !filters.body.includes(l.bodyType)) return false;
-    if (filters.fuel?.length && !filters.fuel.includes(l.fuelType)) return false;
-    if (filters.trans?.length && !filters.trans.includes(l.transmission)) return false;
-    if (filters.own?.length && !filters.own.includes(l.ownership)) return false;
-    if (filters.state?.length && !filters.state.includes(l.registrationState)) return false;
-    if (filters.priceMin != null && p < filters.priceMin) return false;
-    if (filters.priceMax != null && p > filters.priceMax) return false;
-    if (filters.yearMin != null && l.year < filters.yearMin) return false;
-    if (filters.yearMax != null && l.year > filters.yearMax) return false;
-    if (filters.kmMin != null && l.kmDriven < filters.kmMin) return false;
-    if (filters.kmMax != null && l.kmDriven > filters.kmMax) return false;
-    return true;
-  });
-  const sort = filters.sort ?? "newest";
-  r = [...r].sort((a, b) => {
-    const pa = a.pricing?.finalPrice ?? a.expectedPrice;
-    const pb = b.pricing?.finalPrice ?? b.expectedPrice;
-    if (sort === "price_low") return pa - pb;
-    if (sort === "price_high") return pb - pa;
-    if (sort === "km_low") return a.kmDriven - b.kmDriven;
-    return b.createdAt - a.createdAt;
-  });
-  return r;
+  return listings;
 }
+
+// ---------------------------------------------------------------------------
+// Reviews
+// ---------------------------------------------------------------------------
 
 export async function getReviews(listingId: string): Promise<Review[]> {
-  await ready();
-  await delay();
-  await maybeFail();
-  return getStore().reviews.filter((r) => r.listingId === listingId);
+  const { reviews } = await request<{ reviews: Review[] }>(
+    `/reviews?listingId=${listingId}`,
+  );
+  return reviews;
 }
 
-export async function addReview(r: Omit<Review, "id" | "createdAt">): Promise<Review> {
-  await ready();
-  await delay();
-  await maybeFail();
-  getMutators().addReview(r);
-  return { ...r, id: "r-" + Date.now(), createdAt: Date.now() };
+export async function addReview(
+  r: Omit<Review, "id" | "createdAt">,
+): Promise<Review> {
+  const { review } = await request<{ review: Review }>("/reviews", {
+    method: "POST",
+    body: JSON.stringify(r),
+  });
+  return review;
 }
+
+// ---------------------------------------------------------------------------
+// Offers
+// ---------------------------------------------------------------------------
 
 export async function getOffers(listingId?: string): Promise<Offer[]> {
-  await ready();
-  await delay();
-  await maybeFail();
-  const { offers } = getStore();
-  return listingId ? offers.filter((o) => o.listingId === listingId) : offers;
+  const url = listingId
+    ? `/offers?listingId=${listingId}`
+    : "/offers";
+  const { offers } = await request<{ offers: Offer[] }>(url);
+  return offers;
 }
 
-export async function createOffer(o: Omit<Offer, "id" | "createdAt" | "state">): Promise<Offer> {
-  await ready();
-  await delay();
-  await maybeFail();
-  getMutators().addOffer(o);
-  return { ...o, id: "o-" + Date.now(), state: "pending", createdAt: Date.now() };
+export async function createOffer(
+  o: Omit<Offer, "id" | "createdAt" | "state">,
+): Promise<Offer> {
+  const { offer } = await request<{ offer: Offer }>("/offers", {
+    method: "POST",
+    body: JSON.stringify(o),
+  });
+  return offer;
 }
 
-export async function counterOffer(id: string, amount: number): Promise<void> {
-  await ready();
-  await delay();
-  await maybeFail();
-  getMutators().updateOffer(id, { state: "countered", counterAmount: amount });
+export async function counterOffer(
+  id: string,
+  amount: number,
+): Promise<void> {
+  await request(`/offers/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify({ state: "countered", counterAmount: amount }),
+  });
 }
 
-export async function updateOffer(id: string, patch: Partial<Offer>): Promise<void> {
-  await ready();
-  await delay();
-  await maybeFail();
-  getMutators().updateOffer(id, patch);
+export async function updateOffer(
+  id: string,
+  patch: Partial<Offer>,
+): Promise<void> {
+  await request(`/offers/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify(patch),
+  });
 }
+
+// ---------------------------------------------------------------------------
+// Bookings
+// ---------------------------------------------------------------------------
 
 export async function getBookings(userId?: string): Promise<Booking[]> {
-  await ready();
-  await delay();
-  await maybeFail();
-  const { bookings } = getStore();
-  return userId ? bookings.filter((b) => b.userId === userId) : bookings;
+  const url = userId
+    ? `/bookings?userId=${userId}`
+    : "/bookings";
+  const { bookings } = await request<{ bookings: Booking[] }>(url);
+  return bookings;
 }
 
 export async function createBooking(
   b: Omit<Booking, "id" | "createdAt" | "status">,
 ): Promise<Booking> {
-  await ready();
-  await delay();
-  await maybeFail();
-  return getMutators().addBooking(b);
+  const { booking } = await request<{ booking: Booking }>("/bookings", {
+    method: "POST",
+    body: JSON.stringify(b),
+  });
+  return booking;
 }
 
+// ---------------------------------------------------------------------------
+// Tickets
+// ---------------------------------------------------------------------------
+
 export async function getTickets(userId?: string): Promise<Ticket[]> {
-  await ready();
-  await delay();
-  await maybeFail();
-  const { tickets, user } = getStore();
-  if (userId) {
-    const u = user;
-    return tickets.filter((t) => t.email === u?.email || t.userId === userId);
-  }
+  const url = userId ? `/tickets?userId=${userId}` : "/tickets";
+  const { tickets } = await request<{ tickets: Ticket[] }>(url);
   return tickets;
 }
 
 export async function createTicket(
   t: Omit<Ticket, "id" | "createdAt" | "status">,
 ): Promise<Ticket> {
-  await ready();
-  await delay();
-  await maybeFail();
-  getMutators().addTicket(t);
-  return { ...t, id: "t-" + Date.now(), status: "open", createdAt: Date.now() };
+  const { ticket } = await request<{ ticket: Ticket }>("/tickets", {
+    method: "POST",
+    body: JSON.stringify(t),
+  });
+  return ticket;
 }
 
-export async function getConversations(userId: string): Promise<Conversation[]> {
-  await ready();
-  await delay();
-  await maybeFail();
-  const { conversations } = getStore();
-  return conversations.filter((c) => c.buyerId === userId || c.sellerId === userId);
+// ---------------------------------------------------------------------------
+// Conversations
+// ---------------------------------------------------------------------------
+
+export async function getConversations(
+  userId: string,
+): Promise<Conversation[]> {
+  const { conversations } = await request<{ conversations: Conversation[] }>(
+    `/conversations?userId=${userId}`,
+  );
+  return conversations.map((c) => ({
+    ...c,
+    mine: false,
+    messages: (c.messages ?? []).map((m: unknown) => ({
+      ...(m as Message),
+      mine: !!(m as { mine?: number }).mine,
+    })),
+  }));
 }
 
-export async function getConversation(id: string): Promise<Conversation | null> {
-  await ready();
-  await delay();
-  await maybeFail();
-  return getStore().conversations.find((c) => c.id === id) ?? null;
+export async function getConversation(
+  id: string,
+): Promise<Conversation | null> {
+  const { conversation } = await request<{ conversation: Conversation }>(
+    `/conversations/${id}`,
+  );
+  return conversation
+    ? {
+        ...conversation,
+        messages: (conversation.messages ?? []).map((m: unknown) => ({
+          ...(m as Message),
+          mine: !!(m as { mine?: number }).mine,
+        })),
+      }
+    : null;
 }
 
 export async function startConversation(args: {
@@ -225,45 +278,99 @@ export async function startConversation(args: {
   sellerName: string;
   listingTitle: string;
 }): Promise<Conversation> {
-  await ready();
-  await delay();
-  await maybeFail();
-  const existing = getStore().conversations.find(
-    (c) => c.listingId === args.listingId && c.buyerId === args.buyerId,
+  const { conversation } = await request<{ conversation: Conversation }>(
+    "/conversations",
+    {
+      method: "POST",
+      body: JSON.stringify(args),
+    },
   );
-  if (existing) return existing;
-  return getMutators().addConversation({ ...args });
+  return conversation;
 }
-
-const CANNED_REPLIES = [
-  "Thanks for your interest! The car is still available.",
-  "Yes, it has a full service history and is inspection-certified.",
-  "Sure, we can arrange a test drive at your convenience.",
-  "The price is slightly negotiable. Feel free to make an offer.",
-  "Let me check and get back to you shortly.",
-];
 
 export async function sendMessage(
   conversationId: string,
   m: Omit<Message, "id" | "createdAt">,
-  sellerId: string,
+  _sellerId: string,
 ): Promise<void> {
-  await ready();
-  await delay();
-  await maybeFail();
-  getMutators().appendMessage(conversationId, m);
-  if (!m.mine) return;
-  await delay();
-  const reply = CANNED_REPLIES[Math.floor(Math.random() * CANNED_REPLIES.length)];
-  getMutators().appendMessage(conversationId, {
-    senderId: sellerId,
-    senderName: "Seller",
-    text: reply,
-    mine: false,
+  await request(`/conversations/${conversationId}/messages`, {
+    method: "POST",
+    body: JSON.stringify({ ...m, mine: m.mine ? 1 : 0 }),
   });
 }
 
-export async function markConversationRead(id: string, userId: string): Promise<void> {
-  await ready();
-  getMutators().markConversationRead(id, userId);
+export async function markConversationRead(
+  id: string,
+  userId: string,
+): Promise<void> {
+  await request(`/conversations/${id}/read`, {
+    method: "POST",
+    body: JSON.stringify({ userId }),
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Saved searches & wishlist
+// ---------------------------------------------------------------------------
+
+export async function getSavedSearches(): Promise<
+  { id: string; name: string; filters: Record<string, unknown>; createdAt: number }[]
+> {
+  const { searches } = await request<{
+    searches: {
+      id: string;
+      name: string;
+      filters: Record<string, unknown>;
+      createdAt: number;
+    }[];
+  }>("/saved-searches");
+  return searches;
+}
+
+export async function createSavedSearch(s: {
+  name: string;
+  filters: Record<string, unknown>;
+}): Promise<{
+  id: string;
+  name: string;
+  filters: Record<string, unknown>;
+  createdAt: number;
+}> {
+  const { search } = await request<{
+    search: {
+      id: string;
+      name: string;
+      filters: Record<string, unknown>;
+      createdAt: number;
+    };
+  }>("/saved-searches", {
+    method: "POST",
+    body: JSON.stringify(s),
+  });
+  return search;
+}
+
+export async function removeSavedSearch(id: string): Promise<void> {
+  await request(`/saved-searches/${id}`, { method: "DELETE" });
+}
+
+export async function toggleWishlist(
+  userId: string,
+  listingId: string,
+): Promise<boolean> {
+  const { added } = await request<{ added: boolean }>(
+    `/wishlist/${listingId}`,
+    {
+      method: "POST",
+      body: JSON.stringify({ userId }),
+    },
+  );
+  return added;
+}
+
+export async function getWishlist(userId: string): Promise<string[]> {
+  const { wishlist } = await request<{ wishlist: string[] }>(
+    `/wishlist?userId=${userId}`,
+  );
+  return wishlist;
 }

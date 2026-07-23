@@ -1,5 +1,4 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-import { generateMockListings, generateSeedReviews, SEED_OFFERS, SEED_TICKETS } from "./mock-data";
 import type {
   Booking,
   Conversation,
@@ -10,20 +9,19 @@ import type {
   Ticket,
   User,
 } from "./types";
+import { apiLogin, apiRegister } from "./api";
+
+// ---------------------------------------------------------------------------
+// Only UI/local state is persisted — entity data comes from the server
+// ---------------------------------------------------------------------------
 
 interface Persisted {
   user: User | null;
-  listings: Listing[];
-  tickets: Ticket[];
-  offers: Offer[];
-  bookings: Booking[];
+  token: string | null;
   wishlist: string[];
   recentlyViewed: string[];
   compare: string[];
   theme: "light" | "dark";
-  reviews: Review[];
-  conversations: Conversation[];
-  savedSearches: SavedSearch[];
 }
 
 export interface StoreSnapshot {
@@ -82,12 +80,21 @@ export function getMutators(): StoreMutators {
   return _mutators;
 }
 
+export function getToken(): string | null {
+  try {
+    const raw = localStorage.getItem(KEY);
+    if (raw) return JSON.parse(raw).token ?? null;
+  } catch { /* ignore */ }
+  return null;
+}
+
 interface AppState extends StoreSnapshot, StoreMutators {
   ready: boolean;
   theme: "light" | "dark";
+  token: string | null;
   login: (email: string, password: string) => Promise<User>;
-  loginAsAdmin: () => void;
-  loginAsAgent: () => void;
+  loginAsAdmin: () => Promise<void>;
+  loginAsAgent: () => Promise<void>;
   register: (name: string, email: string, password: string) => Promise<User>;
   logout: () => void;
   updateProfile: (patch: Partial<User>) => void;
@@ -112,9 +119,16 @@ function loadPersisted(): Partial<Persisted> | null {
   }
 }
 
+function savePersisted(p: Persisted) {
+  try {
+    localStorage.setItem(KEY, JSON.stringify(p));
+  } catch { /* ignore */ }
+}
+
 export function AppProvider({ children }: { children: ReactNode }) {
   const [ready, setReady] = useState(false);
   const [user, setUser] = useState<User | null>(null);
+  const [token, setToken] = useState<string | null>(null);
   const [listings, setListings] = useState<Listing[]>([]);
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [offers, setOffers] = useState<Offer[]>([]);
@@ -131,59 +145,29 @@ export function AppProvider({ children }: { children: ReactNode }) {
     const p = loadPersisted();
     if (p) {
       setUser(p.user ?? null);
-      setListings(p.listings ?? generateMockListings());
-      setTickets(p.tickets ?? SEED_TICKETS);
-      setOffers(p.offers ?? SEED_OFFERS);
-      setBookings(p.bookings ?? []);
+      setToken(p.token ?? null);
       setWishlist(p.wishlist ?? []);
       setRecentlyViewed(p.recentlyViewed ?? []);
       setCompare(p.compare ?? []);
       setThemeState(p.theme ?? "light");
-      setReviews(p.reviews ?? []);
-      setConversations(p.conversations ?? []);
-      setSavedSearches(p.savedSearches ?? []);
-    } else {
-      setListings(generateMockListings());
-      setTickets(SEED_TICKETS);
-      setOffers(SEED_OFFERS);
-      setReviews(generateSeedReviews(generateMockListings()));
     }
     setReady(true);
     _resolveReady();
   }, []);
 
+  // Persist only UI state + auth token
   useEffect(() => {
     if (!ready) return;
     const data: Persisted = {
       user,
-      listings,
-      tickets,
-      offers,
-      bookings,
+      token,
       wishlist,
       recentlyViewed,
       compare,
       theme,
-      reviews,
-      conversations,
-      savedSearches,
     };
-    localStorage.setItem(KEY, JSON.stringify(data));
-  }, [
-    ready,
-    user,
-    listings,
-    tickets,
-    offers,
-    bookings,
-    wishlist,
-    recentlyViewed,
-    compare,
-    theme,
-    reviews,
-    conversations,
-    savedSearches,
-  ]);
+    savePersisted(data);
+  }, [ready, user, token, wishlist, recentlyViewed, compare, theme]);
 
   useEffect(() => {
     if (typeof document === "undefined") return;
@@ -202,7 +186,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
       updateTicket: (id, patch) =>
         setTickets((prev) => prev.map((t) => (t.id === id ? { ...t, ...patch } : t))),
       addOffer: (o) => {
-        const no: Offer = { ...o, id: "o-" + Date.now(), state: "pending", createdAt: Date.now() };
+        const no: Offer = {
+          ...o,
+          id: "o-" + Date.now(),
+          state: "pending",
+          createdAt: Date.now(),
+        };
         setOffers((prev) => [no, ...prev]);
       },
       updateOffer: (id, patch) =>
@@ -243,7 +232,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
             c.id === id
               ? {
                   ...c,
-                  messages: [...c.messages, { ...m, id: "m-" + Date.now(), createdAt: Date.now() }],
+                  messages: [
+                    ...c.messages,
+                    { ...m, id: "m-" + Date.now(), createdAt: Date.now() },
+                  ],
                 }
               : c,
           ),
@@ -260,7 +252,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
         const ns: SavedSearch = { ...s, id: "ss-" + Date.now(), createdAt: Date.now() };
         setSavedSearches((prev) => [ns, ...prev]);
       },
-      removeSavedSearch: (id) => setSavedSearches((prev) => prev.filter((s) => s.id !== id)),
+      removeSavedSearch: (id) =>
+        setSavedSearches((prev) => prev.filter((s) => s.id !== id)),
     }),
     [],
   );
@@ -300,6 +293,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const value: AppState = {
     ready,
     user,
+    token,
     listings,
     tickets,
     offers,
@@ -312,70 +306,82 @@ export function AppProvider({ children }: { children: ReactNode }) {
     conversations,
     savedSearches,
     ...mutators,
-    async login(email) {
-      const u: User = { id: "u-" + email, name: email.split("@")[0], email, role: "user" };
+    async login(email, password) {
+      const { user: u, token: t } = await apiLogin(email, password);
       setUser(u);
+      setToken(t);
       return u;
     },
-    loginAsAdmin() {
-      setUser({ id: "admin-1", name: "Admin", email: "admin@drivehub.io", role: "admin" });
-    },
-    loginAsAgent() {
-      setUser({ id: "agent-1", name: "Agent Priya", email: "agent@drivehub.io", role: "agent" });
-    },
-    async register(name, email) {
-      const u: User = { id: "u-" + email, name, email, role: "user" };
+    async register(name, email, password) {
+      const { user: u, token: t } = await apiRegister(name, email, password);
       setUser(u);
+      setToken(t);
       return u;
+    },
+    async loginAsAdmin() {
+      const { user: u, token: t } = await apiLogin("admin@drivehub.io", "admin");
+      setUser(u);
+      setToken(t);
+    },
+    async loginAsAgent() {
+      // Try login first (agent is seeded with password "agent")
+      try {
+        const { user: u, token: t } = await apiLogin("agent@drivehub.io", "agent");
+        setUser(u);
+        setToken(t);
+      } catch {
+        // Agent might not be seeded yet — try registering
+        try {
+          const { user: u, token: t } = await apiRegister("Agent Priya", "agent@drivehub.io", "agent");
+          setUser(u);
+          setToken(t);
+        } catch {
+          // Both failed — silently ignore (server unavailable or DB not seeded)
+        }
+      }
     },
     logout() {
       setUser(null);
+      setToken(null);
     },
     updateProfile(patch) {
       setUser((u) => (u ? { ...u, ...patch } : u));
     },
     toggleWishlist(id) {
-      setWishlist((w) => (w.includes(id) ? w.filter((x) => x !== id) : [...w, id]));
+      setWishlist((w) =>
+        w.includes(id) ? w.filter((x) => x !== id) : [...w, id],
+      );
     },
     toggleCompare(id) {
       setCompare((c) =>
-        c.includes(id) ? c.filter((x) => x !== id) : c.length >= 3 ? c : [...c, id],
+        c.includes(id)
+          ? c.filter((x) => x !== id)
+          : c.length >= 3
+            ? c
+            : [...c, id],
       );
     },
     clearCompare() {
       setCompare([]);
     },
     markViewed(id) {
-      setRecentlyViewed((r) => [id, ...r.filter((x) => x !== id)].slice(0, 8));
+      setRecentlyViewed((r) =>
+        [id, ...r.filter((x) => x !== id)].slice(0, 8),
+      );
     },
     setTheme(t) {
       setThemeState(t);
     },
     resetData() {
-      const fresh: Persisted = {
-        user: null,
-        listings: generateMockListings(),
-        tickets: SEED_TICKETS,
-        offers: SEED_OFFERS,
-        bookings: [],
-        wishlist: [],
-        recentlyViewed: [],
-        compare: [],
-        theme: "light",
-        reviews: [],
-        conversations: [],
-        savedSearches: [],
-      };
-      localStorage.setItem(KEY, JSON.stringify(fresh));
-      setUser(fresh.user);
-      setListings(fresh.listings);
-      setTickets(fresh.tickets);
-      setOffers(fresh.offers);
-      setBookings(fresh.bookings);
-      setWishlist(fresh.wishlist);
-      setRecentlyViewed(fresh.recentlyViewed);
-      setCompare(fresh.compare);
-      setThemeState(fresh.theme);
+      setUser(null);
+      setToken(null);
+      setListings([]);
+      setTickets([]);
+      setOffers([]);
+      setBookings([]);
+      setWishlist([]);
+      setRecentlyViewed([]);
+      setCompare([]);
       setReviews([]);
       setConversations([]);
       setSavedSearches([]);

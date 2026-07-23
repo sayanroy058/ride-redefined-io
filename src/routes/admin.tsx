@@ -52,7 +52,7 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { useApp } from "@/lib/store";
-import { calculateFinalPrice } from "@/lib/mock-data";
+import { calculateFinalPrice } from "@/lib/constants";
 import { formatPrice, StatusBadge } from "@/components/site/CarCard";
 import { TableSkeleton } from "@/components/site/Skeletons";
 import { Seo } from "@/components/site/Seo";

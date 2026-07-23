@@ -19,7 +19,7 @@ import { CarCard, formatPrice } from "@/components/site/CarCard";
 import { EmptyState } from "@/components/site/States";
 import { ListingGridSkeleton } from "@/components/site/Skeletons";
 import { Seo } from "@/components/site/Seo";
-import { BODY_TYPES, BRANDS, FUEL_TYPES, OWNERSHIP, STATES, TRANSMISSIONS } from "@/lib/mock-data";
+import { BODY_TYPES, BRANDS, FUEL_TYPES, OWNERSHIP, STATES, TRANSMISSIONS } from "@/lib/constants";
 import { useApp } from "@/lib/store";
 import { getListings } from "@/lib/api";
 import { qk } from "@/lib/queries";

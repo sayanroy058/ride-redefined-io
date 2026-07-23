@@ -40,7 +40,7 @@ import { useApp } from "@/lib/store";
 import { CarCard, formatPriceShort } from "@/components/site/CarCard";
 import { Seo } from "@/components/site/Seo";
 import { Badge } from "@/components/ui/badge";
-import { BRANDS, BODY_TYPES } from "@/lib/mock-data";
+import { BRANDS, BODY_TYPES } from "@/lib/constants";
 
 export const Route = createFileRoute("/")({
   component: Landing,

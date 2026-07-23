@@ -12,6 +12,11 @@ dist
 dist-ssr
 *.local
 
+# SQLite database
+drivehub.db
+drivehub.db-wal
+drivehub.db-shm
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

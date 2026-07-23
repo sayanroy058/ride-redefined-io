@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/form";
 import { Seo } from "@/components/site/Seo";
 import { useApp } from "@/lib/store";
-import { BRANDS, BODY_TYPES, FUEL_TYPES, OWNERSHIP, STATES, TRANSMISSIONS } from "@/lib/mock-data";
+import { BRANDS, BODY_TYPES, FUEL_TYPES, OWNERSHIP, STATES, TRANSMISSIONS } from "@/lib/constants";
 import { sellSchema, type SellValues } from "@/lib/validations";
 import type { Listing } from "@/lib/types";
 

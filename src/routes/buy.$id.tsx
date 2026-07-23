@@ -44,7 +44,7 @@ import { Reviews } from "@/components/site/Reviews";
 import { DetailSkeleton } from "@/components/site/Skeletons";
 import { Seo } from "@/components/site/Seo";
 import { Lightbox } from "@/components/site/Lightbox";
-import { emiEstimate } from "@/lib/mock-data";
+import { emiEstimate } from "@/lib/constants";
 import { getListing, getSimilar } from "@/lib/api";
 import { qk } from "@/lib/queries";
 import { startConversation } from "@/lib/api";
