@@ -39,4 +39,33 @@ router.post("/", (req: Request, res: Response) => {
   res.status(201).json({ ticket: row });
 });
 
+// PATCH /api/tickets/:id
+router.patch("/:id", (req: Request, res: Response) => {
+  const db = getDb();
+  const existing = db.prepare("SELECT * FROM tickets WHERE id = ?").get(req.params.id);
+  if (!existing) {
+    res.status(404).json({ error: "Ticket not found" });
+    return;
+  }
+
+  const { status, subject, category, message } = req.body;
+  const sets: string[] = [];
+  const params: unknown[] = [];
+
+  if (status) { sets.push("status = ?"); params.push(status); }
+  if (subject) { sets.push("subject = ?"); params.push(subject); }
+  if (category) { sets.push("category = ?"); params.push(category); }
+  if (message) { sets.push("message = ?"); params.push(message); }
+
+  if (sets.length === 0) {
+    res.json({ ticket: existing });
+    return;
+  }
+
+  params.push(req.params.id);
+  db.prepare(`UPDATE tickets SET ${sets.join(", ")} WHERE id = ?`).run(...params);
+  const row = db.prepare("SELECT * FROM tickets WHERE id = ?").get(req.params.id);
+  res.json({ ticket: row });
+});
+
 export default router;

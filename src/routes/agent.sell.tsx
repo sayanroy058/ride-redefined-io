@@ -27,7 +27,7 @@ import { Seo } from "@/components/site/Seo";
 import { useApp } from "@/lib/store";
 import { BRANDS, BODY_TYPES, FUEL_TYPES, OWNERSHIP, STATES, TRANSMISSIONS } from "@/lib/constants";
 import { sellSchema, type SellValues } from "@/lib/validations";
-import { uploadImages } from "@/lib/api";
+import { uploadImages, createListing } from "@/lib/api";
 import type { Listing } from "@/lib/types";
 
 export const Route = createFileRoute("/agent/sell")({
@@ -173,8 +173,7 @@ function AgentSell() {
         imageUrls = CAR_IMAGES;
       }
 
-      const listing: Listing = {
-        id: "L-" + Date.now(),
+      const listingData = {
         sellerId: user!.id,
         sellerName: values.sellerName,
         sellerEmail: values.sellerEmail,
@@ -209,10 +208,10 @@ function AgentSell() {
         preferredContactTime: values.preferredContactTime,
         bodyType: values.bodyType,
         images: imageUrls,
-        status: "pending_review",
-        createdAt: Date.now(),
+        status: "pending_review" as const,
       };
-      addListing(listing);
+      const created = await createListing(listingData);
+      addListing(created);
       toast.success("Car onboarded — submitted for inspection & pricing");
       nav({ to: "/agent" });
     } catch {

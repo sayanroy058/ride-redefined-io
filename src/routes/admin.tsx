@@ -62,7 +62,7 @@ import { BRANDS, BODY_TYPES, FUEL_TYPES, OWNERSHIP, STATES, TRANSMISSIONS } from
 import { formatPrice, StatusBadge } from "@/components/site/CarCard";
 import { TableSkeleton } from "@/components/site/Skeletons";
 import { Seo } from "@/components/site/Seo";
-import { getListings, getTickets, uploadImages, createListing } from "@/lib/api";
+import { getListings, getTickets, uploadImages, createListing, patchListing } from "@/lib/api";
 import { qk } from "@/lib/queries";
 import type { Listing, TicketStatus } from "@/lib/types";
 
@@ -458,8 +458,9 @@ function ApprovalQueue() {
     direct: queue.filter((l) => !l.sellerId.startsWith("agent-")).length,
   };
 
-  function bulkApprove() {
-    filtered.forEach((l) => {
+  async function bulkApprove() {
+    let success = 0;
+    for (const l of filtered) {
       const p = {
         basePrice: l.expectedPrice,
         refurbishment: Math.round(l.expectedPrice * 0.04),
@@ -471,9 +472,13 @@ function ApprovalQueue() {
         margin: Math.round(l.expectedPrice * 0.08),
       };
       const finalPrice = calculateFinalPrice(p);
-      updateListing(l.id, { status: "listed", pricing: { ...p, finalPrice } });
-    });
-    toast.success(`${filtered.length} listing(s) approved & published`);
+      try {
+        await patchListing(l.id, { status: "listed", pricing: { ...p, finalPrice } });
+        updateListing(l.id, { status: "listed", pricing: { ...p, finalPrice } });
+        success++;
+      } catch { /* skip failed */ }
+    }
+    if (success > 0) toast.success(`${success} listing(s) approved & published`);
   }
 
   return (
@@ -544,22 +549,37 @@ function ApprovalRow({ listing }: { listing: Listing }) {
   });
   const final = useMemo(() => calculateFinalPrice(p), [p]);
 
-  function approve() {
-    updateListing(listing.id, { status: "listed", pricing: { ...p, finalPrice: final } });
-    toast.success("Listing approved & published");
+  async function approve() {
+    try {
+      await patchListing(listing.id, { status: "listed", pricing: { ...p, finalPrice: final } });
+      updateListing(listing.id, { status: "listed", pricing: { ...p, finalPrice: final } });
+      toast.success("Listing approved & published");
+    } catch {
+      toast.error("Failed to approve listing");
+    }
     setOpen(false);
   }
-  function reject() {
-    updateListing(listing.id, { status: "rejected" });
-    toast.success("Listing rejected");
+  async function reject() {
+    try {
+      await patchListing(listing.id, { status: "rejected" });
+      updateListing(listing.id, { status: "rejected" });
+      toast.success("Listing rejected");
+    } catch {
+      toast.error("Failed to reject listing");
+    }
   }
 
   const score = inspectionScore(listing.id);
   const isAgent = listing.sellerId.startsWith("agent-");
 
-  function quickApprove() {
-    updateListing(listing.id, { status: "listed", pricing: { ...p, finalPrice: final } });
-    toast.success("Listing approved & published");
+  async function quickApprove() {
+    try {
+      await patchListing(listing.id, { status: "listed", pricing: { ...p, finalPrice: final } });
+      updateListing(listing.id, { status: "listed", pricing: { ...p, finalPrice: final } });
+      toast.success("Listing approved & published");
+    } catch {
+      toast.error("Failed to approve listing");
+    }
   }
 
   return (

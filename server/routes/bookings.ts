@@ -37,4 +37,32 @@ router.post("/", (req: Request, res: Response) => {
   res.status(201).json({ booking: row });
 });
 
+// PATCH /api/bookings/:id
+router.patch("/:id", (req: Request, res: Response) => {
+  const db = getDb();
+  const existing = db.prepare("SELECT * FROM bookings WHERE id = ?").get(req.params.id);
+  if (!existing) {
+    res.status(404).json({ error: "Booking not found" });
+    return;
+  }
+
+  const { status, scheduledDate, city } = req.body;
+  const sets: string[] = [];
+  const params: unknown[] = [];
+
+  if (status) { sets.push("status = ?"); params.push(status); }
+  if (scheduledDate) { sets.push("scheduledDate = ?"); params.push(scheduledDate); }
+  if (city) { sets.push("city = ?"); params.push(city); }
+
+  if (sets.length === 0) {
+    res.json({ booking: existing });
+    return;
+  }
+
+  params.push(req.params.id);
+  db.prepare(`UPDATE bookings SET ${sets.join(", ")} WHERE id = ?`).run(...params);
+  const row = db.prepare("SELECT * FROM bookings WHERE id = ?").get(req.params.id);
+  res.json({ booking: row });
+});
+
 export default router;

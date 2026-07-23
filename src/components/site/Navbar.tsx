@@ -2,6 +2,7 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import {
   ArrowRight,
   Bell,
+  Briefcase,
   Car,
   Heart,
   LogOut,
@@ -38,7 +39,7 @@ const NAV = [
 ] as const;
 
 export function Navbar() {
-  const { user, logout, theme, setTheme, wishlist, conversations } =
+  const { user, logout, theme, setTheme, wishlist, conversations, loginAsAgent } =
     useApp();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [open, setOpen] = useState(false);
@@ -229,6 +230,22 @@ export function Navbar() {
                 <Button asChild size="sm">
                   <Link to="/register">Register</Link>
                 </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="hidden lg:inline-flex"
+                  onClick={async () => {
+                    try {
+                      await loginAsAgent();
+                      toast.success("Signed in as agent");
+                    } catch {
+                      toast.error("Agent login failed");
+                    }
+                  }}
+                >
+                  <Briefcase className="mr-1.5 h-3.5 w-3.5" />
+                  Agent
+                </Button>
                 <Button asChild variant="outline" size="sm" className="hidden lg:inline-flex">
                   <Link to="/admin-login">
                     <ShieldCheck className="mr-1.5 h-3.5 w-3.5" />
@@ -369,6 +386,20 @@ export function Navbar() {
                         >
                           Register
                         </Link>
+                        <button
+                          onClick={async () => {
+                            try {
+                              await loginAsAgent();
+                              setOpen(false);
+                              toast.success("Signed in as agent");
+                            } catch {
+                              toast.error("Agent login failed");
+                            }
+                          }}
+                          className="rounded-lg px-4 py-2.5 text-left text-sm font-medium hover:bg-secondary"
+                        >
+                          <Briefcase className="mr-2 inline h-4 w-4" /> Agent Demo
+                        </button>
                         <Link
                           to="/admin-login"
                           onClick={() => setOpen(false)}

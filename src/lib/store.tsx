@@ -9,7 +9,22 @@ import type {
   Ticket,
   User,
 } from "./types";
-import { apiLogin, apiRegister } from "./api";
+import {
+  apiLogin,
+  apiRegister,
+  apiGetMe,
+  apiUpdateProfile,
+  createOffer,
+  updateOffer as apiUpdateOffer,
+  createTicket,
+  patchTicket,
+  createBooking,
+  patchBooking,
+  addReview as apiAddReview,
+  startConversation,
+  sendMessage,
+  markConversationRead as apiMarkConversationRead,
+} from "./api";
 
 // ---------------------------------------------------------------------------
 // Only UI/local state is persisted — entity data comes from the server
@@ -151,6 +166,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setCompare(p.compare ?? []);
       setThemeState(p.theme ?? "light");
     }
+    // Validate stored token and refresh user data
+    if (p?.token) {
+      apiGetMe()
+        .then((u) => setUser(u))
+        .catch(() => {
+          // Token expired or invalid — clear it
+          setToken(null);
+          setUser(null);
+        });
+    }
     setReady(true);
     _resolveReady();
   }, []);
@@ -180,41 +205,66 @@ export function AppProvider({ children }: { children: ReactNode }) {
       updateListing: (id, patch) =>
         setListings((prev) => prev.map((l) => (l.id === id ? { ...l, ...patch } : l))),
       addTicket: (t) => {
-        const nt: Ticket = { ...t, id: "t-" + Date.now(), status: "open", createdAt: Date.now() };
+        const tempId = "t-" + Date.now();
+        const nt: Ticket = { ...t, id: tempId, status: "open", createdAt: Date.now() };
         setTickets((prev) => [nt, ...prev]);
+        createTicket(t).then((serverTicket) => {
+          setTickets((prev) => prev.map((x) => (x.id === tempId ? serverTicket : x)));
+        }).catch((err) => {
+          console.error("Failed to create ticket:", err);
+          setTickets((prev) => prev.filter((x) => x.id !== tempId));
+        });
       },
-      updateTicket: (id, patch) =>
-        setTickets((prev) => prev.map((t) => (t.id === id ? { ...t, ...patch } : t))),
+      updateTicket: (id, patch) => {
+        setTickets((prev) => prev.map((t) => (t.id === id ? { ...t, ...patch } : t)));
+        patchTicket(id, patch).catch((err) => console.error("Failed to update ticket:", err));
+      },
       addOffer: (o) => {
-        const no: Offer = {
-          ...o,
-          id: "o-" + Date.now(),
-          state: "pending",
-          createdAt: Date.now(),
-        };
+        const tempId = "o-" + Date.now();
+        const no: Offer = { ...o, id: tempId, state: "pending", createdAt: Date.now() };
         setOffers((prev) => [no, ...prev]);
+        createOffer(o).then((serverOffer) => {
+          setOffers((prev) => prev.map((x) => (x.id === tempId ? serverOffer : x)));
+        }).catch((err) => {
+          console.error("Failed to create offer:", err);
+          setOffers((prev) => prev.filter((x) => x.id !== tempId));
+        });
       },
-      updateOffer: (id, patch) =>
-        setOffers((prev) => prev.map((o) => (o.id === id ? { ...o, ...patch } : o))),
+      updateOffer: (id, patch) => {
+        setOffers((prev) => prev.map((o) => (o.id === id ? { ...o, ...patch } : o)));
+        apiUpdateOffer(id, patch).catch((err) => console.error("Failed to update offer:", err));
+      },
       addBooking: (b) => {
-        const nb: Booking = {
-          ...b,
-          id: "b-" + Date.now(),
-          status: "confirmed",
-          createdAt: Date.now(),
-        };
+        const tempId = "b-" + Date.now();
+        const nb: Booking = { ...b, id: tempId, status: "confirmed", createdAt: Date.now() };
         setBookings((prev) => [nb, ...prev]);
+        createBooking(b).then((serverBooking) => {
+          setBookings((prev) => prev.map((x) => (x.id === tempId ? serverBooking : x)));
+        }).catch((err) => {
+          console.error("Failed to create booking:", err);
+          setBookings((prev) => prev.filter((x) => x.id !== tempId));
+        });
         return nb;
       },
-      updateBooking: (id, patch) =>
-        setBookings((prev) => prev.map((b) => (b.id === id ? { ...b, ...patch } : b))),
+      updateBooking: (id, patch) => {
+        setBookings((prev) => prev.map((b) => (b.id === id ? { ...b, ...patch } : b)));
+        patchBooking(id, patch).catch((err) => console.error("Failed to update booking:", err));
+      },
       addReview: (r) => {
-        const nr: Review = { ...r, id: "r-" + Date.now(), createdAt: Date.now() };
+        const tempId = "r-" + Date.now();
+        const nr: Review = { ...r, id: tempId, createdAt: Date.now() };
         setReviews((prev) => [nr, ...prev]);
+        apiAddReview(r).then((serverReview) => {
+          setReviews((prev) => prev.map((x) => (x.id === tempId ? serverReview : x)));
+        }).catch((err) => {
+          console.error("Failed to add review:", err);
+          setReviews((prev) => prev.filter((x) => x.id !== tempId));
+        });
       },
       addConversation: (c) => {
+        const tempId = "c-" + Date.now();
         const nc: Conversation = {
-          id: "c-" + Date.now(),
+          id: tempId,
           createdAt: Date.now(),
           messages: c.messages ?? [],
           listingId: c.listingId,
@@ -224,9 +274,28 @@ export function AppProvider({ children }: { children: ReactNode }) {
           listingTitle: c.listingTitle,
         };
         setConversations((prev) => [nc, ...prev]);
+        startConversation({
+          listingId: c.listingId,
+          buyerId: c.buyerId,
+          sellerId: c.sellerId,
+          sellerName: c.sellerName,
+          listingTitle: c.listingTitle,
+        }).then((serverConv) => {
+          setConversations((prev) =>
+            prev.map((x) =>
+              x.id === tempId
+                ? { ...serverConv, messages: x.messages, lastReadAt: x.lastReadAt }
+                : x,
+            ),
+          );
+        }).catch((err) => {
+          console.error("Failed to start conversation:", err);
+          setConversations((prev) => prev.filter((x) => x.id !== tempId));
+        });
         return nc;
       },
-      appendMessage: (id, m) =>
+      appendMessage: (id, m) => {
+        const tempMsgId = "m-" + Date.now();
         setConversations((prev) =>
           prev.map((c) =>
             c.id === id
@@ -234,20 +303,28 @@ export function AppProvider({ children }: { children: ReactNode }) {
                   ...c,
                   messages: [
                     ...c.messages,
-                    { ...m, id: "m-" + Date.now(), createdAt: Date.now() },
+                    { ...m, id: tempMsgId, createdAt: Date.now() },
                   ],
                 }
               : c,
           ),
-        ),
-      markConversationRead: (id, userId) =>
+        );
+        sendMessage(id, m, "").catch((err) =>
+          console.error("Failed to send message:", err),
+        );
+      },
+      markConversationRead: (id, userId) => {
         setConversations((prev) =>
           prev.map((c) =>
             c.id === id
               ? { ...c, lastReadAt: { ...(c.lastReadAt ?? {}), [userId]: Date.now() } }
               : c,
           ),
-        ),
+        );
+        apiMarkConversationRead(id, userId).catch((err) =>
+          console.error("Failed to mark conversation read:", err),
+        );
+      },
       addSavedSearch: (s) => {
         const ns: SavedSearch = { ...s, id: "ss-" + Date.now(), createdAt: Date.now() };
         setSavedSearches((prev) => [ns, ...prev]);
@@ -346,6 +423,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
     },
     updateProfile(patch) {
       setUser((u) => (u ? { ...u, ...patch } : u));
+      apiUpdateProfile({ name: patch.name, phone: patch.phone }).catch((err) =>
+        console.error("Failed to update profile:", err),
+      );
     },
     toggleWishlist(id) {
       setWishlist((w) =>

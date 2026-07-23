@@ -12,7 +12,7 @@ import { EmptyState } from "@/components/site/States";
 import { TableSkeleton } from "@/components/site/Skeletons";
 import { Seo } from "@/components/site/Seo";
 import { ListingAnalytics } from "@/components/site/ListingAnalytics";
-import { getBookings, getOffers, getTickets, counterOffer, updateOffer } from "@/lib/api";
+import { getBookings, getOffers, getTickets, getListings, counterOffer, updateOffer } from "@/lib/api";
 import { qk } from "@/lib/queries";
 import type { OfferState } from "@/lib/types";
 
@@ -25,6 +25,10 @@ export const Route = createFileRoute("/dashboard")({
   ),
   loader: async ({ context }) => {
     await Promise.all([
+      context.queryClient.ensureQueryData({
+        queryKey: qk.listings,
+        queryFn: () => getListings(),
+      }),
       context.queryClient.ensureQueryData({
         queryKey: qk.offers(),
         queryFn: () => getOffers(),

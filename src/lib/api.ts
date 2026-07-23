@@ -62,6 +62,21 @@ export async function apiRegister(
   });
 }
 
+export async function apiGetMe(): Promise<User> {
+  const { user } = await request<{ user: User }>("/auth/me");
+  return user;
+}
+
+export async function apiUpdateProfile(
+  patch: { name?: string; phone?: string },
+): Promise<User> {
+  const { user } = await request<{ user: User }>("/auth/profile", {
+    method: "PATCH",
+    body: JSON.stringify(patch),
+  });
+  return user;
+}
+
 // ---------------------------------------------------------------------------
 // Listings
 // ---------------------------------------------------------------------------
@@ -214,6 +229,17 @@ export async function createBooking(
   return booking;
 }
 
+export async function patchBooking(
+  id: string,
+  patch: Partial<Booking>,
+): Promise<Booking> {
+  const { booking } = await request<{ booking: Booking }>(`/bookings/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify(patch),
+  });
+  return booking;
+}
+
 // ---------------------------------------------------------------------------
 // Tickets
 // ---------------------------------------------------------------------------
@@ -230,6 +256,17 @@ export async function createTicket(
   const { ticket } = await request<{ ticket: Ticket }>("/tickets", {
     method: "POST",
     body: JSON.stringify(t),
+  });
+  return ticket;
+}
+
+export async function patchTicket(
+  id: string,
+  patch: Partial<Ticket>,
+): Promise<Ticket> {
+  const { ticket } = await request<{ ticket: Ticket }>(`/tickets/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify(patch),
   });
   return ticket;
 }
@@ -411,6 +448,17 @@ export async function createListing(
   const { listing } = await request<{ listing: Listing }>("/listings", {
     method: "POST",
     body: JSON.stringify(data),
+  });
+  return listing;
+}
+
+export async function patchListing(
+  id: string,
+  patch: Partial<Listing> & { pricing?: Listing["pricing"]; featured?: boolean },
+): Promise<Listing> {
+  const { listing } = await request<{ listing: Listing }>(`/listings/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify(patch),
   });
   return listing;
 }
