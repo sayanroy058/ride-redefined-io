@@ -2,19 +2,110 @@ import bcrypt from "bcryptjs";
 import { getDb } from "./db";
 
 const SAMPLE_IMAGES = [
-  "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=1200&q=80",
-  "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1200&q=80",
-  "https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=1200&q=80",
-  "https://images.unsplash.com/photo-1542362567-b07e54358753?w=1200&q=80",
-  "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=1200&q=80",
-  "https://images.unsplash.com/photo-1555215695-3004980ad54e?w=1200&q=80",
-  "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=1200&q=80",
-  "https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=1200&q=80",
-  "https://images.unsplash.com/photo-1617788138017-80ad40651399?w=1200&q=80",
-  "https://images.unsplash.com/photo-1617814086367-3a4b9d12ac02?w=1200&q=80",
-  "https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=1200&q=80",
-  "https://images.unsplash.com/photo-1502877338535-766e1452684a?w=1200&q=80",
+  "/uploads/fallback-0.jpg",
+  "/uploads/fallback-1.jpg",
+  "/uploads/fallback-2.jpg",
+  "/uploads/fallback-3.jpg",
+  "/uploads/fallback-4.jpg",
+  "/uploads/fallback-5.jpg",
+  "/uploads/fallback-6.jpg",
+  "/uploads/fallback-7.jpg",
+  "/uploads/fallback-8.jpg",
+  "/uploads/fallback-9.jpg",
 ];
+
+// Car-specific local image paths (downloaded from Unsplash to server/uploads/)
+const CAR_SPECIFIC_IMAGES: Record<string, string[]> = {
+  "Tesla_Model 3": [
+    "/uploads/tesla-model3-0.jpg", "/uploads/tesla-model3-1.jpg", "/uploads/tesla-model3-2.jpg",
+    "/uploads/tesla-model3-3.jpg", "/uploads/tesla-model3-4.jpg", "/uploads/tesla-model3-5.jpg",
+    "/uploads/tesla-model3-6.jpg", "/uploads/tesla-model3-7.jpg", "/uploads/tesla-model3-8.jpg",
+    "/uploads/tesla-model3-9.jpg",
+  ],
+  "BMW_M340i": [
+    "/uploads/bmw-m340i-0.jpg", "/uploads/bmw-m340i-1.jpg", "/uploads/bmw-m340i-2.jpg",
+    "/uploads/bmw-m340i-3.jpg", "/uploads/bmw-m340i-4.jpg", "/uploads/bmw-m340i-5.jpg",
+    "/uploads/bmw-m340i-6.jpg", "/uploads/bmw-m340i-7.jpg", "/uploads/bmw-m340i-8.jpg",
+    "/uploads/bmw-m340i-9.jpg",
+  ],
+  "Porsche_Macan": [
+    "/uploads/porsche-macan-0.jpg", "/uploads/porsche-macan-1.jpg", "/uploads/porsche-macan-2.jpg",
+    "/uploads/porsche-macan-3.jpg", "/uploads/porsche-macan-4.jpg", "/uploads/porsche-macan-5.jpg",
+    "/uploads/porsche-macan-6.jpg", "/uploads/porsche-macan-7.jpg", "/uploads/porsche-macan-8.jpg",
+    "/uploads/porsche-macan-9.jpg",
+  ],
+  "Mercedes-Benz_C300": [
+    "/uploads/mercedes-c300-0.jpg", "/uploads/mercedes-c300-1.jpg", "/uploads/mercedes-c300-2.jpg",
+    "/uploads/mercedes-c300-3.jpg", "/uploads/mercedes-c300-4.jpg", "/uploads/mercedes-c300-5.jpg",
+    "/uploads/mercedes-c300-6.jpg", "/uploads/mercedes-c300-7.jpg", "/uploads/mercedes-c300-8.jpg",
+    "/uploads/mercedes-c300-9.jpg",
+  ],
+  "Audi_Q5": [
+    "/uploads/audi-q5-0.jpg", "/uploads/audi-q5-1.jpg", "/uploads/audi-q5-2.jpg",
+    "/uploads/audi-q5-3.jpg", "/uploads/audi-q5-4.jpg", "/uploads/audi-q5-5.jpg",
+    "/uploads/audi-q5-6.jpg", "/uploads/audi-q5-7.jpg", "/uploads/audi-q5-8.jpg",
+    "/uploads/audi-q5-9.jpg",
+  ],
+  "Toyota_Camry": [
+    "/uploads/toyota-camry-0.jpg", "/uploads/toyota-camry-1.jpg", "/uploads/toyota-camry-2.jpg",
+    "/uploads/toyota-camry-3.jpg", "/uploads/toyota-camry-4.jpg", "/uploads/toyota-camry-5.jpg",
+    "/uploads/toyota-camry-6.jpg", "/uploads/toyota-camry-7.jpg", "/uploads/toyota-camry-8.jpg",
+    "/uploads/toyota-camry-9.jpg",
+  ],
+  "Honda_Civic": [
+    "/uploads/honda-civic-0.jpg", "/uploads/honda-civic-1.jpg", "/uploads/honda-civic-2.jpg",
+    "/uploads/honda-civic-3.jpg", "/uploads/honda-civic-4.jpg", "/uploads/honda-civic-5.jpg",
+    "/uploads/honda-civic-6.jpg", "/uploads/honda-civic-7.jpg", "/uploads/honda-civic-8.jpg",
+    "/uploads/honda-civic-9.jpg",
+  ],
+  "Polestar_2": [
+    "/uploads/polestar-2-0.jpg", "/uploads/polestar-2-1.jpg", "/uploads/polestar-2-2.jpg",
+    "/uploads/polestar-2-3.jpg", "/uploads/polestar-2-4.jpg", "/uploads/polestar-2-5.jpg",
+    "/uploads/polestar-2-6.jpg", "/uploads/polestar-2-7.jpg", "/uploads/polestar-2-8.jpg",
+    "/uploads/polestar-2-9.jpg",
+  ],
+  "Volvo_XC60": [
+    "/uploads/volvo-xc60-0.jpg", "/uploads/volvo-xc60-1.jpg", "/uploads/volvo-xc60-2.jpg",
+    "/uploads/volvo-xc60-3.jpg", "/uploads/volvo-xc60-4.jpg", "/uploads/volvo-xc60-5.jpg",
+    "/uploads/volvo-xc60-6.jpg", "/uploads/volvo-xc60-7.jpg", "/uploads/volvo-xc60-8.jpg",
+    "/uploads/volvo-xc60-9.jpg",
+  ],
+  "Lexus_RX 350": [
+    "/uploads/lexus-rx350-0.jpg", "/uploads/lexus-rx350-1.jpg", "/uploads/lexus-rx350-2.jpg",
+    "/uploads/lexus-rx350-3.jpg", "/uploads/lexus-rx350-4.jpg", "/uploads/lexus-rx350-5.jpg",
+    "/uploads/lexus-rx350-6.jpg", "/uploads/lexus-rx350-7.jpg", "/uploads/lexus-rx350-8.jpg",
+    "/uploads/lexus-rx350-9.jpg",
+  ],
+  "Hyundai_Ioniq 5": [
+    "/uploads/hyundai-ioniq5-0.jpg", "/uploads/hyundai-ioniq5-1.jpg", "/uploads/hyundai-ioniq5-2.jpg",
+    "/uploads/hyundai-ioniq5-3.jpg", "/uploads/hyundai-ioniq5-4.jpg", "/uploads/hyundai-ioniq5-5.jpg",
+    "/uploads/hyundai-ioniq5-6.jpg", "/uploads/hyundai-ioniq5-7.jpg", "/uploads/hyundai-ioniq5-8.jpg",
+    "/uploads/hyundai-ioniq5-9.jpg",
+  ],
+  "Kia_EV6": [
+    "/uploads/kia-ev6-0.jpg", "/uploads/kia-ev6-1.jpg", "/uploads/kia-ev6-2.jpg",
+    "/uploads/kia-ev6-3.jpg", "/uploads/kia-ev6-4.jpg", "/uploads/kia-ev6-5.jpg",
+    "/uploads/kia-ev6-6.jpg", "/uploads/kia-ev6-7.jpg", "/uploads/kia-ev6-8.jpg",
+    "/uploads/kia-ev6-9.jpg",
+  ],
+  "Mazda_CX-5": [
+    "/uploads/mazda-cx5-0.jpg", "/uploads/mazda-cx5-1.jpg", "/uploads/mazda-cx5-2.jpg",
+    "/uploads/mazda-cx5-3.jpg", "/uploads/mazda-cx5-4.jpg", "/uploads/mazda-cx5-5.jpg",
+    "/uploads/mazda-cx5-6.jpg", "/uploads/mazda-cx5-7.jpg", "/uploads/mazda-cx5-8.jpg",
+    "/uploads/mazda-cx5-9.jpg",
+  ],
+  "Volkswagen_Golf GTI": [
+    "/uploads/volkswagen-golf-0.jpg", "/uploads/volkswagen-golf-1.jpg", "/uploads/volkswagen-golf-2.jpg",
+    "/uploads/volkswagen-golf-3.jpg", "/uploads/volkswagen-golf-4.jpg", "/uploads/volkswagen-golf-5.jpg",
+    "/uploads/volkswagen-golf-6.jpg", "/uploads/volkswagen-golf-7.jpg", "/uploads/volkswagen-golf-8.jpg",
+    "/uploads/volkswagen-golf-9.jpg",
+  ],
+};
+
+function getCarImages(brand: string, model: string): string[] {
+  const key = `${brand}_${model}`;
+  return CAR_SPECIFIC_IMAGES[key] ?? SAMPLE_IMAGES;
+}
 
 const OWNERSHIP = ["1st Owner", "2nd Owner", "3rd Owner", "4th+ Owner"];
 const STATES = [
@@ -255,9 +346,10 @@ export function seed() {
         margin;
 
       const startIdx = i % SAMPLE_IMAGES.length;
+      const specificImages = getCarImages(c.brand, c.model);
       const images = [
-        ...SAMPLE_IMAGES.slice(startIdx),
-        ...SAMPLE_IMAGES.slice(0, startIdx),
+        ...specificImages,
+        ...SAMPLE_IMAGES,
       ].slice(0, 10);
 
       const status =

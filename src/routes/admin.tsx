@@ -1,19 +1,23 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import {
   Activity,
   Briefcase,
+  Camera,
   Car,
   CheckCircle2,
   Gauge,
   IndianRupee,
   Inbox,
   LifeBuoy,
+  Loader2,
   Package,
+  Plus,
   Search,
   ShieldCheck,
   TrendingUp,
   Users,
+  X,
   XCircle,
 } from "lucide-react";
 import {
@@ -34,6 +38,7 @@ import {
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Dialog,
@@ -53,10 +58,11 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { useApp } from "@/lib/store";
 import { calculateFinalPrice } from "@/lib/constants";
+import { BRANDS, BODY_TYPES, FUEL_TYPES, OWNERSHIP, STATES, TRANSMISSIONS } from "@/lib/constants";
 import { formatPrice, StatusBadge } from "@/components/site/CarCard";
 import { TableSkeleton } from "@/components/site/Skeletons";
 import { Seo } from "@/components/site/Seo";
-import { getListings, getTickets } from "@/lib/api";
+import { getListings, getTickets, uploadImages, createListing } from "@/lib/api";
 import { qk } from "@/lib/queries";
 import type { Listing, TicketStatus } from "@/lib/types";
 
@@ -273,6 +279,10 @@ function Admin() {
           <TabsTrigger value="approvals">Approval queue</TabsTrigger>
           <TabsTrigger value="offers">Offers ({offers.length})</TabsTrigger>
           <TabsTrigger value="inventory">Inventory</TabsTrigger>
+          <TabsTrigger value="add-car">
+            <Plus className="mr-1 h-3.5 w-3.5" />
+            Add Car
+          </TabsTrigger>
           <TabsTrigger value="tickets">Support tickets</TabsTrigger>
           <TabsTrigger value="users">Users</TabsTrigger>
         </TabsList>
@@ -330,6 +340,10 @@ function Admin() {
               </tbody>
             </table>
           </div>
+        </TabsContent>
+
+        <TabsContent value="add-car" className="mt-6">
+          <AddCarForm />
         </TabsContent>
 
         <TabsContent value="tickets" className="mt-6">
@@ -832,5 +846,299 @@ function OffersTable({
         </tbody>
       </table>
     </div>
+  );
+}
+
+// ── Add Car form for admins ──
+
+function AddCarForm() {
+  const { user, addListing } = useApp();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [files, setFiles] = useState<File[]>([]);
+  const [previews, setPreviews] = useState<string[]>([]);
+  const [uploading, setUploading] = useState(false);
+  const [form, setForm] = useState({
+    brand: "",
+    model: "",
+    variant: "",
+    bodyType: "Sedan",
+    year: 2024,
+    registrationYear: 2024,
+    fuelType: "Petrol",
+    transmission: "Automatic",
+    kmDriven: 10000,
+    ownership: "1st Owner",
+    registrationState: "Maharashtra",
+    registrationCity: "Mumbai",
+    vin: "",
+    insuranceStatus: "Active",
+    roadTaxStatus: "Paid",
+    serviceHistory: "Complete dealer history",
+    accidentHistory: "No accidents",
+    keys: 2,
+    exteriorCondition: "Excellent",
+    interiorCondition: "Excellent",
+    engineCondition: "Excellent",
+    tireCondition: "Good (70%+)",
+    batteryCondition: "Good",
+    defects: "",
+    modifications: "None",
+    description: "",
+    expectedPrice: 1500000,
+    address: "",
+    preferredContactTime: "Afternoon (12-5)",
+    status: "listed" as Listing["status"],
+  });
+
+  function handleFiles(e: React.ChangeEvent<HTMLInputElement>) {
+    const selected = Array.from(e.target.files ?? []);
+    if (selected.length === 0) return;
+    setFiles((prev) => [...prev, ...selected]);
+    const newPreviews = selected.map((f) => URL.createObjectURL(f));
+    setPreviews((prev) => [...prev, ...newPreviews]);
+  }
+
+  function removeFile(idx: number) {
+    URL.revokeObjectURL(previews[idx]);
+    setFiles((prev) => prev.filter((_, i) => i !== idx));
+    setPreviews((prev) => prev.filter((_, i) => i !== idx));
+  }
+
+  function setField(f: string, v: unknown) {
+    setForm((prev) => ({ ...prev, [f]: v }));
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!form.brand || !form.model) {
+      toast.error("Brand and model are required");
+      return;
+    }
+    if (!user) {
+      toast.error("You must be logged in as admin");
+      return;
+    }
+
+    setUploading(true);
+    try {
+      let imageUrls: string[] = [];
+      if (files.length > 0) {
+        imageUrls = await uploadImages(files);
+      } else {
+        imageUrls = ["/uploads/fallback-0.jpg", "/uploads/fallback-1.jpg", "/uploads/fallback-2.jpg"];
+      }
+
+      const listingData: Omit<Listing, "id" | "createdAt"> = {
+        sellerId: user.id,
+        sellerName: user.name,
+        sellerEmail: user.email,
+        sellerPhone: user.phone ?? "",
+        brand: form.brand,
+        model: form.model,
+        variant: form.variant,
+        year: form.year,
+        registrationYear: form.registrationYear,
+        fuelType: form.fuelType,
+        transmission: form.transmission,
+        kmDriven: form.kmDriven,
+        ownership: form.ownership,
+        registrationState: form.registrationState,
+        registrationCity: form.registrationCity,
+        vin: form.vin,
+        insuranceStatus: form.insuranceStatus,
+        roadTaxStatus: form.roadTaxStatus,
+        serviceHistory: form.serviceHistory,
+        accidentHistory: form.accidentHistory,
+        keys: form.keys,
+        exteriorCondition: form.exteriorCondition,
+        interiorCondition: form.interiorCondition,
+        engineCondition: form.engineCondition,
+        tireCondition: form.tireCondition,
+        batteryCondition: form.batteryCondition,
+        defects: form.defects,
+        modifications: form.modifications,
+        description: form.description,
+        expectedPrice: form.expectedPrice,
+        address: form.address,
+        preferredContactTime: form.preferredContactTime,
+        bodyType: form.bodyType,
+        images: imageUrls,
+        status: form.status,
+      };
+
+      const created = await createListing(listingData);
+      addListing(created);
+      toast.success(`${form.brand} ${form.model} added to inventory!`);
+
+      // Reset form
+      setFiles([]);
+      setPreviews([]);
+      setForm({
+        brand: "", model: "", variant: "", bodyType: "Sedan", year: 2024,
+        registrationYear: 2024, fuelType: "Petrol", transmission: "Automatic",
+        kmDriven: 10000, ownership: "1st Owner", registrationState: "Maharashtra",
+        registrationCity: "Mumbai", vin: "", insuranceStatus: "Active",
+        roadTaxStatus: "Paid", serviceHistory: "Complete dealer history",
+        accidentHistory: "No accidents", keys: 2, exteriorCondition: "Excellent",
+        interiorCondition: "Excellent", engineCondition: "Excellent",
+        tireCondition: "Good (70%+)", batteryCondition: "Good",
+        defects: "", modifications: "None", description: "",
+        expectedPrice: 1500000, address: "", preferredContactTime: "Afternoon (12-5)",
+        status: "listed",
+      });
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    } catch {
+      toast.error("Failed to create listing");
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="rounded-2xl border border-border/60 bg-card p-6">
+      <h3 className="mb-6 font-display text-lg font-semibold">Add a new car to inventory</h3>
+      <div className="grid gap-4 md:grid-cols-3">
+        <div>
+          <Label className="mb-1.5 block text-xs">Brand *</Label>
+          <Select value={form.brand} onValueChange={(v) => setField("brand", v)}>
+            <SelectTrigger><SelectValue placeholder="Select brand" /></SelectTrigger>
+            <SelectContent>
+              {BRANDS.map((b) => (<SelectItem key={b} value={b}>{b}</SelectItem>))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <Label className="mb-1.5 block text-xs">Model *</Label>
+          <Input value={form.model} onChange={(e) => setField("model", e.target.value)} placeholder="e.g. Model 3" />
+        </div>
+        <div>
+          <Label className="mb-1.5 block text-xs">Variant</Label>
+          <Input value={form.variant} onChange={(e) => setField("variant", e.target.value)} placeholder="e.g. Long Range" />
+        </div>
+        <div>
+          <Label className="mb-1.5 block text-xs">Body type</Label>
+          <Select value={form.bodyType} onValueChange={(v) => setField("bodyType", v)}>
+            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectContent>{BODY_TYPES.map((b) => (<SelectItem key={b} value={b}>{b}</SelectItem>))}</SelectContent>
+          </Select>
+        </div>
+        <div>
+          <Label className="mb-1.5 block text-xs">Year</Label>
+          <Input type="number" value={form.year} onChange={(e) => setField("year", +e.target.value)} />
+        </div>
+        <div>
+          <Label className="mb-1.5 block text-xs">Registration year</Label>
+          <Input type="number" value={form.registrationYear} onChange={(e) => setField("registrationYear", +e.target.value)} />
+        </div>
+        <div>
+          <Label className="mb-1.5 block text-xs">Fuel type</Label>
+          <Select value={form.fuelType} onValueChange={(v) => setField("fuelType", v)}>
+            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectContent>{FUEL_TYPES.map((f) => (<SelectItem key={f} value={f}>{f}</SelectItem>))}</SelectContent>
+          </Select>
+        </div>
+        <div>
+          <Label className="mb-1.5 block text-xs">Transmission</Label>
+          <Select value={form.transmission} onValueChange={(v) => setField("transmission", v)}>
+            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectContent>{TRANSMISSIONS.map((t) => (<SelectItem key={t} value={t}>{t}</SelectItem>))}</SelectContent>
+          </Select>
+        </div>
+        <div>
+          <Label className="mb-1.5 block text-xs">KM driven</Label>
+          <Input type="number" value={form.kmDriven} onChange={(e) => setField("kmDriven", +e.target.value)} />
+        </div>
+        <div>
+          <Label className="mb-1.5 block text-xs">Ownership</Label>
+          <Select value={form.ownership} onValueChange={(v) => setField("ownership", v)}>
+            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectContent>{OWNERSHIP.map((o) => (<SelectItem key={o} value={o}>{o}</SelectItem>))}</SelectContent>
+          </Select>
+        </div>
+        <div>
+          <Label className="mb-1.5 block text-xs">State</Label>
+          <Select value={form.registrationState} onValueChange={(v) => setField("registrationState", v)}>
+            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectContent>{STATES.map((s) => (<SelectItem key={s} value={s}>{s}</SelectItem>))}</SelectContent>
+          </Select>
+        </div>
+        <div>
+          <Label className="mb-1.5 block text-xs">City</Label>
+          <Input value={form.registrationCity} onChange={(e) => setField("registrationCity", e.target.value)} />
+        </div>
+        <div>
+          <Label className="mb-1.5 block text-xs">Expected price (₹)</Label>
+          <Input type="number" value={form.expectedPrice} onChange={(e) => setField("expectedPrice", +e.target.value)} />
+        </div>
+        <div>
+          <Label className="mb-1.5 block text-xs">Initial status</Label>
+          <Select value={form.status} onValueChange={(v) => setField("status", v)}>
+            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="listed">Listed (published)</SelectItem>
+              <SelectItem value="approved">Approved</SelectItem>
+              <SelectItem value="pending_review">Pending review</SelectItem>
+              <SelectItem value="under_inspection">Under inspection</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="md:col-span-3">
+          <Label className="mb-1.5 block text-xs">Description</Label>
+          <Textarea rows={2} value={form.description} onChange={(e) => setField("description", e.target.value)} placeholder="Describe the car..." />
+        </div>
+        <div className="md:col-span-3">
+          <Label className="mb-1.5 block text-xs">Car images</Label>
+          <div className="flex flex-wrap items-center gap-3">
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={handleFiles}
+              className="hidden"
+              id="admin-car-images"
+            />
+            <Button type="button" variant="outline" size="sm" onClick={() => fileInputRef.current?.click()}>
+              <Camera className="mr-1.5 h-4 w-4" />
+              Choose images
+            </Button>
+            <span className="text-xs text-muted-foreground">
+              {files.length > 0 ? `${files.length} selected` : "No files chosen (fallback images will be used)"}
+            </span>
+          </div>
+          {previews.length > 0 && (
+            <div className="mt-3 flex flex-wrap gap-2">
+              {previews.map((url, i) => (
+                <div key={i} className="relative">
+                  <img src={url} className="h-20 w-28 rounded-lg object-cover" alt={`Preview ${i + 1}`} />
+                  <button
+                    type="button"
+                    onClick={() => removeFile(i)}
+                    className="absolute -right-1.5 -top-1.5 grid h-5 w-5 place-items-center rounded-full bg-destructive text-destructive-foreground shadow"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+      <div className="mt-6">
+        <Button type="submit" disabled={uploading}>
+          {uploading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Uploading...
+            </>
+          ) : (
+            <>
+              <Plus className="mr-2 h-4 w-4" />
+              Add to inventory
+            </>
+          )}
+        </Button>
+      </div>
+    </form>
   );
 }

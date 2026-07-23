@@ -38,7 +38,7 @@ const NAV = [
 ] as const;
 
 export function Navbar() {
-  const { user, logout, theme, setTheme, wishlist, conversations, loginAsAdmin, loginAsAgent } =
+  const { user, logout, theme, setTheme, wishlist, conversations } =
     useApp();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [open, setOpen] = useState(false);
@@ -229,23 +229,11 @@ export function Navbar() {
                 <Button asChild size="sm">
                   <Link to="/register">Register</Link>
                 </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={loginAsAdmin}
-                  className="hidden lg:inline-flex"
-                >
-                  <ShieldCheck className="mr-1.5 h-3.5 w-3.5" />
-                  Demo Admin
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={loginAsAgent}
-                  className="hidden lg:inline-flex"
-                >
-                  <ShieldCheck className="mr-1.5 h-3.5 w-3.5" />
-                  Demo Agent
+                <Button asChild variant="outline" size="sm" className="hidden lg:inline-flex">
+                  <Link to="/admin-login">
+                    <ShieldCheck className="mr-1.5 h-3.5 w-3.5" />
+                    Admin
+                  </Link>
                 </Button>
               </div>
             )}
@@ -381,24 +369,13 @@ export function Navbar() {
                         >
                           Register
                         </Link>
-                        <button
-                          onClick={() => {
-                            loginAsAdmin();
-                            setOpen(false);
-                          }}
+                        <Link
+                          to="/admin-login"
+                          onClick={() => setOpen(false)}
                           className="rounded-lg px-4 py-2.5 text-left text-sm font-medium hover:bg-secondary"
                         >
-                          <ShieldCheck className="mr-2 inline h-4 w-4" /> Demo Admin
-                        </button>
-                        <button
-                          onClick={() => {
-                            loginAsAgent();
-                            setOpen(false);
-                          }}
-                          className="rounded-lg px-4 py-2.5 text-left text-sm font-medium hover:bg-secondary"
-                        >
-                          <ShieldCheck className="mr-2 inline h-4 w-4" /> Demo Agent
-                        </button>
+                          <ShieldCheck className="mr-2 inline h-4 w-4" /> Admin Login
+                        </Link>
                       </>
                     )}
                   </div>

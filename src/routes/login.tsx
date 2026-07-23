@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { Car, ShieldCheck } from "lucide-react";
+import { Car, Lock } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,7 +12,7 @@ export const Route = createFileRoute("/login")({
 });
 
 function Login() {
-  const { login, loginAsAdmin } = useApp();
+  const { login } = useApp();
   const nav = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -48,21 +48,15 @@ function Login() {
         <Button type="submit" size="lg" disabled={loading}>
           Sign in
         </Button>
-        <Button
-          type="button"
-          variant="outline"
-          size="lg"
-          onClick={() => {
-            loginAsAdmin();
-            toast.success("Signed in as admin");
-            nav({ to: "/admin" });
-          }}
-        >
-          <ShieldCheck className="mr-2 h-4 w-4" />
-          Try as Admin
-        </Button>
       </form>
       <p className="mt-6 text-center text-sm text-muted-foreground">
+        Are you an admin?{" "}
+        <Link to="/admin-login" className="text-primary hover:underline">
+          <Lock className="mr-0.5 inline h-3 w-3" />
+          Admin login
+        </Link>
+      </p>
+      <p className="mt-3 text-center text-sm text-muted-foreground">
         Don't have an account?{" "}
         <Link to="/register" className="text-primary hover:underline">
           Register

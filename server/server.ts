@@ -1,4 +1,6 @@
 import express from "express";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import cors from "cors";
 import { getDb, closeDb } from "./db";
 import { seed } from "./seed";
@@ -12,6 +14,9 @@ import reviewRoutes from "./routes/reviews";
 import conversationRoutes from "./routes/conversations";
 import savedSearchRoutes from "./routes/saved-searches";
 import wishlistRoutes from "./routes/wishlist";
+import uploadRoutes from "./routes/upload";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const app = express();
 const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3001;
@@ -20,11 +25,15 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3001;
 app.use(cors());
 app.use(express.json());
 
+// ── Static files (uploaded images) ──
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
 // ── Public routes (no auth required) ──
 app.get("/api/health", (_req, res) => {
   res.json({ status: "ok", timestamp: Date.now() });
 });
 app.use("/api/auth", authRoutes);
+app.use("/api/upload", requireAuth as express.RequestHandler, uploadRoutes);
 
 // ── Initialize DB and seed ──
 const db = getDb();
@@ -59,6 +68,7 @@ process.on("SIGTERM", () => {
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
+  console.log(`📁 Uploads served from http://localhost:${PORT}/uploads`);
 });
 
 export { app };

@@ -374,3 +374,43 @@ export async function getWishlist(userId: string): Promise<string[]> {
   );
   return wishlist;
 }
+
+// ---------------------------------------------------------------------------
+// Upload
+// ---------------------------------------------------------------------------
+
+export async function uploadImages(files: File[]): Promise<string[]> {
+  const formData = new FormData();
+  for (const file of files) {
+    formData.append("images", file);
+  }
+
+  const token = getToken();
+  const res = await fetch(`${BASE}/upload`, {
+    method: "POST",
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+    body: formData,
+  });
+
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error(body.error ?? `Upload failed: ${res.status}`);
+  }
+
+  const { urls } = await res.json();
+  return urls as string[];
+}
+
+// ---------------------------------------------------------------------------
+// Create listing (server-side)
+// ---------------------------------------------------------------------------
+
+export async function createListing(
+  data: Omit<Listing, "id" | "createdAt">,
+): Promise<Listing> {
+  const { listing } = await request<{ listing: Listing }>("/listings", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+  return listing;
+}

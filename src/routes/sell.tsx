@@ -1,15 +1,15 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   ArrowLeft,
   ArrowRight,
+  Camera,
   Check,
-  FileText,
-  Image as ImageIcon,
+  Loader2,
   Upload,
-  Video,
+  X,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -35,6 +35,7 @@ import { Seo } from "@/components/site/Seo";
 import { useApp } from "@/lib/store";
 import { BRANDS, BODY_TYPES, FUEL_TYPES, OWNERSHIP, STATES, TRANSMISSIONS } from "@/lib/constants";
 import { sellSchema, type SellValues } from "@/lib/validations";
+import { uploadImages } from "@/lib/api";
 import type { Listing } from "@/lib/types";
 
 export const Route = createFileRoute("/sell")({
@@ -83,6 +84,9 @@ function Sell() {
   const { user, addListing } = useApp();
   const nav = useNavigate();
   const [step, setStep] = useState(0);
+  const [files, setFiles] = useState<File[]>([]);
+  const [previews, setPreviews] = useState<string[]>([]);
+  const [uploading, setUploading] = useState(false);
   const form = useForm<SellValues>({
     resolver: zodResolver(sellSchema),
     defaultValues: {
@@ -154,53 +158,67 @@ function Sell() {
     if (step > 0) setStep((s) => s - 1);
   }
 
-  function submit(values: SellValues) {
-    const listing: Listing = {
-      id: "L-" + Date.now(),
-      sellerId: user!.id,
-      sellerName: values.sellerName,
-      sellerEmail: values.sellerEmail,
-      sellerPhone: values.sellerPhone,
-      brand: values.brand,
-      model: values.model,
-      variant: values.variant ?? "",
-      year: values.year,
-      registrationYear: values.registrationYear,
-      fuelType: values.fuelType,
-      transmission: values.transmission,
-      kmDriven: values.kmDriven,
-      ownership: values.ownership,
-      registrationState: values.registrationState,
-      registrationCity: values.registrationCity,
-      vin: values.vin ?? "",
-      insuranceStatus: values.insuranceStatus,
-      roadTaxStatus: values.roadTaxStatus,
-      serviceHistory: values.serviceHistory,
-      accidentHistory: values.accidentHistory,
-      keys: values.keys,
-      exteriorCondition: values.exteriorCondition,
-      interiorCondition: values.interiorCondition,
-      engineCondition: values.engineCondition,
-      tireCondition: values.tireCondition,
-      batteryCondition: values.batteryCondition,
-      defects: values.defects ?? "",
-      modifications: values.modifications ?? "None",
-      description: values.description ?? "",
-      expectedPrice: values.expectedPrice,
-      address: values.address ?? "",
-      preferredContactTime: values.preferredContactTime,
-      bodyType: values.bodyType,
-      images: [
-        "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=1200&q=80",
-        "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1200&q=80",
-        "https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=1200&q=80",
-      ],
-      status: "pending_review",
-      createdAt: Date.now(),
-    };
-    addListing(listing);
-    toast.success("Submission received! Our team will review within 24 hours.");
-    nav({ to: "/dashboard" });
+  async function submit(values: SellValues) {
+    setUploading(true);
+    try {
+      let imageUrls: string[];
+      if (files.length > 0) {
+        imageUrls = await uploadImages(files);
+      } else {
+        imageUrls = [
+          "/uploads/fallback-0.jpg",
+          "/uploads/fallback-1.jpg",
+          "/uploads/fallback-2.jpg",
+        ];
+      }
+
+      const listing: Listing = {
+        id: "L-" + Date.now(),
+        sellerId: user!.id,
+        sellerName: values.sellerName,
+        sellerEmail: values.sellerEmail,
+        sellerPhone: values.sellerPhone,
+        brand: values.brand,
+        model: values.model,
+        variant: values.variant ?? "",
+        year: values.year,
+        registrationYear: values.registrationYear,
+        fuelType: values.fuelType,
+        transmission: values.transmission,
+        kmDriven: values.kmDriven,
+        ownership: values.ownership,
+        registrationState: values.registrationState,
+        registrationCity: values.registrationCity,
+        vin: values.vin ?? "",
+        insuranceStatus: values.insuranceStatus,
+        roadTaxStatus: values.roadTaxStatus,
+        serviceHistory: values.serviceHistory,
+        accidentHistory: values.accidentHistory,
+        keys: values.keys,
+        exteriorCondition: values.exteriorCondition,
+        interiorCondition: values.interiorCondition,
+        engineCondition: values.engineCondition,
+        tireCondition: values.tireCondition,
+        batteryCondition: values.batteryCondition,
+        defects: values.defects ?? "",
+        modifications: values.modifications ?? "None",
+        description: values.description ?? "",
+        expectedPrice: values.expectedPrice,
+        address: values.address ?? "",
+        preferredContactTime: values.preferredContactTime,
+        bodyType: values.bodyType,
+        images: imageUrls,
+        status: "pending_review",
+        createdAt: Date.now(),
+      };
+      addListing(listing);
+      toast.success("Submission received! Our team will review within 24 hours.");
+      nav({ to: "/dashboard" });
+    } catch {
+      toast.error("Failed to upload images. Please try again.");
+    } finally {
+      setUploading(false);
+    }
   }
 
   const progress = ((step + 1) / STEPS.length) * 100;
@@ -334,28 +352,65 @@ function Sell() {
 
           {step === 3 && (
             <div className="grid gap-5">
-              <UploadCard
-                icon={ImageIcon}
-                title="Vehicle images"
-                desc="Upload at least 10 images: exterior, interior, dashboard, engine, tires, damages."
-                count={12}
-              />
-              <UploadCard
-                icon={Video}
-                title="Walkaround video"
-                desc="A 1–2 minute video showing the entire vehicle."
-                count={1}
-              />
-              <UploadCard
-                icon={FileText}
-                title="Documents"
-                desc="Insurance, service records, RC, road tax receipt."
-                count={4}
-              />
+              <div className="rounded-xl border-2 border-dashed border-border bg-secondary/30 p-5">
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={(e) => {
+                    const selected = Array.from(e.target.files ?? []);
+                    if (selected.length === 0) return;
+                    setFiles((prev) => [...prev, ...selected]);
+                    const newPreviews = selected.map((f) => URL.createObjectURL(f));
+                    setPreviews((prev) => [...prev, ...newPreviews]);
+                  }}
+                  className="hidden"
+                  id="sell-images"
+                />
+                <label htmlFor="sell-images" className="flex cursor-pointer items-center gap-4">
+                  <div className="grid h-12 w-12 place-items-center rounded-xl bg-background">
+                    <Camera className="h-5 w-5 text-primary" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="text-sm font-semibold">
+                      {files.length > 0 ? `${files.length} image(s) selected` : "Vehicle images"}
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      Upload exterior, interior, dashboard, engine, tires, damages. Click to browse.
+                    </div>
+                  </div>
+                  <div className="text-xs font-semibold text-success">
+                    {files.length > 0 ? `${files.length} files` : "Click to add"}
+                  </div>
+                </label>
+              </div>
+              {previews.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {previews.map((url, i) => (
+                    <div key={i} className="relative">
+                      <img
+                        src={url}
+                        className="h-24 w-32 rounded-lg object-cover"
+                        alt={`Preview ${i + 1}`}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          URL.revokeObjectURL(url);
+                          setFiles((prev) => prev.filter((_, j) => j !== i));
+                          setPreviews((prev) => prev.filter((_, j) => j !== i));
+                        }}
+                        className="absolute -right-1.5 -top-1.5 grid h-5 w-5 place-items-center rounded-full bg-destructive text-destructive-foreground shadow"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
               <div className="rounded-xl border border-primary/30 bg-primary/5 p-4 text-sm">
                 <Upload className="mr-2 inline h-4 w-4 text-primary" />
-                For this demo, we'll use placeholder media. Real uploads supported once Cloud is
-                enabled.
+                Images are stored locally. You can upload up to 20 images (max 10 MB each).
               </div>
             </div>
           )}
@@ -390,8 +445,15 @@ function Sell() {
                 Continue <ArrowRight className="ml-1 h-4 w-4" />
               </Button>
             ) : (
-              <Button type="submit" size="lg">
-                Submit for review
+              <Button type="submit" size="lg" disabled={uploading}>
+                {uploading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Uploading images...
+                  </>
+                ) : (
+                  "Submit for review"
+                )}
               </Button>
             )}
           </div>
@@ -511,31 +573,5 @@ function SelectField({
         </FormItem>
       )}
     />
-  );
-}
-
-function UploadCard({
-  icon: Icon,
-  title,
-  desc,
-  count,
-}: {
-  icon: React.ComponentType<{ className?: string }>;
-  title: string;
-  desc: string;
-  count: number;
-}) {
-  return (
-    <label className="flex cursor-pointer items-center gap-4 rounded-xl border-2 border-dashed border-border bg-secondary/30 p-5 transition hover:border-primary/50 hover:bg-secondary/50">
-      <div className="grid h-12 w-12 place-items-center rounded-xl bg-background">
-        <Icon className="h-5 w-5 text-primary" />
-      </div>
-      <div className="flex-1">
-        <div className="text-sm font-semibold">{title}</div>
-        <div className="text-xs text-muted-foreground">{desc}</div>
-      </div>
-      <div className="text-xs font-semibold text-success">{count} attached</div>
-      <input type="file" multiple className="hidden" />
-    </label>
   );
 }
