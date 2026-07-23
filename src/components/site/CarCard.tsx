@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Fuel, GaugeCircle, Heart, MapPin, Settings2, Scale, Star } from "lucide-react";
+import { ArrowRight, Fuel, GaugeCircle, Heart, MapPin, Settings2, Scale, Star } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useApp } from "@/lib/store";
@@ -51,7 +51,7 @@ export function CarCard({ listing }: { listing: Listing }) {
   const listingReviews = reviews.filter((r) => r.listingId === listing.id);
 
   return (
-    <div className="group overflow-hidden rounded-2xl border border-border/60 bg-card transition-all duration-300 hover:shadow-lg hover:border-primary/30">
+    <div className="group overflow-hidden rounded-2xl border border-border/60 bg-card transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:border-primary/40">
       <Link
         to="/buy/$id"
         params={{ id: listing.id }}
@@ -61,15 +61,15 @@ export function CarCard({ listing }: { listing: Listing }) {
           src={listing.images[0]}
           alt={`${listing.brand} ${listing.model}`}
           className="h-full w-full"
-          imgClassName="transition-transform duration-500 group-hover:scale-105"
+          imgClassName="transition-transform duration-700 group-hover:scale-110"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-70" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent opacity-80 transition-opacity group-hover:opacity-60" />
         {listing.featured && (
-          <Badge className="absolute left-3 top-3 border-0 bg-primary text-primary-foreground shadow-sm">
+          <Badge className="absolute left-3 top-3 border-0 bg-accent text-accent-foreground shadow-lg">
             Featured
           </Badge>
         )}
-        <div className="absolute right-3 top-3 flex gap-2">
+        <div className="absolute right-3 top-3 flex gap-2 opacity-0 transition-opacity group-hover:opacity-100">
           <button
             onClick={(e) => {
               e.preventDefault();
@@ -113,7 +113,7 @@ export function CarCard({ listing }: { listing: Listing }) {
             <div className="text-xs font-medium text-muted-foreground">
               {listing.variant} · {listing.year}
             </div>
-            <h3 className="mt-1 truncate text-lg font-bold tracking-tight">
+            <h3 className="mt-1 truncate text-lg font-bold tracking-tight group-hover:text-primary transition-colors">
               {listing.brand} {listing.model}
             </h3>
           </div>
@@ -125,28 +125,28 @@ export function CarCard({ listing }: { listing: Listing }) {
           </div>
         </div>
         <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground">
-          <span className="inline-flex items-center gap-1.5 rounded-lg border border-border/60 bg-secondary/50 px-2.5 py-1.5">
+          <span className="inline-flex items-center gap-1.5 rounded-xl border border-border/60 bg-secondary/50 px-3 py-2 transition-colors group-hover:border-primary/20">
             <GaugeCircle className="h-3.5 w-3.5" />
             {listing.kmDriven.toLocaleString()} km
           </span>
-          <span className="inline-flex items-center gap-1.5 rounded-lg border border-border/60 bg-secondary/50 px-2.5 py-1.5">
+          <span className="inline-flex items-center gap-1.5 rounded-xl border border-border/60 bg-secondary/50 px-3 py-2 transition-colors group-hover:border-primary/20">
             <Fuel className="h-3.5 w-3.5" />
             {listing.fuelType}
           </span>
-          <span className="inline-flex items-center gap-1.5 rounded-lg border border-border/60 bg-secondary/50 px-2.5 py-1.5">
+          <span className="inline-flex items-center gap-1.5 rounded-xl border border-border/60 bg-secondary/50 px-3 py-2 transition-colors group-hover:border-primary/20">
             <Settings2 className="h-3.5 w-3.5" />
             {listing.transmission}
           </span>
-          <span className="inline-flex items-center gap-1.5 rounded-lg border border-border/60 bg-secondary/50 px-2.5 py-1.5">
+          <span className="inline-flex items-center gap-1.5 rounded-xl border border-border/60 bg-secondary/50 px-3 py-2 transition-colors group-hover:border-primary/20">
             <MapPin className="h-3.5 w-3.5" />
             {listing.registrationCity}
           </span>
         </div>
         <div className="flex items-center justify-between border-t border-border/60 pt-3">
           <span className="text-xs font-medium text-muted-foreground">{listing.ownership}</span>
-          <Button asChild size="sm" variant="secondary">
+          <Button asChild size="sm" variant="secondary" className="gap-1">
             <Link to="/buy/$id" params={{ id: listing.id }}>
-              View details
+              View details <ArrowRight className="h-3 w-3" />
             </Link>
           </Button>
         </div>

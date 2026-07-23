@@ -73,8 +73,15 @@ export function Navbar() {
                     key={n.to}
                     to={n.to}
                     aria-current={active ? "page" : undefined}
-                    className={`rounded-lg px-3.5 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${active ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-secondary hover:text-foreground"}`}
+                    className={`relative rounded-lg px-3.5 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
+                      active
+                        ? "text-primary"
+                        : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+                    }`}
                   >
+                    {active && (
+                      <span className="absolute inset-x-1 -bottom-1 h-0.5 rounded-full bg-primary" />
+                    )}
                     {n.label}
                   </Link>
                 );
