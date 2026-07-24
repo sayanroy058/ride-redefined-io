@@ -65,7 +65,7 @@ router.post("/login", (req: Request, res: Response) => {
 
 // POST /api/auth/register — public
 router.post("/register", (req: Request, res: Response) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, role } = req.body;
   if (!name || !email || !password) {
     res.status(400).json({ error: "Name, email and password are required" });
     return;
@@ -75,6 +75,8 @@ router.post("/register", (req: Request, res: Response) => {
     res.status(400).json({ error: "Password must be at least 6 characters" });
     return;
   }
+
+  const finalRole = role === "agent" ? "agent" : "user";
 
   const db = getDb();
   const existing = db.prepare("SELECT id FROM users WHERE email = ?").get(email);
@@ -87,10 +89,10 @@ router.post("/register", (req: Request, res: Response) => {
   const hashed = bcrypt.hashSync(password as string, 10);
 
   db.prepare(
-    "INSERT INTO users (id, name, email, role, password) VALUES (?, ?, ?, 'user', ?)"
-  ).run(id, name as string, email as string, hashed);
+    "INSERT INTO users (id, name, email, role, password) VALUES (?, ?, ?, ?, ?)"
+  ).run(id, name as string, email as string, finalRole, hashed);
 
-  const user = { id, name: name as string, email: email as string, phone: null, role: "user" };
+  const user = { id, name: name as string, email: email as string, phone: null, role: finalRole };
   const token = signToken(user);
 
   res.status(201).json({ user, token });

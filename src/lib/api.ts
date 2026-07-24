@@ -55,10 +55,11 @@ export async function apiRegister(
   name: string,
   email: string,
   password: string,
+  role?: "agent",
 ): Promise<{ user: User; token: string }> {
   return request<{ user: User; token: string }>("/auth/register", {
     method: "POST",
-    body: JSON.stringify({ name, email, password }),
+    body: JSON.stringify({ name, email, password, role }),
   });
 }
 

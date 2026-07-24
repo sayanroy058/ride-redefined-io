@@ -26,6 +26,7 @@ import { Route as FinanceRouteImport } from './routes/finance'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CompareRouteImport } from './routes/compare'
+import { Route as AgentRegisterRouteImport } from './routes/agent-register'
 import { Route as AgentLoginRouteImport } from './routes/agent-login'
 import { Route as AdminLoginRouteImport } from './routes/admin-login'
 import { Route as AdminRouteImport } from './routes/admin'
@@ -127,6 +128,11 @@ const CompareRoute = CompareRouteImport.update({
   path: '/compare',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AgentRegisterRoute = AgentRegisterRouteImport.update({
+  id: '/agent-register',
+  path: '/agent-register',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AgentLoginRoute = AgentLoginRouteImport.update({
   id: '/agent-login',
   path: '/agent-login',
@@ -209,6 +215,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRoute
   '/admin-login': typeof AdminLoginRoute
   '/agent-login': typeof AgentLoginRoute
+  '/agent-register': typeof AgentRegisterRoute
   '/compare': typeof CompareRoute
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
@@ -243,6 +250,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRoute
   '/admin-login': typeof AdminLoginRoute
   '/agent-login': typeof AgentLoginRoute
+  '/agent-register': typeof AgentRegisterRoute
   '/compare': typeof CompareRoute
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
@@ -278,6 +286,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/admin-login': typeof AdminLoginRoute
   '/agent-login': typeof AgentLoginRoute
+  '/agent-register': typeof AgentRegisterRoute
   '/compare': typeof CompareRoute
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
@@ -314,6 +323,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/admin-login'
     | '/agent-login'
+    | '/agent-register'
     | '/compare'
     | '/contact'
     | '/dashboard'
@@ -348,6 +358,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/admin-login'
     | '/agent-login'
+    | '/agent-register'
     | '/compare'
     | '/contact'
     | '/dashboard'
@@ -382,6 +393,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/admin-login'
     | '/agent-login'
+    | '/agent-register'
     | '/compare'
     | '/contact'
     | '/dashboard'
@@ -417,6 +429,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   AdminLoginRoute: typeof AdminLoginRoute
   AgentLoginRoute: typeof AgentLoginRoute
+  AgentRegisterRoute: typeof AgentRegisterRoute
   CompareRoute: typeof CompareRoute
   ContactRoute: typeof ContactRoute
   DashboardRoute: typeof DashboardRoute
@@ -564,6 +577,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CompareRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/agent-register': {
+      id: '/agent-register'
+      path: '/agent-register'
+      fullPath: '/agent-register'
+      preLoaderRoute: typeof AgentRegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/agent-login': {
       id: '/agent-login'
       path: '/agent-login'
@@ -692,6 +712,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRoute,
   AdminLoginRoute: AdminLoginRoute,
   AgentLoginRoute: AgentLoginRoute,
+  AgentRegisterRoute: AgentRegisterRoute,
   CompareRoute: CompareRoute,
   ContactRoute: ContactRoute,
   DashboardRoute: DashboardRoute,

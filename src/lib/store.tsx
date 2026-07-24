@@ -109,7 +109,7 @@ interface AppState extends StoreSnapshot, StoreMutators {
   token: string | null;
   login: (email: string, password: string) => Promise<User>;
   loginAsAdmin: () => Promise<void>;
-  register: (name: string, email: string, password: string) => Promise<User>;
+  register: (name: string, email: string, password: string, role?: "agent") => Promise<User>;
   logout: () => void;
   updateProfile: (patch: Partial<User>) => void;
   toggleWishlist: (id: string) => void;
@@ -388,8 +388,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setToken(t);
       return u;
     },
-    async register(name, email, password) {
-      const { user: u, token: t } = await apiRegister(name, email, password);
+    async register(name, email, password, role) {
+      const { user: u, token: t } = await apiRegister(name, email, password, role);
       setUser(u);
       setToken(t);
       return u;

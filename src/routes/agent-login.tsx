@@ -104,6 +104,12 @@ function AgentLogin() {
             </Button>
           </form>
           <p className="mt-6 text-center text-sm text-muted-foreground">
+            New agent?{" "}
+            <Link to="/agent-register" className="text-primary hover:underline">
+              Create an account
+            </Link>
+          </p>
+          <p className="mt-2 text-center text-sm text-muted-foreground">
             Not an agent?{" "}
             <Link to="/login" className="text-primary hover:underline">
               User login
