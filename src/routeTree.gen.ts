@@ -10,7 +10,6 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WishlistRouteImport } from './routes/wishlist'
-import { Route as VerifyOtpRouteImport } from './routes/verify-otp'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SupportRouteImport } from './routes/support'
 import { Route as SettingsRouteImport } from './routes/settings'
@@ -46,11 +45,6 @@ import { Route as BuyIdDefectsRouteImport } from './routes/buy.$id.defects'
 const WishlistRoute = WishlistRouteImport.update({
   id: '/wishlist',
   path: '/wishlist',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const VerifyOtpRoute = VerifyOtpRouteImport.update({
-  id: '/verify-otp',
-  path: '/verify-otp',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TermsRoute = TermsRouteImport.update({
@@ -231,7 +225,6 @@ export interface FileRoutesByFullPath {
   '/settings': typeof SettingsRoute
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
-  '/verify-otp': typeof VerifyOtpRoute
   '/wishlist': typeof WishlistRoute
   '/agent/sell': typeof AgentSellRoute
   '/buy/$id': typeof BuyIdRouteWithChildren
@@ -266,7 +259,6 @@ export interface FileRoutesByTo {
   '/settings': typeof SettingsRoute
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
-  '/verify-otp': typeof VerifyOtpRoute
   '/wishlist': typeof WishlistRoute
   '/agent/sell': typeof AgentSellRoute
   '/buy/$id': typeof BuyIdRouteWithChildren
@@ -302,7 +294,6 @@ export interface FileRoutesById {
   '/settings': typeof SettingsRoute
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
-  '/verify-otp': typeof VerifyOtpRoute
   '/wishlist': typeof WishlistRoute
   '/agent/sell': typeof AgentSellRoute
   '/buy/$id': typeof BuyIdRouteWithChildren
@@ -339,7 +330,6 @@ export interface FileRouteTypes {
     | '/settings'
     | '/support'
     | '/terms'
-    | '/verify-otp'
     | '/wishlist'
     | '/agent/sell'
     | '/buy/$id'
@@ -374,7 +364,6 @@ export interface FileRouteTypes {
     | '/settings'
     | '/support'
     | '/terms'
-    | '/verify-otp'
     | '/wishlist'
     | '/agent/sell'
     | '/buy/$id'
@@ -409,7 +398,6 @@ export interface FileRouteTypes {
     | '/settings'
     | '/support'
     | '/terms'
-    | '/verify-otp'
     | '/wishlist'
     | '/agent/sell'
     | '/buy/$id'
@@ -445,7 +433,6 @@ export interface RootRouteChildren {
   SettingsRoute: typeof SettingsRoute
   SupportRoute: typeof SupportRoute
   TermsRoute: typeof TermsRoute
-  VerifyOtpRoute: typeof VerifyOtpRoute
   WishlistRoute: typeof WishlistRoute
   AgentSellRoute: typeof AgentSellRoute
   BuyIdRoute: typeof BuyIdRouteWithChildren
@@ -463,13 +450,6 @@ declare module '@tanstack/react-router' {
       path: '/wishlist'
       fullPath: '/wishlist'
       preLoaderRoute: typeof WishlistRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/verify-otp': {
-      id: '/verify-otp'
-      path: '/verify-otp'
-      fullPath: '/verify-otp'
-      preLoaderRoute: typeof VerifyOtpRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/terms': {
@@ -728,7 +708,6 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsRoute: SettingsRoute,
   SupportRoute: SupportRoute,
   TermsRoute: TermsRoute,
-  VerifyOtpRoute: VerifyOtpRoute,
   WishlistRoute: WishlistRoute,
   AgentSellRoute: AgentSellRoute,
   BuyIdRoute: BuyIdRouteWithChildren,

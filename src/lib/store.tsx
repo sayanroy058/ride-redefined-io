@@ -24,6 +24,7 @@ import {
   startConversation,
   sendMessage,
   markConversationRead as apiMarkConversationRead,
+  getListings,
 } from "./api";
 
 // ---------------------------------------------------------------------------
@@ -177,6 +178,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }
     setReady(true);
     _resolveReady();
+
+    getListings()
+      .then((data) => setListings(data))
+      .catch((err) => console.error("Failed to load listings:", err));
   }, []);
 
   // Persist only UI state + auth token

@@ -31,7 +31,7 @@ function Register() {
   async function submit(values: RegisterValues) {
     await register(values.name, values.email, values.password);
     toast.success("Account created!");
-    nav({ to: "/verify-otp" });
+    nav({ to: "/" });
   }
 
   return (
