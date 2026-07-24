@@ -44,7 +44,7 @@ import { Reviews } from "@/components/site/Reviews";
 import { DetailSkeleton } from "@/components/site/Skeletons";
 import { Seo } from "@/components/site/Seo";
 import { Lightbox } from "@/components/site/Lightbox";
-import { emiEstimate } from "@/lib/constants";
+import { emiEstimate, ADMIN_ID, ADMIN_NAME } from "@/lib/constants";
 import { getListing, getSimilar } from "@/lib/api";
 import { qk } from "@/lib/queries";
 import { startConversation } from "@/lib/api";
@@ -118,8 +118,8 @@ function VehicleDetail() {
       const conv = await startConversation({
         listingId: listing!.id,
         buyerId: user.id,
-        sellerId: listing!.sellerId,
-        sellerName: listing!.sellerName,
+        sellerId: ADMIN_ID,
+        sellerName: ADMIN_NAME,
         listingTitle: `${listing!.year} ${listing!.brand} ${listing!.model}`,
       });
       nav({ to: "/chat/$id", params: { id: conv.id } });
@@ -666,7 +666,7 @@ function VehicleDetail() {
               </Button>
               <Button size="lg" variant="ghost" className="w-full" onClick={startChat}>
                 <MessageCircle className="mr-2 h-4 w-4" />
-                Chat with seller
+                Chat with DriveHub
               </Button>
             </div>
             <Separator className="my-4" />

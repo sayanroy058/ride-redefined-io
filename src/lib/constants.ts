@@ -22,6 +22,11 @@ export const CITIES = [
   "Ahmedabad", "Kolkata", "Gurugram", "Pune", "Noida",
 ];
 
+// Fixed identity used for all buyer conversations — buyers chat with the
+// company, not individual sellers.
+export const ADMIN_ID = "admin";
+export const ADMIN_NAME = "DriveHub Team";
+
 // EMI estimate for INR with typical Indian car loan rate (~9.5%)
 export function emiEstimate(price: number, years = 5, rate = 0.095) {
   const n = years * 12;

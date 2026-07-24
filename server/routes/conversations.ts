@@ -6,15 +6,17 @@ const router = Router();
 // GET /api/conversations
 router.get("/", (req: Request, res: Response) => {
   const db = getDb();
+  const all = req.query.all === "true";
   const userId = req.query.userId as string | undefined;
-  if (!userId) {
+
+  if (!all && !userId) {
     res.status(400).json({ error: "userId query parameter required" });
     return;
   }
 
-  const rows = db.prepare(
-    "SELECT * FROM conversations WHERE buyerId = ? OR sellerId = ? ORDER BY createdAt DESC"
-  ).all(userId, userId) as Record<string, unknown>[];
+  const rows = all
+    ? (db.prepare("SELECT * FROM conversations ORDER BY createdAt DESC").all() as Record<string, unknown>[])
+    : (db.prepare("SELECT * FROM conversations WHERE buyerId = ? ORDER BY createdAt DESC").all(userId) as Record<string, unknown>[]);
 
   const conversations = rows.map((c) => {
     const messages = db.prepare("SELECT * FROM messages WHERE conversationId = ? ORDER BY createdAt ASC").all(c.id) as Record<string, unknown>[];

@@ -82,7 +82,7 @@ function ChatThread() {
 
   return (
     <div className="container mx-auto max-w-2xl px-4 py-8">
-      <Seo title="Chat — DriveHub" description="Conversation with seller." canonical="/chat" />
+      <Seo title="Chat — DriveHub" description="Conversation with DriveHub team." canonical="/chat" />
       <Link
         to="/chat"
         className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
@@ -94,7 +94,9 @@ function ChatThread() {
         <div className="flex items-center justify-between border-b border-border/60 p-4">
           <div>
             <div className="font-semibold">{conversation.listingTitle}</div>
-            <div className="text-xs text-muted-foreground">with {conversation.sellerName}</div>
+            <div className="text-xs text-muted-foreground">
+              {user.role === "admin" ? `Buyer #${conversation.buyerId}` : `with ${conversation.sellerName}`}
+            </div>
           </div>
           {listing && (
             <Button asChild size="sm" variant="outline">
@@ -109,18 +111,20 @@ function ChatThread() {
           {conversation.messages.length === 0 ? (
             <p className="m-auto text-sm text-muted-foreground">No messages yet. Say hello!</p>
           ) : (
-            conversation.messages.map((m) => (
-              <div key={m.id} className={`flex ${m.mine ? "justify-end" : "justify-start"}`}>
+            conversation.messages.map((m) => {
+              const mine = m.senderId === user.id;
+              return (
+              <div key={m.id} className={`flex ${mine ? "justify-end" : "justify-start"}`}>
                 <div
                   className={`max-w-[75%] rounded-2xl px-3.5 py-2 text-sm ${
-                    m.mine
+                    mine
                       ? "rounded-br-sm bg-primary text-primary-foreground"
                       : "rounded-bl-sm bg-secondary text-foreground"
                   }`}
                 >
                   {m.text}
                   <div
-                    className={`mt-0.5 text-[10px] ${m.mine ? "text-primary-foreground/70" : "text-muted-foreground"}`}
+                    className={`mt-0.5 text-[10px] ${mine ? "text-primary-foreground/70" : "text-muted-foreground"}`}
                   >
                     {new Date(m.createdAt).toLocaleTimeString([], {
                       hour: "2-digit",
@@ -129,7 +133,8 @@ function ChatThread() {
                   </div>
                 </div>
               </div>
-            ))
+              );
+            })
           )}
           <div ref={endRef} />
         </div>

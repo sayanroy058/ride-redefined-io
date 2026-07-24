@@ -277,18 +277,16 @@ export async function patchTicket(
 // ---------------------------------------------------------------------------
 
 export async function getConversations(
-  userId: string,
+  userId?: string,
+  opts?: { all?: boolean },
 ): Promise<Conversation[]> {
+  const qs = opts?.all ? "all=true" : `userId=${userId}`;
   const { conversations } = await request<{ conversations: Conversation[] }>(
-    `/conversations?userId=${userId}`,
+    `/conversations?${qs}`,
   );
   return conversations.map((c) => ({
     ...c,
-    mine: false,
-    messages: (c.messages ?? []).map((m: unknown) => ({
-      ...(m as Message),
-      mine: !!(m as { mine?: number }).mine,
-    })),
+    messages: (c.messages ?? []).map((m: unknown) => m as Message),
   }));
 }
 
@@ -301,10 +299,7 @@ export async function getConversation(
   return conversation
     ? {
         ...conversation,
-        messages: (conversation.messages ?? []).map((m: unknown) => ({
-          ...(m as Message),
-          mine: !!(m as { mine?: number }).mine,
-        })),
+        messages: (conversation.messages ?? []).map((m: unknown) => m as Message),
       }
     : null;
 }

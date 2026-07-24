@@ -23,24 +23,27 @@ function ChatInbox() {
     );
   }
 
-  const mine = conversations.filter((c) => c.buyerId === user.id || c.sellerId === user.id);
+  const isAdmin = user.role === "admin";
+  const mine = isAdmin ? conversations : conversations.filter((c) => c.buyerId === user.id);
 
   const unreadCount = (c: (typeof conversations)[number]) => {
     const lastRead = c.lastReadAt?.[user.id] ?? 0;
-    return c.messages.filter((m) => !m.mine && m.createdAt > lastRead).length;
+    return c.messages.filter((m) => m.senderId !== user.id && m.createdAt > lastRead).length;
   };
 
   return (
     <div className="container mx-auto max-w-2xl px-4 py-10">
       <Seo
         title="Messages — DriveHub"
-        description="Your conversations with sellers."
+        description="Your conversations with our team."
         canonical="/chat"
       />
       <div className="mb-6">
         <h1 className="text-3xl font-bold tracking-tight">Messages</h1>
         <p className="text-sm text-muted-foreground">
-          Chat with sellers about cars you're interested in.
+          {isAdmin
+            ? "All buyer conversations with DriveHub."
+            : "Chat with our team about cars you're interested in."}
         </p>
       </div>
 
@@ -85,7 +88,7 @@ function ChatInbox() {
                     )}
                   </div>
                   <p className="truncate text-sm text-muted-foreground">
-                    {last ? `${last.mine ? "You: " : ""}${last.text}` : "No messages yet"}
+                    {last ? `${last.senderId === user.id ? "You: " : ""}${last.text}` : "No messages yet"}
                   </p>
                 </div>
                 {unread > 0 && (

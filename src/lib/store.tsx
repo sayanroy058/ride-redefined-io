@@ -25,6 +25,8 @@ import {
   sendMessage,
   markConversationRead as apiMarkConversationRead,
   getListings,
+  getConversations,
+  getBookings,
 } from "./api";
 
 // ---------------------------------------------------------------------------
@@ -202,6 +204,20 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (typeof document === "undefined") return;
     document.documentElement.classList.toggle("dark", theme === "dark");
   }, [theme]);
+
+  useEffect(() => {
+    if (!user) {
+      setConversations([]);
+      return;
+    }
+    const isAdmin = user.role === "admin";
+    getConversations(isAdmin ? undefined : user.id, { all: isAdmin })
+      .then(setConversations)
+      .catch((err) => console.error("Failed to load conversations:", err));
+    getBookings(isAdmin ? undefined : user.id)
+      .then(setBookings)
+      .catch((err) => console.error("Failed to load bookings:", err));
+  }, [user?.id, user?.role]);
 
   const mutators = useMemo<StoreMutators>(
     () => ({

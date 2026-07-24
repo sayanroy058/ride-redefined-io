@@ -278,6 +278,7 @@ function Admin() {
         <TabsList className="flex w-full flex-wrap justify-start">
           <TabsTrigger value="approvals">Approval queue</TabsTrigger>
           <TabsTrigger value="offers">Offers ({offers.length})</TabsTrigger>
+          <TabsTrigger value="bookings">Bookings ({bookings.length})</TabsTrigger>
           <TabsTrigger value="inventory">Inventory</TabsTrigger>
           <TabsTrigger value="add-car">
             <Plus className="mr-1 h-3.5 w-3.5" />
@@ -293,6 +294,10 @@ function Admin() {
 
         <TabsContent value="offers" className="mt-6">
           <OffersTable offers={offers} listings={listings} />
+        </TabsContent>
+
+        <TabsContent value="bookings" className="mt-6">
+          <BookingsTable bookings={bookings} listings={listings} />
         </TabsContent>
 
         <TabsContent value="inventory" className="mt-6">
@@ -859,6 +864,98 @@ function OffersTable({
                 </td>
                 <td className="p-3 text-muted-foreground">
                   {new Date(o.createdAt).toLocaleDateString()}
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function BookingsTable({
+  bookings,
+  listings,
+}: {
+  bookings: import("@/lib/types").Booking[];
+  listings: Listing[];
+}) {
+  const { updateBooking } = useApp();
+
+  if (bookings.length === 0) {
+    return (
+      <div className="rounded-2xl border border-border/60 bg-card p-10 text-center text-sm text-muted-foreground">
+        No bookings yet.
+      </div>
+    );
+  }
+
+  const typeLabel: Record<string, string> = {
+    reserve: "Reservation",
+    purchase: "Purchase",
+    test_drive: "Test drive",
+  };
+
+  return (
+    <div className="overflow-x-auto rounded-2xl border border-border/60 bg-card">
+      <table className="w-full text-sm">
+        <thead className="border-b border-border/60 text-left text-xs uppercase tracking-wider text-muted-foreground">
+          <tr>
+            <th className="p-3">Buyer</th>
+            <th className="p-3">Car</th>
+            <th className="p-3">Type</th>
+            <th className="p-3">Scheduled</th>
+            <th className="p-3">City</th>
+            <th className="p-3">Status</th>
+            <th className="p-3">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {bookings.map((b) => {
+            const l = listings.find((l) => l.id === b.listingId);
+            return (
+              <tr key={b.id} className="border-b border-border/40 last:border-0">
+                <td className="p-3">
+                  {b.buyerName}
+                  <div className="text-xs text-muted-foreground">{b.buyerPhone}</div>
+                </td>
+                <td className="p-3">
+                  {l ? `${l.year} ${l.brand} ${l.model}` : "—"}
+                </td>
+                <td className="p-3">
+                  <span className="rounded-full bg-secondary px-2.5 py-0.5 text-xs font-medium capitalize">
+                    {typeLabel[b.type] ?? b.type}
+                  </span>
+                </td>
+                <td className="p-3 text-muted-foreground">
+                  {b.scheduledDate ? new Date(b.scheduledDate).toLocaleDateString() : "—"}
+                </td>
+                <td className="p-3 text-muted-foreground">{b.city ?? "—"}</td>
+                <td className="p-3">
+                  <span className="rounded-full bg-secondary px-2.5 py-0.5 text-xs font-medium capitalize">
+                    {b.status}
+                  </span>
+                </td>
+                <td className="p-3">
+                  <div className="flex gap-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      disabled={b.status === "confirmed"}
+                      onClick={() => updateBooking(b.id, { status: "confirmed" })}
+                    >
+                      Confirm
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      disabled={b.status === "cancelled"}
+                      onClick={() => updateBooking(b.id, { status: "cancelled" })}
+                    >
+                      Cancel
+                    </Button>
+                  </div>
                 </td>
               </tr>
             );

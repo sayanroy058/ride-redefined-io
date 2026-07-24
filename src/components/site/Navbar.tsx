@@ -45,10 +45,10 @@ export function Navbar() {
 
   const unreadChat = user
     ? conversations
-        .filter((c) => c.buyerId === user.id || c.sellerId === user.id)
+        .filter((c) => user.role === "admin" || c.buyerId === user.id)
         .reduce((sum, c) => {
           const lastRead = c.lastReadAt?.[user.id] ?? 0;
-          return sum + c.messages.filter((m) => !m.mine && m.createdAt > lastRead).length;
+          return sum + c.messages.filter((m) => m.senderId !== user.id && m.createdAt > lastRead).length;
         }, 0)
     : 0;
 
