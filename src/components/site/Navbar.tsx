@@ -39,7 +39,7 @@ const NAV = [
 ] as const;
 
 export function Navbar() {
-  const { user, logout, theme, setTheme, wishlist, conversations, loginAsAgent } =
+  const { user, logout, theme, setTheme, wishlist, conversations } =
     useApp();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [open, setOpen] = useState(false);
