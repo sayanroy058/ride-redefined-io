@@ -109,7 +109,6 @@ interface AppState extends StoreSnapshot, StoreMutators {
   token: string | null;
   login: (email: string, password: string) => Promise<User>;
   loginAsAdmin: () => Promise<void>;
-  loginAsAgent: () => Promise<void>;
   register: (name: string, email: string, password: string) => Promise<User>;
   logout: () => void;
   updateProfile: (patch: Partial<User>) => void;
@@ -399,23 +398,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
       const { user: u, token: t } = await apiLogin("admin@drivehub.io", "admin");
       setUser(u);
       setToken(t);
-    },
-    async loginAsAgent() {
-      // Try login first (agent is seeded with password "agent")
-      try {
-        const { user: u, token: t } = await apiLogin("agent@drivehub.io", "agent");
-        setUser(u);
-        setToken(t);
-      } catch {
-        // Agent might not be seeded yet — try registering
-        try {
-          const { user: u, token: t } = await apiRegister("Agent Priya", "agent@drivehub.io", "agent");
-          setUser(u);
-          setToken(t);
-        } catch {
-          // Both failed — silently ignore (server unavailable or DB not seeded)
-        }
-      }
     },
     logout() {
       setUser(null);

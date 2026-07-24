@@ -12,7 +12,7 @@ export const Route = createFileRoute("/login")({
 });
 
 function Login() {
-  const { login, loginAsAgent } = useApp();
+  const { login } = useApp();
   const nav = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -53,22 +53,11 @@ function Login() {
           <div className="relative flex justify-center text-xs uppercase"><span className="bg-card px-2 text-muted-foreground">Quick access</span></div>
         </div>
         <div className="grid grid-cols-2 gap-2">
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={async () => {
-              try {
-                await loginAsAgent();
-                toast.success("Signed in as agent");
-                nav({ to: "/agent" });
-              } catch {
-                toast.error("Agent login failed");
-              }
-            }}
-          >
-            <Briefcase className="mr-1.5 h-3.5 w-3.5" />
-            Agent Demo
+          <Button type="button" variant="outline" size="sm" asChild>
+            <Link to="/agent-login">
+              <Briefcase className="mr-1.5 h-3.5 w-3.5" />
+              Agent
+            </Link>
           </Button>
           <Button
             type="button"

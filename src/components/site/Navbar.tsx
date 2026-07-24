@@ -16,7 +16,6 @@ import {
   User2,
 } from "lucide-react";
 import { useState } from "react";
-import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import {
@@ -230,21 +229,11 @@ export function Navbar() {
                 <Button asChild size="sm">
                   <Link to="/register">Register</Link>
                 </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="hidden lg:inline-flex"
-                  onClick={async () => {
-                    try {
-                      await loginAsAgent();
-                      toast.success("Signed in as agent");
-                    } catch {
-                      toast.error("Agent login failed");
-                    }
-                  }}
-                >
-                  <Briefcase className="mr-1.5 h-3.5 w-3.5" />
-                  Agent
+                <Button asChild variant="outline" size="sm" className="hidden lg:inline-flex">
+                  <Link to="/agent-login">
+                    <Briefcase className="mr-1.5 h-3.5 w-3.5" />
+                    Agent
+                  </Link>
                 </Button>
                 <Button asChild variant="outline" size="sm" className="hidden lg:inline-flex">
                   <Link to="/admin-login">
@@ -386,20 +375,13 @@ export function Navbar() {
                         >
                           Register
                         </Link>
-                        <button
-                          onClick={async () => {
-                            try {
-                              await loginAsAgent();
-                              setOpen(false);
-                              toast.success("Signed in as agent");
-                            } catch {
-                              toast.error("Agent login failed");
-                            }
-                          }}
+                        <Link
+                          to="/agent-login"
+                          onClick={() => setOpen(false)}
                           className="rounded-lg px-4 py-2.5 text-left text-sm font-medium hover:bg-secondary"
                         >
-                          <Briefcase className="mr-2 inline h-4 w-4" /> Agent Demo
-                        </button>
+                          <Briefcase className="mr-2 inline h-4 w-4" /> Agent Login
+                        </Link>
                         <Link
                           to="/admin-login"
                           onClick={() => setOpen(false)}
